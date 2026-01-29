@@ -7,16 +7,19 @@ interface HeaderProps {
 export default function Header({ onAboutClick }: HeaderProps) {
   return (
     <header className="text-center pt-8 pb-4 md:pt-12 md:pb-6 px-4 relative">
-      {/* About Button - Top Right */}
-      <button
-        onClick={onAboutClick}
-        className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-card/80 border border-border-subtle text-text-muted hover:text-claude-orange hover:border-claude-orange/30 transition-all text-sm font-medium"
-      >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span className="hidden sm:inline">About</span>
-      </button>
+      {/* Version & About - Top Right */}
+      <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2">
+        <span className="text-xs text-text-muted font-mono">v1.0.1</span>
+        <button
+          onClick={onAboutClick}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-card/80 border border-border-subtle text-text-muted hover:text-claude-orange hover:border-claude-orange/30 transition-all text-sm font-medium"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="hidden sm:inline">About</span>
+        </button>
+      </div>
 
       <div className="flex items-center justify-center gap-3 mb-3">
         {/* Claude-inspired logo */}
