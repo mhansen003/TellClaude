@@ -284,7 +284,9 @@ export default function Home() {
               <button
                 onClick={handleGenerate}
                 disabled={!transcript.trim() || isGenerating}
-                className="flex-1 h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer"
+                className={`flex-1 h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer ${
+                  transcript.trim() && !isGenerating ? "animate-pulse-glow shadow-[0_0_20px_rgba(255,107,53,0.4)]" : ""
+                }`}
               >
                 {isGenerating ? (
                   <span className="flex items-center justify-center gap-2">
