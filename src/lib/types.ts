@@ -5,6 +5,7 @@ export type PromptModeId =
   | "planning"
   | "brainstorming"
   | "design"
+  | "database"
   | "feedback"
   | "technical"
   | "debugging"
