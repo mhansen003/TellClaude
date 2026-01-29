@@ -61,6 +61,9 @@ export default function Home() {
   // Options collapse
   const [optionsExpanded, setOptionsExpanded] = useState(false);
 
+  // Edit mode for output
+  const [isEditingOutput, setIsEditingOutput] = useState(false);
+
   // Toast
   const [toast, setToast] = useState<string | null>(null);
 
@@ -123,6 +126,7 @@ export default function Home() {
     }
 
     setIsGenerating(true);
+    setIsEditingOutput(false); // Reset edit mode when generating new prompt
 
     try {
       const response = await fetch("/api/generate-prompt", {
@@ -220,6 +224,7 @@ export default function Home() {
     setDetailLevel("balanced");
     setOutputFormat("structured");
     setActiveHistoryId(null);
+    setIsEditingOutput(false);
     setToast("Ready for a new prompt!");
     setTimeout(() => setToast(null), 2000);
   }, [isListening, stopListening, resetTranscript]);
@@ -463,6 +468,16 @@ export default function Home() {
                   {generatedPrompt && (
                     <div className="flex gap-2">
                       <button
+                        onClick={() => setIsEditingOutput(!isEditingOutput)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                          isEditingOutput
+                            ? "bg-accent-purple text-white"
+                            : "bg-bg-elevated text-text-secondary hover:text-accent-purple"
+                        }`}
+                      >
+                        {isEditingOutput ? "View" : "Edit"}
+                      </button>
+                      <button
                         onClick={handleCopy}
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                           copied
@@ -494,8 +509,17 @@ export default function Home() {
                     <p className="text-sm font-medium">Claude Opus 4.5 is crafting your prompt...</p>
                   </div>
                 ) : generatedPrompt ? (
-                  <div className="relative">
-                    <FormattedPrompt content={generatedPrompt} />
+                  <div className="relative h-full">
+                    {isEditingOutput ? (
+                      <textarea
+                        value={generatedPrompt}
+                        onChange={(e) => setGeneratedPrompt(e.target.value)}
+                        className="w-full h-full min-h-[300px] p-4 rounded-xl bg-bg-elevated border-2 border-accent-purple/30 text-text-primary font-mono text-sm resize-none focus:outline-none focus:border-accent-purple/50 transition-colors"
+                        placeholder="Edit your prompt..."
+                      />
+                    ) : (
+                      <FormattedPrompt content={generatedPrompt} />
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center text-text-muted py-8">
