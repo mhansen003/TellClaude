@@ -14,6 +14,8 @@ import DetailLevelSelector from "@/components/DetailLevelSelector";
 import OutputFormatSelector from "@/components/OutputFormatSelector";
 import ContextInput from "@/components/ContextInput";
 import InterviewModal from "@/components/InterviewModal";
+import AboutModal from "@/components/AboutModal";
+import FormattedPrompt from "@/components/FormattedPrompt";
 import PromptHistory, { HistoryItem } from "@/components/PromptHistory";
 
 const HISTORY_STORAGE_KEY = "tellclaude-history";
@@ -51,6 +53,9 @@ export default function Home() {
 
   // Interview modal
   const [showInterview, setShowInterview] = useState(false);
+
+  // About modal
+  const [showAbout, setShowAbout] = useState(false);
 
   // Options collapse
   const [optionsExpanded, setOptionsExpanded] = useState(false);
@@ -232,7 +237,7 @@ export default function Home() {
       />
 
       {/* Header - Full width */}
-      <Header />
+      <Header onAboutClick={() => setShowAbout(true)} />
 
       {/* Main Content - Side by Side Layout */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
@@ -411,9 +416,7 @@ export default function Home() {
                   </div>
                 ) : generatedPrompt ? (
                   <div className="relative">
-                    <pre className="prompt-output text-sm text-text-primary whitespace-pre-wrap leading-relaxed">
-                      {generatedPrompt}
-                    </pre>
+                    <FormattedPrompt content={generatedPrompt} />
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center text-text-muted py-8">
@@ -459,6 +462,12 @@ export default function Home() {
         onComplete={handleInterviewComplete}
         initialTranscript={transcript}
         mode={mode}
+      />
+
+      {/* About Modal */}
+      <AboutModal
+        isOpen={showAbout}
+        onClose={() => setShowAbout(false)}
       />
 
       {/* Toast notification */}
