@@ -2,6 +2,7 @@
 
 import { DetailLevelId } from "@/lib/types";
 import { DETAIL_LEVEL_OPTIONS } from "@/lib/constants";
+import { TooltipIcon } from "@/components/Tooltip";
 
 interface DetailLevelSelectorProps {
   selected: DetailLevelId;
@@ -14,10 +15,16 @@ export default function DetailLevelSelector({
 }: DetailLevelSelectorProps) {
   return (
     <div>
-      <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 mb-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-accent-teal" />
-        Detail Level
-      </label>
+      <div className="flex items-center justify-between mb-2">
+        <label className="text-sm font-semibold text-text-secondary flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-teal" />
+          Detail Level
+        </label>
+        <TooltipIcon
+          content="Concise: Quick, focused answers. Balanced: Standard detail. Detailed: Comprehensive explanations with examples."
+          position="left"
+        />
+      </div>
 
       <div className="flex rounded-xl bg-bg-card border-2 border-border-subtle p-1">
         {DETAIL_LEVEL_OPTIONS.map((option) => {

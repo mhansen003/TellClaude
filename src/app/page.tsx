@@ -17,6 +17,7 @@ import InterviewModal from "@/components/InterviewModal";
 import AboutModal from "@/components/AboutModal";
 import FormattedPrompt from "@/components/FormattedPrompt";
 import PromptHistory, { HistoryItem } from "@/components/PromptHistory";
+import { TooltipIcon } from "@/components/Tooltip";
 
 const HISTORY_STORAGE_KEY = "tellclaude-history";
 
@@ -250,6 +251,17 @@ export default function Home() {
 
             {/* Voice Recorder + Transcript in one card */}
             <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-4">
+              {/* Section Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-claude-orange" />
+                  <span className="text-sm font-semibold text-text-secondary">Voice Input</span>
+                </div>
+                <TooltipIcon
+                  content="Click the microphone to speak your request, or type directly below. Your voice is converted to text in real-time."
+                  position="left"
+                />
+              </div>
               <VoiceRecorder
                 isListening={isListening}
                 isSupported={isSupported}
@@ -267,8 +279,30 @@ export default function Home() {
 
             {/* Mode + Modifiers in one card */}
             <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
+              {/* Mode Header */}
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-purple" />
+                  <span className="text-sm font-semibold text-text-secondary">Prompt Mode</span>
+                </div>
+                <TooltipIcon
+                  content="Select a mode to tell Claude what type of task you need help with. Engineering modes focus on code/technical tasks, Business modes on documents/analysis."
+                  position="left"
+                />
+              </div>
               <PromptModeSelector selected={mode} onChange={setMode} />
               <div className="border-t border-border-subtle pt-3">
+                {/* Modifiers Header */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
+                    <span className="text-sm font-semibold text-text-secondary">Modifiers</span>
+                  </div>
+                  <TooltipIcon
+                    content="Add specific requirements to your prompt. Check multiple options to include step-by-step instructions, examples, best practices, and more."
+                    position="left"
+                  />
+                </div>
                 <ModifierCheckboxes selected={modifiers} onChange={setModifiers} />
               </div>
             </div>
@@ -276,29 +310,37 @@ export default function Home() {
             {/* Options: Detail, Format, Context - Collapsible */}
             <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
               {/* Header - Always visible, clickable to expand/collapse */}
-              <button
-                onClick={() => setOptionsExpanded(!optionsExpanded)}
-                className="w-full flex items-center justify-between py-1 group"
-              >
-                <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 cursor-pointer">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent-teal" />
-                  Output Options
-                  {(detailLevel !== "balanced" || outputFormat !== "structured") && (
-                    <span className="px-2 py-0.5 rounded-full bg-accent-teal/20 text-accent-teal text-xs font-semibold">
-                      Custom
-                    </span>
-                  )}
-                </label>
-                <svg
-                  className={`w-5 h-5 text-text-muted transition-transform duration-200 ${optionsExpanded ? "rotate-180" : ""}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setOptionsExpanded(!optionsExpanded)}
+                  className="flex-1 flex items-center justify-between py-1 group"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
+                  <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 cursor-pointer">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent-teal" />
+                    Output Options
+                    {(detailLevel !== "balanced" || outputFormat !== "structured") && (
+                      <span className="px-2 py-0.5 rounded-full bg-accent-teal/20 text-accent-teal text-xs font-semibold">
+                        Custom
+                      </span>
+                    )}
+                  </label>
+                  <svg
+                    className={`w-5 h-5 text-text-muted transition-transform duration-200 ${optionsExpanded ? "rotate-180" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div className="ml-2">
+                  <TooltipIcon
+                    content="Customize how your prompt is generated. Choose detail level (concise to detailed), output format (structured, natural, or bullets), and add extra context."
+                    position="left"
+                  />
+                </div>
+              </div>
 
               {/* Preview when collapsed */}
               {!optionsExpanded && (

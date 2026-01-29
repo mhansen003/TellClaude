@@ -1,5 +1,7 @@
 "use client";
 
+import { TooltipIcon } from "@/components/Tooltip";
+
 interface ContextInputProps {
   value: string;
   onChange: (value: string) => void;
@@ -14,6 +16,10 @@ export default function ContextInput({ value, onChange }: ContextInputProps) {
           Additional Context
           <span className="text-xs text-text-muted font-normal">(optional)</span>
         </label>
+        <TooltipIcon
+          content="Add extra context like technology stack, project name, or specific constraints that Claude should know about."
+          position="left"
+        />
       </div>
       <input
         type="text"

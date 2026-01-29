@@ -2,6 +2,7 @@
 
 import { OutputFormatId } from "@/lib/types";
 import { OUTPUT_FORMAT_OPTIONS } from "@/lib/constants";
+import { TooltipIcon } from "@/components/Tooltip";
 
 interface OutputFormatSelectorProps {
   selected: OutputFormatId;
@@ -14,10 +15,16 @@ export default function OutputFormatSelector({
 }: OutputFormatSelectorProps) {
   return (
     <div>
-      <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 mb-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-accent-blue" />
-        Output Format
-      </label>
+      <div className="flex items-center justify-between mb-2">
+        <label className="text-sm font-semibold text-text-secondary flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-blue" />
+          Output Format
+        </label>
+        <TooltipIcon
+          content="Structured: Clear sections with headers. Natural: Conversational flow. Bullets: Easy-to-scan list format."
+          position="left"
+        />
+      </div>
 
       <div className="flex rounded-xl bg-bg-card border-2 border-border-subtle p-1">
         {OUTPUT_FORMAT_OPTIONS.map((option) => {
