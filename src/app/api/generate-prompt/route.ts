@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
 
     // Build context for the AI
     const modeDescriptions: Record<string, string> = {
+      // Engineering modes
       code: "writing or modifying code - focus on implementation details, syntax, and working code examples",
       planning: "planning implementation strategy - focus on architecture, milestones, dependencies, and sequencing",
       brainstorming: "brainstorming and exploring ideas - focus on creative solutions, trade-offs, and possibilities",
@@ -37,6 +38,15 @@ export async function POST(request: NextRequest) {
       review: "code review and analysis - focus on code quality, patterns, potential bugs, and improvements",
       documentation: "writing documentation - focus on clarity, completeness, examples, and proper formatting",
       refactoring: "refactoring and improving code structure - focus on clean code, patterns, and maintainability",
+      // Business modes
+      summary: "summarizing content - focus on extracting key points, main ideas, and essential information concisely",
+      transcript: "summarizing meeting transcripts - focus on key decisions, action items, participants, and next steps",
+      report: "generating detailed reports - focus on structure, data presentation, findings, and recommendations",
+      "vendor-compare": "comparing vendors or products - focus on criteria, pros/cons, pricing, features, and recommendations",
+      analysis: "analyzing data or situations - focus on insights, patterns, implications, and actionable conclusions",
+      email: "drafting professional emails - focus on tone, clarity, call-to-action, and appropriate formatting",
+      proposal: "writing proposals or pitches - focus on value proposition, benefits, timeline, and persuasive structure",
+      "meeting-notes": "creating meeting notes - focus on attendees, agenda items, decisions made, and action items with owners",
     };
 
     const detailDescriptions: Record<string, string> = {
@@ -52,18 +62,29 @@ export async function POST(request: NextRequest) {
     };
 
     const modifierDescriptions: Record<string, string> = {
+      // General modifiers
       "step-by-step": "Break the solution into numbered steps that can be followed sequentially",
-      "examples": "Include multiple working code examples to illustrate key concepts",
+      "examples": "Include practical examples to illustrate key concepts",
       "alternatives": "Present 2-3 alternative approaches with pros/cons of each",
       "best-practices": "Highlight industry best practices and explain why they matter",
+      "explain-reasoning": "Explain the 'why' behind decisions and trade-offs",
+      // Engineering modifiers
       "edge-cases": "Identify and address potential edge cases and corner scenarios",
       "performance": "Analyze performance implications and suggest optimizations",
       "security": "Review for security vulnerabilities and suggest secure implementations",
       "testing": "Include test cases, testing strategies, or testable code",
-      "explain-reasoning": "Explain the 'why' behind decisions and trade-offs",
       "typescript": "Use TypeScript with comprehensive type annotations and interfaces",
       "error-handling": "Include robust error handling with meaningful error messages",
       "comments": "Add inline comments explaining complex or non-obvious logic",
+      // Business modifiers
+      "executive-summary": "Include a concise executive summary at the beginning",
+      "action-items": "Extract and list clear action items with owners and deadlines",
+      "pros-cons": "Include a thorough pros and cons analysis",
+      "timeline": "Include timeline estimates and scheduling considerations",
+      "cost-analysis": "Include cost analysis or budget impact considerations",
+      "risks": "Identify potential risks and mitigation strategies",
+      "stakeholders": "Consider all stakeholders and their perspectives",
+      "metrics": "Define clear success metrics and KPIs",
     };
 
     const selectedModifiers = modifiers

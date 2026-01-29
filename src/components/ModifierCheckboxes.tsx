@@ -20,7 +20,7 @@ export default function ModifierCheckboxes({
   };
 
   return (
-    <div className="px-4 md:px-0 py-4">
+    <div>
       <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 mb-3">
         <span className="w-1.5 h-1.5 rounded-full bg-accent-purple" />
         Prompt Modifiers

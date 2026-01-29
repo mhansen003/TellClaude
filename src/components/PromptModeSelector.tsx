@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { PromptModeId } from "@/lib/types";
 import { PROMPT_MODE_OPTIONS } from "@/lib/constants";
 
@@ -12,23 +13,59 @@ export default function PromptModeSelector({
   selected,
   onChange,
 }: PromptModeSelectorProps) {
-  return (
-    <div className="px-4 md:px-0 py-4">
-      <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 mb-3">
-        <span className="w-1.5 h-1.5 rounded-full bg-claude-coral" />
-        Prompt Mode
-      </label>
+  const [activeCategory, setActiveCategory] = useState<"engineering" | "business">(
+    PROMPT_MODE_OPTIONS.find(m => m.id === selected)?.category || "engineering"
+  );
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-        {PROMPT_MODE_OPTIONS.map((mode) => {
+  const engineeringModes = PROMPT_MODE_OPTIONS.filter(m => m.category === "engineering");
+  const businessModes = PROMPT_MODE_OPTIONS.filter(m => m.category === "business");
+
+  const currentModes = activeCategory === "engineering" ? engineeringModes : businessModes;
+
+  return (
+    <div className="py-3">
+      {/* Category Tabs */}
+      <div className="flex items-center gap-2 mb-3">
+        <label className="text-sm font-semibold text-text-secondary flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-claude-coral" />
+          Mode
+        </label>
+        <div className="flex-1" />
+        <div className="flex rounded-lg bg-bg-card border border-border-subtle p-0.5">
+          <button
+            onClick={() => setActiveCategory("engineering")}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+              activeCategory === "engineering"
+                ? "bg-claude-orange text-white"
+                : "text-text-secondary hover:text-text-primary"
+            }`}
+          >
+            Engineering
+          </button>
+          <button
+            onClick={() => setActiveCategory("business")}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+              activeCategory === "business"
+                ? "bg-claude-orange text-white"
+                : "text-text-secondary hover:text-text-primary"
+            }`}
+          >
+            Business
+          </button>
+        </div>
+      </div>
+
+      {/* Mode Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-1.5">
+        {currentModes.map((mode) => {
           const isSelected = selected === mode.id;
           return (
             <button
               key={mode.id}
               onClick={() => onChange(mode.id)}
               className={`
-                relative px-3 py-3 rounded-xl text-left transition-all duration-200
-                border-2 cursor-pointer group
+                relative px-2.5 py-2 rounded-lg text-left transition-all duration-200
+                border cursor-pointer group
                 ${
                   isSelected
                     ? "bg-claude-glow border-claude-orange text-text-primary"
@@ -36,22 +73,14 @@ export default function PromptModeSelector({
                 }
               `}
             >
-              {/* Icon and label */}
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg">{mode.icon}</span>
-                <span className={`text-sm font-semibold ${isSelected ? "text-claude-orange" : ""}`}>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">{mode.icon}</span>
+                <span className={`text-xs font-semibold ${isSelected ? "text-claude-orange" : ""}`}>
                   {mode.label}
                 </span>
               </div>
-
-              {/* Description (hidden on mobile for space) */}
-              <p className="text-xs text-text-muted hidden sm:block truncate">
-                {mode.description}
-              </p>
-
-              {/* Selection indicator */}
               {isSelected && (
-                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-claude-orange" />
+                <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-claude-orange" />
               )}
             </button>
           );

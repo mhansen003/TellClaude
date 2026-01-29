@@ -1,12 +1,14 @@
 import { PromptModeOption, DetailLevelOption, OutputFormatOption, PromptModifier } from "./types";
 
 export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
+  // Engineering modes
   {
     id: "code",
     label: "Code",
     description: "Write or modify code",
     icon: "{ }",
     color: "bg-claude-orange",
+    category: "engineering",
   },
   {
     id: "planning",
@@ -14,6 +16,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     description: "Plan implementation strategy",
     icon: "📋",
     color: "bg-accent-blue",
+    category: "engineering",
   },
   {
     id: "brainstorming",
@@ -21,6 +24,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     description: "Explore ideas and approaches",
     icon: "💡",
     color: "bg-accent-purple",
+    category: "engineering",
   },
   {
     id: "design",
@@ -28,20 +32,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     description: "Architecture and system design",
     icon: "🎨",
     color: "bg-accent-teal",
-  },
-  {
-    id: "feedback",
-    label: "Feedback",
-    description: "Get code review or suggestions",
-    icon: "💬",
-    color: "bg-accent-green",
-  },
-  {
-    id: "technical",
-    label: "Technical",
-    description: "Deep technical explanations",
-    icon: "⚙️",
-    color: "bg-claude-deep",
+    category: "engineering",
   },
   {
     id: "debugging",
@@ -49,6 +40,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     description: "Find and fix issues",
     icon: "🐛",
     color: "bg-accent-rose",
+    category: "engineering",
   },
   {
     id: "review",
@@ -56,6 +48,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     description: "Analyze existing code",
     icon: "🔍",
     color: "bg-accent-blue",
+    category: "engineering",
   },
   {
     id: "documentation",
@@ -63,6 +56,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     description: "Write documentation",
     icon: "📝",
     color: "bg-accent-teal",
+    category: "engineering",
   },
   {
     id: "refactoring",
@@ -70,6 +64,88 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     description: "Improve code structure",
     icon: "♻️",
     color: "bg-accent-green",
+    category: "engineering",
+  },
+  {
+    id: "technical",
+    label: "Technical",
+    description: "Deep technical explanations",
+    icon: "⚙️",
+    color: "bg-claude-deep",
+    category: "engineering",
+  },
+  {
+    id: "feedback",
+    label: "Feedback",
+    description: "Get code review or suggestions",
+    icon: "💬",
+    color: "bg-accent-green",
+    category: "engineering",
+  },
+  // Business modes
+  {
+    id: "summary",
+    label: "Summary",
+    description: "Summarize content or documents",
+    icon: "📄",
+    color: "bg-accent-blue",
+    category: "business",
+  },
+  {
+    id: "transcript",
+    label: "Transcript",
+    description: "Summarize meeting transcripts",
+    icon: "🎙️",
+    color: "bg-accent-purple",
+    category: "business",
+  },
+  {
+    id: "report",
+    label: "Report",
+    description: "Generate detailed reports",
+    icon: "📊",
+    color: "bg-accent-teal",
+    category: "business",
+  },
+  {
+    id: "vendor-compare",
+    label: "Vendor Compare",
+    description: "Compare vendors or products",
+    icon: "⚖️",
+    color: "bg-claude-orange",
+    category: "business",
+  },
+  {
+    id: "analysis",
+    label: "Analysis",
+    description: "Analyze data or situations",
+    icon: "📈",
+    color: "bg-accent-green",
+    category: "business",
+  },
+  {
+    id: "email",
+    label: "Email",
+    description: "Draft professional emails",
+    icon: "✉️",
+    color: "bg-accent-blue",
+    category: "business",
+  },
+  {
+    id: "proposal",
+    label: "Proposal",
+    description: "Write proposals or pitches",
+    icon: "📑",
+    color: "bg-accent-purple",
+    category: "business",
+  },
+  {
+    id: "meeting-notes",
+    label: "Meeting Notes",
+    description: "Create action items from notes",
+    icon: "📌",
+    color: "bg-accent-rose",
+    category: "business",
   },
 ];
 
@@ -98,6 +174,7 @@ export const OUTPUT_FORMAT_OPTIONS: OutputFormatOption[] = [
 ];
 
 export const PROMPT_MODIFIERS: PromptModifier[] = [
+  // General modifiers
   {
     id: "step-by-step",
     label: "Step-by-Step",
@@ -107,8 +184,8 @@ export const PROMPT_MODIFIERS: PromptModifier[] = [
   {
     id: "examples",
     label: "Include Examples",
-    description: "Add code examples",
-    promptAddition: "Include relevant code examples to illustrate the concepts.",
+    description: "Add practical examples",
+    promptAddition: "Include relevant examples to illustrate the concepts.",
   },
   {
     id: "alternatives",
@@ -122,6 +199,13 @@ export const PROMPT_MODIFIERS: PromptModifier[] = [
     description: "Follow industry standards",
     promptAddition: "Follow industry best practices and explain why.",
   },
+  {
+    id: "explain-reasoning",
+    label: "Explain Reasoning",
+    description: "Share thought process",
+    promptAddition: "Explain your reasoning and decision-making process.",
+  },
+  // Engineering modifiers
   {
     id: "edge-cases",
     label: "Handle Edge Cases",
@@ -147,12 +231,6 @@ export const PROMPT_MODIFIERS: PromptModifier[] = [
     promptAddition: "Include appropriate test cases or testing strategies.",
   },
   {
-    id: "explain-reasoning",
-    label: "Explain Reasoning",
-    description: "Share thought process",
-    promptAddition: "Explain your reasoning and decision-making process.",
-  },
-  {
     id: "typescript",
     label: "TypeScript",
     description: "Use TypeScript types",
@@ -170,9 +248,58 @@ export const PROMPT_MODIFIERS: PromptModifier[] = [
     description: "Document the code",
     promptAddition: "Add helpful comments to explain complex logic.",
   },
+  // Business modifiers
+  {
+    id: "executive-summary",
+    label: "Executive Summary",
+    description: "Include high-level overview",
+    promptAddition: "Include an executive summary at the beginning.",
+  },
+  {
+    id: "action-items",
+    label: "Action Items",
+    description: "Extract actionable tasks",
+    promptAddition: "Extract and list clear action items with owners if possible.",
+  },
+  {
+    id: "pros-cons",
+    label: "Pros & Cons",
+    description: "List advantages and disadvantages",
+    promptAddition: "Include a pros and cons analysis.",
+  },
+  {
+    id: "timeline",
+    label: "Timeline",
+    description: "Include time estimates",
+    promptAddition: "Include timeline estimates or scheduling considerations.",
+  },
+  {
+    id: "cost-analysis",
+    label: "Cost Analysis",
+    description: "Consider budget impact",
+    promptAddition: "Include cost analysis or budget considerations.",
+  },
+  {
+    id: "risks",
+    label: "Risk Assessment",
+    description: "Identify potential risks",
+    promptAddition: "Identify potential risks and mitigation strategies.",
+  },
+  {
+    id: "stakeholders",
+    label: "Stakeholders",
+    description: "Consider all parties involved",
+    promptAddition: "Consider all stakeholders and their perspectives.",
+  },
+  {
+    id: "metrics",
+    label: "Success Metrics",
+    description: "Define measurable outcomes",
+    promptAddition: "Define clear success metrics and KPIs.",
+  },
 ];
 
-// Prompt building logic
+// Prompt building logic (fallback when API unavailable)
 export function buildPrompt(
   transcript: string,
   mode: string,
@@ -187,12 +314,11 @@ export function buildPrompt(
     .filter(Boolean)
     .join(" ");
 
-  // Build the structured prompt
   let prompt = "";
 
-  // Add mode context
   if (modeOption) {
     const modeInstructions: Record<string, string> = {
+      // Engineering
       code: "I need help writing or modifying code.",
       planning: "I need help planning the implementation of a feature or project.",
       brainstorming: "I want to brainstorm ideas and explore different approaches.",
@@ -203,19 +329,25 @@ export function buildPrompt(
       review: "I'd like a code review or analysis.",
       documentation: "I need help writing documentation.",
       refactoring: "I need help refactoring and improving code structure.",
+      // Business
+      summary: "I need a clear summary of the following content.",
+      transcript: "I need to summarize this meeting transcript and extract key points.",
+      report: "I need to generate a detailed report.",
+      "vendor-compare": "I need to compare vendors or products to make a decision.",
+      analysis: "I need to analyze this data or situation.",
+      email: "I need to draft a professional email.",
+      proposal: "I need to write a proposal or pitch.",
+      "meeting-notes": "I need to create organized meeting notes with action items.",
     };
     prompt += `## Task Type\n${modeInstructions[mode] || ""}\n\n`;
   }
 
-  // Add the user's request
   prompt += `## Request\n${transcript}\n\n`;
 
-  // Add context if provided
   if (contextInfo.trim()) {
     prompt += `## Additional Context\n${contextInfo}\n\n`;
   }
 
-  // Add detail level instruction
   const detailInstructions: Record<string, string> = {
     concise: "Keep the response concise and to the point.",
     balanced: "Provide a balanced level of detail.",
@@ -223,7 +355,6 @@ export function buildPrompt(
   };
   prompt += `## Detail Level\n${detailInstructions[detailLevel] || detailInstructions.balanced}\n\n`;
 
-  // Add output format instruction
   const formatInstructions: Record<string, string> = {
     structured: "Use clear sections with headers to organize the response.",
     conversational: "Use a natural, conversational tone.",
@@ -231,7 +362,6 @@ export function buildPrompt(
   };
   prompt += `## Output Format\n${formatInstructions[outputFormat] || formatInstructions.structured}\n\n`;
 
-  // Add modifier instructions
   if (modifierAdditions) {
     prompt += `## Additional Requirements\n${modifierAdditions}\n`;
   }

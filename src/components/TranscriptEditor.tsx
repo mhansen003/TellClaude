@@ -16,7 +16,7 @@ export default function TranscriptEditor({
   const wordCount = value.trim() ? value.trim().split(/\s+/).length : 0;
 
   return (
-    <div className="px-4 md:px-0 py-4">
+    <div>
       <div className="relative group">
         {/* Label */}
         <div className="flex items-center justify-between mb-2">

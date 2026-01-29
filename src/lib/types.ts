@@ -1,5 +1,6 @@
-// Prompt Mode Types
+// Prompt Mode Types - Engineering + Business
 export type PromptModeId =
+  // Engineering modes
   | "code"
   | "planning"
   | "brainstorming"
@@ -9,7 +10,16 @@ export type PromptModeId =
   | "debugging"
   | "review"
   | "documentation"
-  | "refactoring";
+  | "refactoring"
+  // Business modes
+  | "summary"
+  | "transcript"
+  | "report"
+  | "vendor-compare"
+  | "analysis"
+  | "email"
+  | "proposal"
+  | "meeting-notes";
 
 export type DetailLevelId = "concise" | "balanced" | "comprehensive";
 
@@ -21,6 +31,7 @@ export interface PromptModeOption {
   description: string;
   icon: string;
   color: string;
+  category: "engineering" | "business";
 }
 
 export interface DetailLevelOption {

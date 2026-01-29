@@ -18,7 +18,7 @@ export default function VoiceRecorder({
   if (!isSupported) return null;
 
   return (
-    <div className="flex flex-col items-center gap-4 py-8">
+    <div className="flex flex-col items-center gap-4 py-4">
       {/* Mic Button */}
       <button
         onClick={isListening ? onStop : onStart}
