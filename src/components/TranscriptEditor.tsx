@@ -158,6 +158,12 @@ export default function TranscriptEditor({
           <label className="text-sm font-semibold text-text-secondary flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-claude-orange" />
             Your Message
+            <span className="flex items-center gap-1 text-xs text-text-muted font-normal ml-1 px-1.5 py-0.5 rounded bg-bg-elevated/50">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+              </svg>
+              drop files
+            </span>
           </label>
           <div className="flex items-center gap-2">
             {attachments.length > 0 && (
