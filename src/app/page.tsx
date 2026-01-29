@@ -246,7 +246,7 @@ export default function Home() {
     setTranscript(item.transcript);
     setGeneratedPrompt(item.prompt);
     setActiveHistoryId(item.id);
-    setModes(item.mode.split(",") as PromptModeId[]);
+    setModes(item.mode ? item.mode.split(",").filter(Boolean) as PromptModeId[] : []);
     setToast("Loaded from history");
     setTimeout(() => setToast(null), 2000);
   }, []);
@@ -306,7 +306,7 @@ export default function Home() {
   // Step progress logic
   const steps = [
     { step: 1, label: "Describe", done: transcript.trim().length > 0 },
-    { step: 2, label: "Configure", done: transcript.trim().length > 0 && (modes.length > 1 || modes[0] !== "code") },
+    { step: 2, label: "Configure", done: transcript.trim().length > 0 && !(modes.length === 1 && modes[0] === "code") },
     { step: 3, label: "Customize", done: optionsExpanded || detailLevel !== "balanced" || outputFormat !== "structured" || contextInfo.trim().length > 0 },
     { step: 4, label: "Generate", done: generatedPrompt.length > 0 },
   ];
@@ -314,7 +314,7 @@ export default function Home() {
   const isStepActive = (step: number) => {
     if (step === 1) return true;
     if (step === 2) return !!transcript.trim();
-    if (step === 3) return modes.length > 1 || modes[0] !== "code";
+    if (step === 3) return !(modes.length === 1 && modes[0] === "code");
     if (step === 4) return !!transcript.trim();
     return false;
   };

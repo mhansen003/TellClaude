@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { transcript, modes: modesRaw, mode: legacyMode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences } = body;
     // Support both new multi-select `modes` array and legacy single `mode` string
-    const modes: string[] = modesRaw || (legacyMode ? [legacyMode] : ["code"]);
+    const modes: string[] = Array.isArray(modesRaw) ? modesRaw : (legacyMode ? [legacyMode] : []);
 
     // Build context for the AI
     const modeDescriptions: Record<string, string> = {
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
 USER'S REQUEST:
 "${transcript}"
 
-MODES: ${modes.map((m: string) => `${m} (${modeDescriptions[m] || "general assistance"})`).join(" + ")}
+MODES: ${modes.length > 0 ? modes.map((m: string) => `${m} (${modeDescriptions[m] || "general assistance"})`).join(" + ") : "general (provide helpful, well-structured assistance — no specific mode selected)"}
 
 DETAIL LEVEL: ${detailLevel}
 ${detailDescriptions[detailLevel] || detailDescriptions.balanced}
@@ -246,8 +246,8 @@ function generateFallbackPrompt(
     .filter(Boolean)
     .join("\n");
 
-  const modeLabel = modes.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(" + ");
-  const modeContext = modes.map(m => modeDescriptions[m] || "providing assistance").join("; ");
+  const modeLabel = modes.length > 0 ? modes.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(" + ") : "General";
+  const modeContext = modes.length > 0 ? modes.map(m => modeDescriptions[m] || "providing assistance").join("; ") : "providing helpful, well-structured assistance";
 
   let prompt = `# ${modeLabel} Request
 
