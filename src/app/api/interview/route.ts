@@ -69,6 +69,19 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      // Handle manual generate action
+      if (action === "generate") {
+        const userResponses = messages
+          ?.filter((m: Message) => m.role === "user")
+          .map((m: Message) => m.content)
+          .join("\n- ");
+
+        return NextResponse.json({
+          isComplete: true,
+          finalPrompt: `## Task Type\nI need help with ${mode}.\n\n## Request\n${transcript || "Help me with my task"}\n\n## Context from Interview\n- ${userResponses || "No additional context provided"}\n\n## Requirements\nPlease provide a detailed, step-by-step solution with code examples where appropriate.`,
+        });
+      }
+
       const followUpQuestions = [
         "What technology stack or framework are you working with?",
         "Are there any specific constraints or patterns you need to follow?",
@@ -110,6 +123,25 @@ export async function POST(request: NextRequest) {
           content: msg.content,
         });
       }
+    } else if (action === "generate" && messages) {
+      // User wants to generate prompt immediately from conversation
+      allMessages.push({
+        role: "user",
+        content: `Context: The user wants help with a "${mode}" task. Their initial request was: "${transcript}"`,
+      });
+
+      for (const msg of messages) {
+        allMessages.push({
+          role: msg.role as MessageRole,
+          content: msg.content,
+        });
+      }
+
+      // Add instruction to generate the prompt now
+      allMessages.push({
+        role: "user",
+        content: "Based on our conversation so far, please generate the final enhanced prompt now. Respond with EXACTLY this format:\n\n[COMPLETE]\n<your enhanced prompt here>\n[/COMPLETE]",
+      });
     }
 
     const result = await generateText({
