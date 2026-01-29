@@ -722,9 +722,12 @@ export default function Home() {
               </div>
 
             </div>
+            {/* /grid */}
             </div>
+            {/* /flex wrapper */}
           </div>
-      </div>
+          {/* /max-w-7xl */}
+        </div>
 
       {/* Interview Modal */}
       <InterviewModal
