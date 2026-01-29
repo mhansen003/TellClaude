@@ -19,7 +19,6 @@ import AboutModal from "@/components/AboutModal";
 import FormattedPrompt from "@/components/FormattedPrompt";
 import PromptHistory, { HistoryItem } from "@/components/PromptHistory";
 import { TooltipIcon } from "@/components/Tooltip";
-import { StepNumber } from "@/components/StepBadge";
 
 const HISTORY_STORAGE_KEY = "tellclaude-history";
 const SETTINGS_STORAGE_KEY = "tellclaude-settings";
@@ -303,6 +302,22 @@ export default function Home() {
     setTimeout(() => setToast(null), 2000);
   }, [isListening, stopListening, resetTranscript]);
 
+  // Step progress logic
+  const steps = [
+    { step: 1, label: "Describe", done: transcript.trim().length > 0 },
+    { step: 2, label: "Configure", done: transcript.trim().length > 0 && mode !== "code" },
+    { step: 3, label: "Customize", done: optionsExpanded || detailLevel !== "balanced" || outputFormat !== "structured" || contextInfo.trim().length > 0 },
+    { step: 4, label: "Generate", done: generatedPrompt.length > 0 },
+  ];
+
+  const isStepActive = (step: number) => {
+    if (step === 1) return true;
+    if (step === 2) return !!transcript.trim();
+    if (step === 3) return mode !== "code";
+    if (step === 4) return !!transcript.trim();
+    return false;
+  };
+
   return (
     <div className="relative z-10 min-h-screen">
       {/* History Sidebar - Overlays, doesn't push content */}
@@ -319,68 +334,18 @@ export default function Home() {
       {/* Header - Full width */}
       <Header onAboutClick={() => setShowAbout(true)} />
 
-      {/* Main Content - Side by Side Layout */}
+      {/* Main Content - Flex: content area + vertical rail */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
-        {/* Workflow Progress Bar */}
-        <div className="mb-4 sm:mb-6 p-3 bg-bg-card/50 rounded-xl border border-border-subtle">
-          <div className="flex items-center justify-between max-w-2xl mx-auto">
-            {[
-              { step: 1, label: "Describe", done: transcript.trim().length > 0 },
-              { step: 2, label: "Configure", done: transcript.trim().length > 0 && mode !== "code" },
-              { step: 3, label: "Customize", done: optionsExpanded || detailLevel !== "balanced" || outputFormat !== "structured" || contextInfo.trim().length > 0 },
-              { step: 4, label: "Generate", done: generatedPrompt.length > 0 },
-            ].map((item, idx) => (
-              <div key={item.step} className="flex items-center">
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                      item.done
-                        ? "bg-accent-green text-white"
-                        : item.step === 1 || (item.step === 2 && transcript.trim()) || (item.step === 3 && mode !== "code") || (item.step === 4 && transcript.trim())
-                          ? "bg-gradient-to-br from-claude-orange to-claude-coral text-white"
-                          : "bg-bg-elevated text-text-muted border border-border-subtle"
-                    }`}
-                  >
-                    {item.done ? (
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      item.step
-                    )}
-                  </div>
-                  <span className={`text-xs mt-1 font-medium ${item.done ? "text-accent-green" : "text-text-muted"}`}>
-                    {item.label}
-                  </span>
-                </div>
-                {idx < 3 && (
-                  <div className={`w-8 sm:w-16 h-0.5 mx-1 sm:mx-2 ${item.done ? "bg-accent-green" : "bg-border-subtle"}`} />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        <div className="flex gap-4 sm:gap-6">
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+          {/* Main Content Area */}
+          <div className="flex-1 min-w-0">
 
-          {/* LEFT COLUMN - Input */}
-          <div className="space-y-3">
             {/* Browser Warning */}
             {showBrowserWarning && <BrowserWarning />}
 
-            {/* Voice Recorder + Transcript in one card */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-4">
-              {/* Section Header */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <StepNumber step={1} />
-                  <span className="text-sm font-semibold text-text-secondary">Describe Your Request</span>
-                </div>
-                <TooltipIcon
-                  content="Click the microphone to speak your request, or type directly below. Your voice is converted to text in real-time."
-                  position="left"
-                />
-              </div>
+            {/* Mic Hero Section - Centered */}
+            <section className="flex flex-col items-center py-2 sm:py-4 mb-4 sm:mb-6">
               <VoiceRecorder
                 isListening={isListening}
                 isSupported={isSupported}
@@ -388,317 +353,374 @@ export default function Home() {
                 onStart={startListening}
                 onStop={stopListening}
               />
-              <TranscriptEditor
-                value={transcript}
-                onChange={setTranscript}
-                onClear={handleClear}
-                isListening={isListening}
-                attachments={attachments}
-                onAttachmentsChange={setAttachments}
-              />
-            </div>
+            </section>
 
-            {/* Mobile Action Buttons - Only visible on mobile, right after transcript */}
-            <div className="lg:hidden">
-              <div className="flex items-center gap-2 mb-2">
-                <StepNumber step={4} />
-                <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
-              </div>
-            </div>
-            <div className="flex gap-2 lg:hidden">
-              {isGenerating ? (
-                <>
-                  <div className="flex-1 h-14 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Generating...
-                  </div>
-                  <button
-                    onClick={handleCancelGeneration}
-                    className="h-14 px-4 rounded-xl bg-bg-card border-2 border-accent-rose/50 text-accent-rose font-semibold text-sm transition-all hover:bg-accent-rose/10 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                </button>
-              )}
-              <button
-                onClick={() => setShowInterview(true)}
-                disabled={isGenerating}
-                className="h-14 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 active:scale-[0.98] disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-              </button>
-            </div>
+            {/* Two-Column Grid: Left (message/config) + Right (generate/output) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
 
-            {/* Mode + Modifiers in one card */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
-              {/* Mode Header */}
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <StepNumber step={2} />
-                  <span className="text-sm font-semibold text-text-secondary">Choose Mode & Modifiers</span>
-                </div>
-                <TooltipIcon
-                  content="Select a mode to tell Claude what type of task you need help with. Engineering modes focus on code/technical tasks, Business modes on documents/analysis."
-                  position="left"
-                />
-              </div>
-              <PromptModeSelector selected={mode} onChange={setMode} />
-              <div className="border-t border-border-subtle pt-3">
-                {/* Modifiers Header */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-text-muted">+ Add Modifiers</span>
+              {/* LEFT COLUMN - Your Message + Config */}
+              <div className="space-y-3">
+
+                {/* Your Message Card (TranscriptEditor only, no mic) */}
+                <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-text-secondary">Your Message</span>
+                    <TooltipIcon
+                      content="Type your request directly, or use the microphone above to speak. Your voice is converted to text in real-time."
+                      position="left"
+                    />
                   </div>
-                  <TooltipIcon
-                    content="Add specific requirements to your prompt. Check multiple options to include step-by-step instructions, examples, best practices, and more."
-                    position="left"
+                  <TranscriptEditor
+                    value={transcript}
+                    onChange={setTranscript}
+                    onClear={handleClear}
+                    isListening={isListening}
+                    attachments={attachments}
+                    onAttachmentsChange={setAttachments}
                   />
                 </div>
-                <ModifierCheckboxes selected={modifiers} onChange={setModifiers} />
-              </div>
-            </div>
 
-            {/* Options: Detail, Format, Context - Collapsible */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
-              {/* Header - Always visible, clickable to expand/collapse */}
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => setOptionsExpanded(!optionsExpanded)}
-                  className="flex-1 flex items-center justify-between py-1 group"
-                >
-                  <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 cursor-pointer">
-                    <StepNumber step={3} />
-                    Customize Output
-                    {(detailLevel !== "balanced" || outputFormat !== "structured") && (
-                      <span className="px-2 py-0.5 rounded-full bg-accent-teal/20 text-accent-teal text-xs font-semibold">
-                        Custom
-                      </span>
+                {/* Mobile Action Buttons - Only visible on mobile, right after transcript */}
+                <div className="lg:hidden space-y-2">
+                  <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
+                  <div className="flex gap-2">
+                    {isGenerating ? (
+                      <>
+                        <div className="flex-1 h-14 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm flex items-center justify-center gap-2">
+                          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                          Generating...
+                        </div>
+                        <button
+                          onClick={handleCancelGeneration}
+                          className="h-14 px-4 rounded-xl bg-bg-card border-2 border-accent-rose/50 text-accent-rose font-semibold text-sm transition-all hover:bg-accent-rose/10 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={handleGenerate}
+                          disabled={!transcript.trim()}
+                          className={`flex-1 h-14 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
+                            transcript.trim() ? "animate-pulse-glow shadow-[0_0_20px_rgba(255,107,53,0.4)]" : ""
+                          }`}
+                        >
+                          <span className="flex items-center justify-center gap-2">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            Generate Prompt
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => setShowInterview(true)}
+                          className="h-14 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                        </button>
+                      </>
                     )}
-                  </label>
-                  <svg
-                    className={`w-5 h-5 text-text-muted transition-transform duration-200 ${optionsExpanded ? "rotate-180" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div className="ml-2">
-                  <TooltipIcon
-                    content="Customize how your prompt is generated. Choose detail level (concise to detailed), output format (structured, natural, or bullets), and add extra context."
-                    position="left"
-                  />
-                </div>
-              </div>
-
-              {/* Preview when collapsed */}
-              {!optionsExpanded && (
-                <div className="flex flex-wrap gap-2 mt-2 text-xs text-text-muted">
-                  <span className="px-2 py-1 rounded bg-bg-elevated/50">{detailLevel === "comprehensive" ? "Detailed" : detailLevel === "concise" ? "Concise" : "Balanced"}</span>
-                  <span className="px-2 py-1 rounded bg-bg-elevated/50">{outputFormat === "bullet-points" ? "Bullets" : outputFormat === "conversational" ? "Natural" : "Structured"}</span>
-                </div>
-              )}
-
-              {/* Expanded content */}
-              {optionsExpanded && (
-                <div className="space-y-4 mt-3 pt-3 border-t border-border-subtle animate-fade_in">
-                  <div className="space-y-3">
-                    <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
-                    <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
                   </div>
+                </div>
+
+                {/* Mode + Modifiers Card */}
+                <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold text-text-secondary">Choose Mode & Modifiers</span>
+                    <TooltipIcon
+                      content="Select a mode to tell Claude what type of task you need help with. Engineering modes focus on code/technical tasks, Business modes on documents/analysis."
+                      position="left"
+                    />
+                  </div>
+                  <PromptModeSelector selected={mode} onChange={setMode} />
                   <div className="border-t border-border-subtle pt-3">
-                    <ContextInput value={contextInfo} onChange={setContextInfo} />
-                  </div>
-                  <div className="border-t border-border-subtle pt-3">
-                    <UrlInput references={urlReferences} onReferencesChange={setUrlReferences} />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN - Actions + Output */}
-          <div className="flex flex-col gap-3 lg:min-h-full">
-            {/* Action Buttons - Desktop only (mobile buttons are above in left column) */}
-            <div className="hidden lg:block flex-shrink-0 space-y-2">
-              <div className="flex items-center gap-2">
-                <StepNumber step={4} />
-                <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
-              </div>
-            </div>
-            <div className="hidden lg:flex gap-2 flex-shrink-0">
-              {isGenerating ? (
-                <>
-                  <div className="flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Generating...
-                  </div>
-                  <button
-                    onClick={handleCancelGeneration}
-                    className="h-14 sm:h-12 px-5 rounded-xl bg-bg-card border-2 border-accent-rose/50 text-accent-rose font-semibold text-sm transition-all hover:bg-accent-rose/10 hover:border-accent-rose active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                    title="Cancel generation"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={handleGenerate}
-                    disabled={!transcript.trim()}
-                    className={`flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer ${
-                      transcript.trim() ? "animate-pulse-glow shadow-[0_0_20px_rgba(255,107,53,0.4)]" : ""
-                    }`}
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                      Generate Prompt
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setShowInterview(true)}
-                    className="h-14 sm:h-12 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                    title="AI-assisted interview - helps you build your prompt through conversation"
-                  >
-                    <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                    <span className="hidden sm:inline">Interview</span>
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Output Panel - Fixed height with internal scroll */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[500px] lg:h-[calc(100vh-220px)] lg:max-h-[700px] lg:min-h-[400px]">
-              {/* Header */}
-              <div className="flex-shrink-0 px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-text-muted">+ Add Modifiers</span>
+                      <TooltipIcon
+                        content="Add specific requirements to your prompt. Check multiple options to include step-by-step instructions, examples, best practices, and more."
+                        position="left"
+                      />
                     </div>
-                    <div>
-                      <h2 className="text-base font-bold text-text-primary">Generated Prompt</h2>
-                      <p className="text-xs text-text-muted">Powered by Claude Opus 4.5</p>
+                    <ModifierCheckboxes selected={modifiers} onChange={setModifiers} />
+                  </div>
+                </div>
+
+                {/* Customize Output Card - Collapsible */}
+                <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setOptionsExpanded(!optionsExpanded)}
+                      className="flex-1 flex items-center justify-between py-1 group"
+                    >
+                      <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 cursor-pointer">
+                        Customize Output
+                        {(detailLevel !== "balanced" || outputFormat !== "structured") && (
+                          <span className="px-2 py-0.5 rounded-full bg-accent-teal/20 text-accent-teal text-xs font-semibold">
+                            Custom
+                          </span>
+                        )}
+                      </label>
+                      <svg
+                        className={`w-5 h-5 text-text-muted transition-transform duration-200 ${optionsExpanded ? "rotate-180" : ""}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    <div className="ml-2">
+                      <TooltipIcon
+                        content="Customize how your prompt is generated. Choose detail level (concise to detailed), output format (structured, natural, or bullets), and add extra context."
+                        position="left"
+                      />
                     </div>
                   </div>
-                  {generatedPrompt && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setIsEditingOutput(!isEditingOutput)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                          isEditingOutput
-                            ? "bg-accent-purple text-white"
-                            : "bg-bg-elevated text-text-secondary hover:text-accent-purple"
-                        }`}
-                      >
-                        {isEditingOutput ? "View" : "Edit"}
-                      </button>
-                      <button
-                        onClick={handleCopy}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                          copied
-                            ? "bg-accent-green text-white"
-                            : "bg-bg-elevated text-text-secondary hover:text-claude-orange"
-                        }`}
-                      >
-                        {copied ? "Copied!" : "Copy"}
-                      </button>
-                      <button
-                        onClick={handleReset}
-                        className="px-3 py-1.5 rounded-lg bg-bg-elevated text-text-secondary hover:text-accent-rose text-xs font-semibold transition-all"
-                      >
-                        Clear
-                      </button>
+
+                  {/* Preview when collapsed */}
+                  {!optionsExpanded && (
+                    <div className="flex flex-wrap gap-2 mt-2 text-xs text-text-muted">
+                      <span className="px-2 py-1 rounded bg-bg-elevated/50">{detailLevel === "comprehensive" ? "Detailed" : detailLevel === "concise" ? "Concise" : "Balanced"}</span>
+                      <span className="px-2 py-1 rounded bg-bg-elevated/50">{outputFormat === "bullet-points" ? "Bullets" : outputFormat === "conversational" ? "Natural" : "Structured"}</span>
+                    </div>
+                  )}
+
+                  {/* Expanded content */}
+                  {optionsExpanded && (
+                    <div className="space-y-4 mt-3 pt-3 border-t border-border-subtle animate-fade_in">
+                      <div className="space-y-3">
+                        <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
+                        <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
+                      </div>
+                      <div className="border-t border-border-subtle pt-3">
+                        <ContextInput value={contextInfo} onChange={setContextInfo} />
+                      </div>
+                      <div className="border-t border-border-subtle pt-3">
+                        <UrlInput references={urlReferences} onReferencesChange={setUrlReferences} />
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Content - Scrollable */}
-              <div className="p-4 sm:p-5 flex-1 min-h-0 overflow-y-auto">
-                {isGenerating ? (
-                  <div className="flex flex-col items-center justify-center h-64 text-text-muted">
-                    <div className="relative w-16 h-16 mb-4">
-                      <div className="absolute inset-0 rounded-full border-4 border-claude-orange/20" />
-                      <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-claude-orange animate-spin" />
+              {/* RIGHT COLUMN - Generate + Output */}
+              <div className="flex flex-col gap-3">
+                {/* Action Buttons - Desktop only */}
+                <div className="hidden lg:block flex-shrink-0 space-y-2">
+                  <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
+                </div>
+                <div className="hidden lg:flex gap-2 flex-shrink-0">
+                  {isGenerating ? (
+                    <>
+                      <div className="flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm flex items-center justify-center gap-2">
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Generating...
+                      </div>
+                      <button
+                        onClick={handleCancelGeneration}
+                        className="h-14 sm:h-12 px-5 rounded-xl bg-bg-card border-2 border-accent-rose/50 text-accent-rose font-semibold text-sm transition-all hover:bg-accent-rose/10 hover:border-accent-rose active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                        title="Cancel generation"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={handleGenerate}
+                        disabled={!transcript.trim()}
+                        className={`flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer ${
+                          transcript.trim() ? "animate-pulse-glow shadow-[0_0_20px_rgba(255,107,53,0.4)]" : ""
+                        }`}
+                      >
+                        <span className="flex items-center justify-center gap-2">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                          Generate Prompt
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => setShowInterview(true)}
+                        className="h-14 sm:h-12 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                        title="AI-assisted interview - helps you build your prompt through conversation"
+                      >
+                        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        <span className="hidden sm:inline">Interview</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {/* Output Panel */}
+                <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[500px] lg:h-[calc(100vh-280px)] lg:max-h-[700px] lg:min-h-[400px]">
+                  {/* Header */}
+                  <div className="flex-shrink-0 px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center">
+                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <h2 className="text-base font-bold text-text-primary">Generated Prompt</h2>
+                          <p className="text-xs text-text-muted">Powered by Claude Opus 4.5</p>
+                        </div>
+                      </div>
+                      {generatedPrompt && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setIsEditingOutput(!isEditingOutput)}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                              isEditingOutput
+                                ? "bg-accent-purple text-white"
+                                : "bg-bg-elevated text-text-secondary hover:text-accent-purple"
+                            }`}
+                          >
+                            {isEditingOutput ? "View" : "Edit"}
+                          </button>
+                          <button
+                            onClick={handleCopy}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                              copied
+                                ? "bg-accent-green text-white"
+                                : "bg-bg-elevated text-text-secondary hover:text-claude-orange"
+                            }`}
+                          >
+                            {copied ? "Copied!" : "Copy"}
+                          </button>
+                          <button
+                            onClick={handleReset}
+                            className="px-3 py-1.5 rounded-lg bg-bg-elevated text-text-secondary hover:text-accent-rose text-xs font-semibold transition-all"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-sm font-medium">Claude Opus 4.5 is crafting your prompt...</p>
                   </div>
-                ) : generatedPrompt ? (
-                  <div className="relative h-full">
-                    {isEditingOutput ? (
-                      <textarea
-                        value={generatedPrompt}
-                        onChange={(e) => setGeneratedPrompt(e.target.value)}
-                        className="w-full h-full min-h-[300px] p-4 rounded-xl bg-bg-elevated border-2 border-accent-purple/30 text-text-primary font-mono text-sm resize-none focus:outline-none focus:border-accent-purple/50 transition-colors"
-                        placeholder="Edit your prompt..."
-                      />
+
+                  {/* Content - Scrollable */}
+                  <div className="p-4 sm:p-5 flex-1 min-h-0 overflow-y-auto">
+                    {isGenerating ? (
+                      <div className="flex flex-col items-center justify-center h-64 text-text-muted">
+                        <div className="relative w-16 h-16 mb-4">
+                          <div className="absolute inset-0 rounded-full border-4 border-claude-orange/20" />
+                          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-claude-orange animate-spin" />
+                        </div>
+                        <p className="text-sm font-medium">Claude Opus 4.5 is crafting your prompt...</p>
+                      </div>
+                    ) : generatedPrompt ? (
+                      <div className="relative h-full">
+                        {isEditingOutput ? (
+                          <textarea
+                            value={generatedPrompt}
+                            onChange={(e) => setGeneratedPrompt(e.target.value)}
+                            className="w-full h-full min-h-[300px] p-4 rounded-xl bg-bg-elevated border-2 border-accent-purple/30 text-text-primary font-mono text-sm resize-none focus:outline-none focus:border-accent-purple/50 transition-colors"
+                            placeholder="Edit your prompt..."
+                          />
+                        ) : (
+                          <FormattedPrompt content={generatedPrompt} />
+                        )}
+                      </div>
                     ) : (
-                      <FormattedPrompt content={generatedPrompt} />
+                      <div className="flex flex-col items-center justify-center text-text-muted py-8">
+                        <svg className="w-12 h-12 mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p className="text-sm font-medium mb-1">Your prompt will appear here</p>
+                        <p className="text-xs mb-6">Speak or type your request, then click Generate</p>
+
+                        {/* Workflow Guide integrated into empty state */}
+                        <div className="w-full max-w-xs border-t border-border-subtle pt-4">
+                          <h3 className="text-xs font-semibold text-text-muted mb-3 flex items-center justify-center gap-1.5">
+                            <span className="text-claude-orange">🚀</span> Quick Start Guide
+                          </h3>
+                          <ul className="text-xs text-text-muted space-y-2 text-left">
+                            <li className="flex items-start gap-2">
+                              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                              <span><strong>Describe</strong> your request using voice or text</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                              <span><strong>Choose</strong> a mode that matches your task</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                              <span><strong>Customize</strong> options for more control</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                              <span><strong>Generate</strong> and copy to Claude Code</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
                     )}
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center text-text-muted py-8">
-                    <svg className="w-12 h-12 mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <p className="text-sm font-medium mb-1">Your prompt will appear here</p>
-                    <p className="text-xs mb-6">Speak or type your request, then click Generate</p>
+                </div>
+              </div>
 
-                    {/* Workflow Guide integrated into empty state */}
-                    <div className="w-full max-w-xs border-t border-border-subtle pt-4">
-                      <h3 className="text-xs font-semibold text-text-muted mb-3 flex items-center justify-center gap-1.5">
-                        <span className="text-claude-orange">🚀</span> Quick Start Guide
-                      </h3>
-                      <ul className="text-xs text-text-muted space-y-2 text-left">
-                        <li className="flex items-start gap-2">
-                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
-                          <span><strong>Describe</strong> your request using voice or text</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
-                          <span><strong>Choose</strong> a mode that matches your task</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
-                          <span><strong>Customize</strong> options for more control</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
-                          <span><strong>Generate</strong> and copy to Claude Code</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+            </div>
+          </div>
+
+          {/* Vertical Progress Rail - Desktop only */}
+          <aside className="hidden lg:flex flex-col items-center gap-0 sticky top-24 self-start pt-2 pl-2 pr-1">
+            {steps.map((item, idx) => (
+              <div key={item.step} className="flex flex-col items-center">
+                {/* Step circle */}
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                    item.done
+                      ? "bg-accent-green text-white"
+                      : isStepActive(item.step)
+                        ? "bg-gradient-to-br from-claude-orange to-claude-coral text-white"
+                        : "bg-bg-elevated text-text-muted border border-border-subtle"
+                  }`}
+                >
+                  {item.done ? (
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    item.step
+                  )}
+                </div>
+                {/* Step label */}
+                <span className={`text-[10px] mt-1 font-semibold whitespace-nowrap ${
+                  item.done ? "text-accent-green" : isStepActive(item.step) ? "text-claude-orange" : "text-text-muted"
+                }`}>
+                  {item.label}
+                </span>
+                {/* Connector line */}
+                {idx < steps.length - 1 && (
+                  <div className={`w-0.5 h-8 my-1 rounded-full transition-colors ${
+                    item.done ? "bg-accent-green" : "bg-border-subtle"
+                  }`} />
                 )}
               </div>
-            </div>
+            ))}
+          </aside>
 
-          </div>
         </div>
       </div>
 
