@@ -80,27 +80,33 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const allMessages = [
+    type MessageRole = "system" | "user" | "assistant";
+    interface ChatMessage {
+      role: MessageRole;
+      content: string;
+    }
+
+    const allMessages: ChatMessage[] = [
       {
-        role: "system" as const,
+        role: "system",
         content: SYSTEM_PROMPT,
       },
     ];
 
     if (action === "start") {
       allMessages.push({
-        role: "user" as const,
+        role: "user",
         content: `The user wants help with a "${mode}" task. Their initial request is:\n\n"${transcript}"\n\nPlease greet them and ask your first clarifying question.`,
       });
     } else if (action === "continue" && messages) {
       allMessages.push({
-        role: "user" as const,
+        role: "user",
         content: `Context: The user wants help with a "${mode}" task. Their initial request was: "${transcript}"`,
       });
 
       for (const msg of messages) {
         allMessages.push({
-          role: msg.role as "user" | "assistant",
+          role: msg.role as MessageRole,
           content: msg.content,
         });
       }
