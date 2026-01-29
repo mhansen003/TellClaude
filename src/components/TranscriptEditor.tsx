@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 interface TranscriptEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -13,7 +15,19 @@ export default function TranscriptEditor({
   onClear,
   isListening,
 }: TranscriptEditorProps) {
+  const [copied, setCopied] = useState(false);
   const wordCount = value.trim() ? value.trim().split(/\s+/).length : 0;
+
+  const handleCopy = async () => {
+    if (!value.trim()) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
 
   return (
     <div>
@@ -54,17 +68,40 @@ export default function TranscriptEditor({
             `}
           />
 
-          {/* Clear button */}
+          {/* Action buttons */}
           {value.trim() && !isListening && (
-            <button
-              onClick={onClear}
-              className="absolute top-3 right-3 p-1.5 rounded-lg bg-bg-elevated/80 text-text-muted hover:text-accent-rose hover:bg-accent-rose/10 transition-colors"
-              title="Clear transcript"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <div className="absolute top-3 right-3 flex items-center gap-1">
+              {/* Copy button */}
+              <button
+                onClick={handleCopy}
+                className={`p-1.5 rounded-lg transition-colors ${
+                  copied
+                    ? "bg-accent-green/20 text-accent-green"
+                    : "bg-bg-elevated/80 text-text-muted hover:text-claude-orange hover:bg-claude-orange/10"
+                }`}
+                title={copied ? "Copied!" : "Copy message"}
+              >
+                {copied ? (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                )}
+              </button>
+              {/* Clear button */}
+              <button
+                onClick={onClear}
+                className="p-1.5 rounded-lg bg-bg-elevated/80 text-text-muted hover:text-accent-rose hover:bg-accent-rose/10 transition-colors"
+                title="Clear message"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           )}
         </div>
 
