@@ -240,8 +240,8 @@ export default function Home() {
             {/* Browser Warning */}
             {showBrowserWarning && <BrowserWarning />}
 
-            {/* Voice Recorder */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
+            {/* Voice Recorder + Transcript in one card */}
+            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-4">
               <VoiceRecorder
                 isListening={isListening}
                 isSupported={isSupported}
@@ -249,10 +249,6 @@ export default function Home() {
                 onStart={startListening}
                 onStop={stopListening}
               />
-            </div>
-
-            {/* Transcript Editor */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
               <TranscriptEditor
                 value={transcript}
                 onChange={setTranscript}
@@ -261,42 +257,38 @@ export default function Home() {
               />
             </div>
 
-            {/* Prompt Mode Selector */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
+            {/* Mode + Modifiers in one card */}
+            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
               <PromptModeSelector selected={mode} onChange={setMode} />
-            </div>
-
-            {/* Modifier Checkboxes - Collapsible */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
-              <ModifierCheckboxes selected={modifiers} onChange={setModifiers} />
-            </div>
-
-            {/* Detail Level and Output Format */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
-                <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
+              <div className="border-t border-border-subtle pt-3">
+                <ModifierCheckboxes selected={modifiers} onChange={setModifiers} />
               </div>
             </div>
 
-            {/* Context Input */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
-              <ContextInput value={contextInfo} onChange={setContextInfo} />
+            {/* Options: Detail, Format, Context in one card */}
+            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
+                <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
+              </div>
+              <div className="border-t border-border-subtle pt-3">
+                <ContextInput value={contextInfo} onChange={setContextInfo} />
+              </div>
             </div>
           </div>
 
           {/* RIGHT COLUMN - Actions + Output */}
-          <div className="space-y-4">
-            {/* Action Buttons - Now on right side */}
-            <div className="flex gap-3">
+          <div className="space-y-3">
+            {/* Action Buttons - Aligned and consistent height */}
+            <div className="flex gap-2">
               <button
                 onClick={handleGenerate}
                 disabled={!transcript.trim() || isGenerating}
-                className="flex-1 py-4 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-base transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer"
+                className="flex-1 h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer"
               >
                 {isGenerating ? (
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
@@ -304,7 +296,7 @@ export default function Home() {
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                     Generate Prompt
@@ -315,10 +307,10 @@ export default function Home() {
               <button
                 onClick={() => setShowInterview(true)}
                 disabled={!transcript.trim() || isGenerating}
-                className="px-5 py-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                className="h-12 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
                 title="AI-assisted interview"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 <span className="hidden sm:inline">Interview</span>
@@ -394,21 +386,21 @@ export default function Home() {
 
             {/* Quick Tips - Only show when no prompt */}
             {!generatedPrompt && !isGenerating && (
-              <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
-                <h3 className="text-sm font-semibold text-text-secondary mb-3 flex items-center gap-2">
+              <div className="bg-bg-card/50 rounded-xl border border-border-subtle p-3">
+                <h3 className="text-xs font-semibold text-text-muted mb-2 flex items-center gap-1.5">
                   <span className="text-claude-orange">💡</span> Quick Tips
                 </h3>
-                <ul className="text-xs text-text-muted space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="text-claude-orange mt-0.5">•</span>
+                <ul className="text-xs text-text-muted space-y-1">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-claude-orange/60">•</span>
                     <span>Be specific about what you want to achieve</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-claude-orange mt-0.5">•</span>
-                    <span>Click "Prompt Modifiers" to add requirements</span>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-claude-orange/60">•</span>
+                    <span>Expand "Prompt Modifiers" to add requirements</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-claude-orange mt-0.5">•</span>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-claude-orange/60">•</span>
                     <span>Use Interview mode for complex requests</span>
                   </li>
                 </ul>

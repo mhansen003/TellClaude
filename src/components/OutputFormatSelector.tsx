@@ -19,7 +19,7 @@ export default function OutputFormatSelector({
         Output Format
       </label>
 
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="flex rounded-xl bg-bg-card border-2 border-border-subtle p-1">
         {OUTPUT_FORMAT_OPTIONS.map((option) => {
           const isSelected = selected === option.id;
           return (
@@ -27,12 +27,12 @@ export default function OutputFormatSelector({
               key={option.id}
               onClick={() => onChange(option.id)}
               className={`
-                flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer
-                border-2
+                flex-1 py-2 px-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer
+                truncate
                 ${
                   isSelected
-                    ? "bg-claude-glow border-claude-orange text-claude-orange"
-                    : "bg-bg-card border-border-subtle text-text-secondary hover:border-claude-orange/30 hover:text-text-primary"
+                    ? "bg-gradient-to-r from-claude-orange to-claude-coral text-white shadow-lg shadow-claude-orange/20"
+                    : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
                 }
               `}
             >

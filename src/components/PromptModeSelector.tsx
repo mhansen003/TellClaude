@@ -55,8 +55,8 @@ export default function PromptModeSelector({
         </div>
       </div>
 
-      {/* Mode Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-1.5">
+      {/* Mode Grid - max 4 columns to prevent overflow */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5">
         {currentModes.map((mode) => {
           const isSelected = selected === mode.id;
           return (
@@ -64,8 +64,8 @@ export default function PromptModeSelector({
               key={mode.id}
               onClick={() => onChange(mode.id)}
               className={`
-                relative px-2.5 py-2 rounded-lg text-left transition-all duration-200
-                border cursor-pointer group
+                relative px-2 py-2 rounded-lg text-left transition-all duration-200
+                border cursor-pointer group min-w-0
                 ${
                   isSelected
                     ? "bg-claude-glow border-claude-orange text-text-primary"
@@ -73,9 +73,9 @@ export default function PromptModeSelector({
                 }
               `}
             >
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm">{mode.icon}</span>
-                <span className={`text-xs font-semibold ${isSelected ? "text-claude-orange" : ""}`}>
+              <div className="flex items-center gap-1 min-w-0">
+                <span className="text-sm flex-shrink-0">{mode.icon}</span>
+                <span className={`text-xs font-semibold truncate ${isSelected ? "text-claude-orange" : ""}`}>
                   {mode.label}
                 </span>
               </div>
