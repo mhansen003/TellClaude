@@ -28,14 +28,14 @@ export default function VoiceRecorder({
           ${
             isListening
               ? "bg-gradient-to-br from-claude-orange to-claude-coral mic-recording scale-110"
-              : "bg-bg-card hover:bg-bg-elevated border-2 border-border-subtle hover:border-claude-orange/50"
+              : "bg-bg-card hover:bg-bg-elevated border-2 border-claude-orange/40 hover:border-claude-orange shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:shadow-[0_0_30px_rgba(255,107,53,0.5)] animate-pulse-glow"
           }
         `}
         aria-label={isListening ? "Stop recording" : "Start recording"}
       >
-        {/* Outer glow ring */}
+        {/* Outer glow ring - always visible when not listening */}
         {!isListening && (
-          <span className="absolute inset-0 rounded-full bg-gradient-to-r from-claude-orange/20 to-claude-coral/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-claude-orange/30 to-claude-coral/30 blur-sm animate-pulse" />
         )}
 
         {/* Pulse rings when recording */}

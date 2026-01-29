@@ -64,6 +64,16 @@ const config: Config = {
           "0%, 100%": { boxShadow: "0 0 20px rgba(255, 107, 53, 0.3)" },
           "50%": { boxShadow: "0 0 40px rgba(255, 107, 53, 0.5)" },
         },
+        "pulse-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 15px rgba(255, 107, 53, 0.3), 0 0 30px rgba(255, 107, 53, 0.1)",
+            borderColor: "rgba(255, 107, 53, 0.4)"
+          },
+          "50%": {
+            boxShadow: "0 0 25px rgba(255, 107, 53, 0.5), 0 0 50px rgba(255, 107, 53, 0.2)",
+            borderColor: "rgba(255, 107, 53, 0.7)"
+          },
+        },
       },
       animation: {
         pulse_ring: "pulse_ring 1.5s ease-out infinite",
@@ -71,6 +81,7 @@ const config: Config = {
         shimmer: "shimmer 2s linear infinite",
         float: "float 3s ease-in-out infinite",
         glow: "glow 2s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
