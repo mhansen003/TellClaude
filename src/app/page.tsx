@@ -334,29 +334,87 @@ export default function Home() {
       {/* Header - Full width */}
       <Header onAboutClick={() => setShowAbout(true)} />
 
-      {/* Main Content - Flex: content area + vertical rail */}
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
-        <div className="flex gap-4 sm:gap-6">
-
-          {/* Main Content Area */}
-          <div className="flex-1 min-w-0">
 
             {/* Browser Warning */}
             {showBrowserWarning && <BrowserWarning />}
 
-            {/* Mic Hero Section - Centered */}
+            {/* Mic Hero Section - Centered, with Interview beside it */}
             <section className="flex flex-col items-center py-2 sm:py-4 mb-4 sm:mb-6">
-              <VoiceRecorder
-                isListening={isListening}
-                isSupported={isSupported}
-                interimTranscript={interimTranscript}
-                onStart={startListening}
-                onStop={stopListening}
-              />
+              <div className="flex items-center gap-6 sm:gap-10">
+                <VoiceRecorder
+                  isListening={isListening}
+                  isSupported={isSupported}
+                  interimTranscript={interimTranscript}
+                  onStart={startListening}
+                  onStop={stopListening}
+                />
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={() => setShowInterview(true)}
+                    className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer group bg-bg-card hover:bg-bg-elevated border-2 border-accent-purple/40 hover:border-accent-purple shadow-[0_0_15px_rgba(168,85,247,0.2)] hover:shadow-[0_0_25px_rgba(168,85,247,0.4)]"
+                    aria-label="Start AI interview"
+                    title="AI-assisted interview — build your prompt through conversation"
+                  >
+                    <svg
+                      className="w-7 h-7 sm:w-8 sm:h-8 text-text-secondary group-hover:text-accent-purple transition-colors"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </button>
+                  <p className="text-sm font-semibold text-text-muted">Interview</p>
+                </div>
+              </div>
             </section>
 
+            {/* Content with Left Rail + Two-Column Grid */}
+            <div className="flex gap-4 sm:gap-6 items-start">
+
+            {/* Vertical Progress Rail - Desktop only, left side */}
+            <aside className="hidden lg:flex flex-col items-center gap-0 sticky top-24 self-start pt-1 pr-2">
+              {steps.map((item, idx) => (
+                <div key={item.step} className="flex flex-col items-center">
+                  {/* Step circle */}
+                  <div
+                    className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                      item.done
+                        ? "bg-accent-green text-white"
+                        : isStepActive(item.step)
+                          ? "bg-gradient-to-br from-claude-orange to-claude-coral text-white"
+                          : "bg-bg-elevated text-text-muted border border-border-subtle"
+                    }`}
+                  >
+                    {item.done ? (
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      item.step
+                    )}
+                  </div>
+                  {/* Step label */}
+                  <span className={`text-[10px] mt-1 font-semibold whitespace-nowrap ${
+                    item.done ? "text-accent-green" : isStepActive(item.step) ? "text-claude-orange" : "text-text-muted"
+                  }`}>
+                    {item.label}
+                  </span>
+                  {/* Connector line */}
+                  {idx < steps.length - 1 && (
+                    <div className={`w-0.5 h-8 my-1 rounded-full transition-colors ${
+                      item.done ? "bg-accent-green" : "bg-border-subtle"
+                    }`} />
+                  )}
+                </div>
+              ))}
+            </aside>
+
             {/* Two-Column Grid: Left (message/config) + Right (generate/output) */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
+            <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
 
               {/* LEFT COLUMN - Your Message + Config */}
               <div className="space-y-3">
@@ -418,14 +476,6 @@ export default function Home() {
                             </svg>
                             Generate Prompt
                           </span>
-                        </button>
-                        <button
-                          onClick={() => setShowInterview(true)}
-                          className="h-14 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                          </svg>
                         </button>
                       </>
                     )}
@@ -556,16 +606,6 @@ export default function Home() {
                           Generate Prompt
                         </span>
                       </button>
-                      <button
-                        onClick={() => setShowInterview(true)}
-                        className="h-14 sm:h-12 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                        title="AI-assisted interview - helps you build your prompt through conversation"
-                      >
-                        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        <span className="hidden sm:inline">Interview</span>
-                      </button>
                     </>
                   )}
                 </div>
@@ -681,47 +721,8 @@ export default function Home() {
               </div>
 
             </div>
+            </div>
           </div>
-
-          {/* Vertical Progress Rail - Desktop only */}
-          <aside className="hidden lg:flex flex-col items-center gap-0 sticky top-24 self-start pt-2 pl-2 pr-1">
-            {steps.map((item, idx) => (
-              <div key={item.step} className="flex flex-col items-center">
-                {/* Step circle */}
-                <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                    item.done
-                      ? "bg-accent-green text-white"
-                      : isStepActive(item.step)
-                        ? "bg-gradient-to-br from-claude-orange to-claude-coral text-white"
-                        : "bg-bg-elevated text-text-muted border border-border-subtle"
-                  }`}
-                >
-                  {item.done ? (
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : (
-                    item.step
-                  )}
-                </div>
-                {/* Step label */}
-                <span className={`text-[10px] mt-1 font-semibold whitespace-nowrap ${
-                  item.done ? "text-accent-green" : isStepActive(item.step) ? "text-claude-orange" : "text-text-muted"
-                }`}>
-                  {item.label}
-                </span>
-                {/* Connector line */}
-                {idx < steps.length - 1 && (
-                  <div className={`w-0.5 h-8 my-1 rounded-full transition-colors ${
-                    item.done ? "bg-accent-green" : "bg-border-subtle"
-                  }`} />
-                )}
-              </div>
-            ))}
-          </aside>
-
-        </div>
       </div>
 
       {/* Interview Modal */}
