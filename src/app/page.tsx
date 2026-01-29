@@ -13,7 +13,6 @@ import ModifierCheckboxes from "@/components/ModifierCheckboxes";
 import DetailLevelSelector from "@/components/DetailLevelSelector";
 import OutputFormatSelector from "@/components/OutputFormatSelector";
 import ContextInput from "@/components/ContextInput";
-import PromptPreview from "@/components/PromptPreview";
 import InterviewModal from "@/components/InterviewModal";
 import PromptHistory, { HistoryItem } from "@/components/PromptHistory";
 
@@ -237,7 +236,7 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* LEFT COLUMN - Input */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Browser Warning */}
             {showBrowserWarning && <BrowserWarning />}
 
@@ -267,7 +266,7 @@ export default function Home() {
               <PromptModeSelector selected={mode} onChange={setMode} />
             </div>
 
-            {/* Modifier Checkboxes */}
+            {/* Modifier Checkboxes - Collapsible */}
             <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
               <ModifierCheckboxes selected={modifiers} onChange={setModifiers} />
             </div>
@@ -284,13 +283,16 @@ export default function Home() {
             <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
               <ContextInput value={contextInfo} onChange={setContextInfo} />
             </div>
+          </div>
 
-            {/* Action Buttons */}
+          {/* RIGHT COLUMN - Actions + Output */}
+          <div className="space-y-4">
+            {/* Action Buttons - Now on right side */}
             <div className="flex gap-3">
               <button
                 onClick={handleGenerate}
                 disabled={!transcript.trim() || isGenerating}
-                className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-base transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer"
+                className="flex-1 py-4 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-base transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer"
               >
                 {isGenerating ? (
                   <span className="flex items-center justify-center gap-2">
@@ -313,20 +315,18 @@ export default function Home() {
               <button
                 onClick={() => setShowInterview(true)}
                 disabled={!transcript.trim() || isGenerating}
-                className="px-4 py-3.5 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="px-5 py-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
                 title="AI-assisted interview"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
+                <span className="hidden sm:inline">Interview</span>
               </button>
             </div>
-          </div>
 
-          {/* RIGHT COLUMN - Output */}
-          <div className="lg:sticky lg:top-4 lg:self-start space-y-4">
             {/* Output Panel */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden">
+            <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden lg:sticky lg:top-4">
               {/* Header */}
               <div className="px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
                 <div className="flex items-center justify-between">
@@ -365,7 +365,7 @@ export default function Home() {
               </div>
 
               {/* Content */}
-              <div className="p-5 min-h-[400px] max-h-[calc(100vh-200px)] overflow-y-auto">
+              <div className="p-5 min-h-[300px] max-h-[calc(100vh-280px)] overflow-y-auto">
                 {isGenerating ? (
                   <div className="flex flex-col items-center justify-center h-64 text-text-muted">
                     <div className="relative w-16 h-16 mb-4">
@@ -376,7 +376,6 @@ export default function Home() {
                   </div>
                 ) : generatedPrompt ? (
                   <div className="relative">
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-claude-orange/5 to-transparent pointer-events-none" />
                     <pre className="prompt-output text-sm text-text-primary whitespace-pre-wrap leading-relaxed">
                       {generatedPrompt}
                     </pre>
@@ -393,7 +392,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Quick Tips */}
+            {/* Quick Tips - Only show when no prompt */}
             {!generatedPrompt && !isGenerating && (
               <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
                 <h3 className="text-sm font-semibold text-text-secondary mb-3 flex items-center gap-2">
@@ -406,15 +405,11 @@ export default function Home() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-claude-orange mt-0.5">•</span>
-                    <span>Select modifiers that match your needs</span>
+                    <span>Click "Prompt Modifiers" to add requirements</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-claude-orange mt-0.5">•</span>
                     <span>Use Interview mode for complex requests</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-claude-orange mt-0.5">•</span>
-                    <span>Add context for better results</span>
                   </li>
                 </ul>
               </div>
