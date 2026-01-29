@@ -23,7 +23,7 @@ The prompt should be thorough and specific. Don't be afraid to expand on what th
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { transcript, mode, detailLevel, outputFormat, modifiers, contextInfo } = body;
+    const { transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, attachments } = body;
 
     // Build context for the AI
     const modeDescriptions: Record<string, string> = {
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
       planning: "planning implementation strategy - focus on architecture, milestones, dependencies, and sequencing",
       brainstorming: "brainstorming and exploring ideas - focus on creative solutions, trade-offs, and possibilities",
       design: "architecture and system design - focus on patterns, scalability, maintainability, and technical decisions",
+      database: "database schema design and data modeling - focus on tables, relationships, normalization, indexes, and SQL queries",
       feedback: "getting code review and suggestions - focus on improvements, potential issues, and best practices",
       technical: "deep technical explanation - focus on how things work, underlying concepts, and detailed mechanics",
       debugging: "debugging and fixing issues - focus on root cause analysis, diagnostic steps, and solutions",
@@ -93,6 +94,17 @@ export async function POST(request: NextRequest) {
       .filter(Boolean)
       .join("\n- ");
 
+    // Format attachments for inclusion in prompt
+    interface AttachmentData {
+      name: string;
+      content: string;
+    }
+    const attachmentSection = attachments && attachments.length > 0
+      ? `\n\nATTACHED FILES FOR CONTEXT:\n${attachments.map((a: AttachmentData) =>
+          `--- ${a.name} ---\n\`\`\`\n${a.content.slice(0, 10000)}\n\`\`\`\n`
+        ).join('\n')}`
+      : '';
+
     const userPrompt = `Transform this into a comprehensive prompt for Claude Code:
 
 USER'S REQUEST:
@@ -107,15 +119,15 @@ OUTPUT FORMAT: ${outputFormat}
 ${formatDescriptions[outputFormat] || formatDescriptions.structured}
 
 ${contextInfo ? `ADDITIONAL CONTEXT PROVIDED:\n${contextInfo}\n` : ""}
-
+${attachmentSection}
 ${selectedModifiers ? `REQUIREMENTS TO INCLUDE:\n- ${selectedModifiers}` : ""}
 
-Generate a detailed, well-structured prompt that incorporates all of the above. The prompt should be ready to paste directly into Claude Code.`;
+Generate a detailed, well-structured prompt that incorporates all of the above. If files were attached, reference their contents appropriately in the prompt. The prompt should be ready to paste directly into Claude Code.`;
 
     if (!process.env.OPENROUTER_API_KEY) {
       // Fallback when no API key - use enhanced local generation
       return NextResponse.json({
-        prompt: generateFallbackPrompt(transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, modeDescriptions, detailDescriptions, formatDescriptions, modifierDescriptions),
+        prompt: generateFallbackPrompt(transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, attachments, modeDescriptions, detailDescriptions, formatDescriptions, modifierDescriptions),
       });
     }
 
@@ -141,6 +153,11 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
   }
 }
 
+interface FallbackAttachment {
+  name: string;
+  content: string;
+}
+
 function generateFallbackPrompt(
   transcript: string,
   mode: string,
@@ -148,6 +165,7 @@ function generateFallbackPrompt(
   outputFormat: string,
   modifiers: string[],
   contextInfo: string,
+  attachments: FallbackAttachment[] | undefined,
   modeDescriptions: Record<string, string>,
   detailDescriptions: Record<string, string>,
   formatDescriptions: Record<string, string>,
@@ -173,6 +191,19 @@ This is a **${mode}** task focused on ${modeDescriptions[mode] || "providing ass
 ${contextInfo}
 
 `;
+  }
+
+  // Add attachments section
+  if (attachments && attachments.length > 0) {
+    prompt += `## Attached Files\n`;
+    for (const attachment of attachments) {
+      prompt += `### ${attachment.name}
+\`\`\`
+${attachment.content.slice(0, 10000)}
+\`\`\`
+
+`;
+    }
   }
 
   prompt += `## Expected Response

@@ -7,7 +7,7 @@ import { useClipboard } from "@/hooks/useClipboard";
 import Header from "@/components/Header";
 import BrowserWarning from "@/components/BrowserWarning";
 import VoiceRecorder from "@/components/VoiceRecorder";
-import TranscriptEditor from "@/components/TranscriptEditor";
+import TranscriptEditor, { Attachment } from "@/components/TranscriptEditor";
 import PromptModeSelector from "@/components/PromptModeSelector";
 import ModifierCheckboxes from "@/components/ModifierCheckboxes";
 import DetailLevelSelector from "@/components/DetailLevelSelector";
@@ -42,6 +42,7 @@ export default function Home() {
   const [outputFormat, setOutputFormat] = useState<OutputFormatId>("structured");
   const [modifiers, setModifiers] = useState<string[]>([]);
   const [contextInfo, setContextInfo] = useState("");
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
 
   // Generated prompt
   const [generatedPrompt, setGeneratedPrompt] = useState("");
@@ -129,6 +130,12 @@ export default function Home() {
     setIsEditingOutput(false); // Reset edit mode when generating new prompt
 
     try {
+      // Prepare attachments for API (just name and content)
+      const attachmentData = attachments.map(a => ({
+        name: a.name,
+        content: a.content,
+      }));
+
       const response = await fetch("/api/generate-prompt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -139,6 +146,7 @@ export default function Home() {
           outputFormat,
           modifiers,
           contextInfo,
+          attachments: attachmentData,
         }),
       });
 
@@ -220,6 +228,7 @@ export default function Home() {
     setGeneratedPrompt("");
     setModifiers([]);
     setContextInfo("");
+    setAttachments([]);
     setMode("code");
     setDetailLevel("balanced");
     setOutputFormat("structured");
@@ -279,6 +288,8 @@ export default function Home() {
                 onChange={setTranscript}
                 onClear={handleClear}
                 isListening={isListening}
+                attachments={attachments}
+                onAttachmentsChange={setAttachments}
               />
             </div>
 
