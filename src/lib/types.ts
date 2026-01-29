@@ -18,6 +18,11 @@ export type PromptModeId =
   | "mcp-server"
   | "cli"
   | "api"
+  | "security-audit"
+  | "auth-sso"
+  | "otp-mfa"
+  | "encryption"
+  | "compliance"
   // Business modes
   | "summary"
   | "transcript"
@@ -36,7 +41,33 @@ export type PromptModeId =
   | "runbook"
   | "presentation"
   | "faq"
-  | "sow";
+  | "sow"
+  // Marketing modes
+  | "ad-copy"
+  | "social-media"
+  | "landing-page"
+  | "email-campaign"
+  | "video-script"
+  | "ai-avatar"
+  | "seo-content"
+  | "brand-voice"
+  | "press-release"
+  | "case-study"
+  | "product-launch"
+  | "influencer-brief"
+  // Research modes
+  | "deep-research"
+  | "competitive-analysis"
+  | "market-research"
+  | "literature-review"
+  | "trend-analysis"
+  | "feasibility-study"
+  | "benchmarking"
+  | "survey-design"
+  | "data-synthesis"
+  | "gap-analysis"
+  | "swot"
+  | "due-diligence";
 
 export type DetailLevelId = "concise" | "balanced" | "comprehensive";
 
@@ -48,7 +79,7 @@ export interface PromptModeOption {
   description: string;
   icon: string;
   color: string;
-  category: "engineering" | "business";
+  category: "engineering" | "business" | "marketing" | "research";
 }
 
 export interface DetailLevelOption {

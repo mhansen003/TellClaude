@@ -138,6 +138,46 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     color: "bg-accent-blue",
     category: "engineering",
   },
+  {
+    id: "security-audit",
+    label: "Security Audit",
+    description: "Vulnerability assessment and hardening",
+    icon: "🛡️",
+    color: "bg-accent-rose",
+    category: "engineering",
+  },
+  {
+    id: "auth-sso",
+    label: "Auth / SSO",
+    description: "Authentication and single sign-on",
+    icon: "🔑",
+    color: "bg-accent-blue",
+    category: "engineering",
+  },
+  {
+    id: "otp-mfa",
+    label: "OTP / MFA",
+    description: "Multi-factor and one-time passwords",
+    icon: "📲",
+    color: "bg-accent-green",
+    category: "engineering",
+  },
+  {
+    id: "encryption",
+    label: "Encryption",
+    description: "Data encryption and key management",
+    icon: "🔐",
+    color: "bg-claude-deep",
+    category: "engineering",
+  },
+  {
+    id: "compliance",
+    label: "Compliance",
+    description: "SOC 2, GDPR, HIPAA standards",
+    icon: "📜",
+    color: "bg-accent-teal",
+    category: "engineering",
+  },
   // Business modes
   {
     id: "summary",
@@ -282,6 +322,200 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     icon: "📝",
     color: "bg-accent-green",
     category: "business",
+  },
+  // Marketing modes
+  {
+    id: "ad-copy",
+    label: "Ad Copy",
+    description: "Write advertising headlines and copy",
+    icon: "📢",
+    color: "bg-claude-orange",
+    category: "marketing",
+  },
+  {
+    id: "social-media",
+    label: "Social Media",
+    description: "Create social posts and campaigns",
+    icon: "📱",
+    color: "bg-accent-blue",
+    category: "marketing",
+  },
+  {
+    id: "landing-page",
+    label: "Landing Page",
+    description: "Write landing page copy and CTAs",
+    icon: "🖥️",
+    color: "bg-accent-purple",
+    category: "marketing",
+  },
+  {
+    id: "email-campaign",
+    label: "Email Campaign",
+    description: "Draft email drips and sequences",
+    icon: "📧",
+    color: "bg-accent-teal",
+    category: "marketing",
+  },
+  {
+    id: "video-script",
+    label: "Video Script",
+    description: "Write scripts for video content",
+    icon: "🎬",
+    color: "bg-accent-rose",
+    category: "marketing",
+  },
+  {
+    id: "ai-avatar",
+    label: "AI Avatar",
+    description: "Scripts for AI talking-head videos",
+    icon: "🤖",
+    color: "bg-claude-deep",
+    category: "marketing",
+  },
+  {
+    id: "seo-content",
+    label: "SEO Content",
+    description: "Search-optimized articles and pages",
+    icon: "🔍",
+    color: "bg-accent-green",
+    category: "marketing",
+  },
+  {
+    id: "brand-voice",
+    label: "Brand Voice",
+    description: "Define or apply brand tone guidelines",
+    icon: "🎭",
+    color: "bg-accent-purple",
+    category: "marketing",
+  },
+  {
+    id: "press-release",
+    label: "Press Release",
+    description: "Write press releases and media kits",
+    icon: "📰",
+    color: "bg-accent-blue",
+    category: "marketing",
+  },
+  {
+    id: "case-study",
+    label: "Case Study",
+    description: "Write customer success stories",
+    icon: "🏆",
+    color: "bg-claude-orange",
+    category: "marketing",
+  },
+  {
+    id: "product-launch",
+    label: "Product Launch",
+    description: "Plan launch messaging and assets",
+    icon: "🚀",
+    color: "bg-accent-teal",
+    category: "marketing",
+  },
+  {
+    id: "influencer-brief",
+    label: "Influencer Brief",
+    description: "Creator briefs and partnerships",
+    icon: "🤝",
+    color: "bg-accent-rose",
+    category: "marketing",
+  },
+  // Research modes
+  {
+    id: "deep-research",
+    label: "Deep Research",
+    description: "Thorough investigation of a topic",
+    icon: "🔬",
+    color: "bg-accent-purple",
+    category: "research",
+  },
+  {
+    id: "competitive-analysis",
+    label: "Competitive",
+    description: "Analyze competitors and positioning",
+    icon: "⚔️",
+    color: "bg-accent-rose",
+    category: "research",
+  },
+  {
+    id: "market-research",
+    label: "Market Research",
+    description: "Market size, segments, and trends",
+    icon: "📊",
+    color: "bg-claude-orange",
+    category: "research",
+  },
+  {
+    id: "literature-review",
+    label: "Lit Review",
+    description: "Summarize existing research and papers",
+    icon: "📚",
+    color: "bg-accent-blue",
+    category: "research",
+  },
+  {
+    id: "trend-analysis",
+    label: "Trend Analysis",
+    description: "Identify and analyze emerging trends",
+    icon: "📈",
+    color: "bg-accent-green",
+    category: "research",
+  },
+  {
+    id: "feasibility-study",
+    label: "Feasibility",
+    description: "Assess viability and requirements",
+    icon: "🧪",
+    color: "bg-accent-teal",
+    category: "research",
+  },
+  {
+    id: "benchmarking",
+    label: "Benchmarking",
+    description: "Compare against industry standards",
+    icon: "📏",
+    color: "bg-claude-deep",
+    category: "research",
+  },
+  {
+    id: "survey-design",
+    label: "Survey Design",
+    description: "Create surveys and questionnaires",
+    icon: "📋",
+    color: "bg-accent-purple",
+    category: "research",
+  },
+  {
+    id: "data-synthesis",
+    label: "Data Synthesis",
+    description: "Combine and synthesize data sources",
+    icon: "🧬",
+    color: "bg-accent-blue",
+    category: "research",
+  },
+  {
+    id: "gap-analysis",
+    label: "Gap Analysis",
+    description: "Identify gaps between current and target",
+    icon: "🔎",
+    color: "bg-accent-rose",
+    category: "research",
+  },
+  {
+    id: "swot",
+    label: "SWOT",
+    description: "Strengths, weaknesses, opportunities, threats",
+    icon: "🎯",
+    color: "bg-claude-orange",
+    category: "research",
+  },
+  {
+    id: "due-diligence",
+    label: "Due Diligence",
+    description: "Thorough investigation before decisions",
+    icon: "⚖️",
+    color: "bg-accent-green",
+    category: "research",
   },
 ];
 
@@ -438,13 +672,13 @@ export const PROMPT_MODIFIERS: PromptModifier[] = [
 // Prompt building logic (fallback when API unavailable)
 export function buildPrompt(
   transcript: string,
-  mode: string,
+  modes: string[],
   detailLevel: string,
   outputFormat: string,
   modifiers: string[],
   contextInfo: string
 ): string {
-  const modeOption = PROMPT_MODE_OPTIONS.find(m => m.id === mode);
+  const modeOptions = modes.map(m => PROMPT_MODE_OPTIONS.find(opt => opt.id === m)).filter(Boolean);
   const modifierAdditions = modifiers
     .map(id => PROMPT_MODIFIERS.find(m => m.id === id)?.promptAddition)
     .filter(Boolean)
@@ -452,7 +686,7 @@ export function buildPrompt(
 
   let prompt = "";
 
-  if (modeOption) {
+  if (modeOptions.length > 0) {
     const modeInstructions: Record<string, string> = {
       // Engineering
       code: "I need help writing or modifying code.",
@@ -472,6 +706,11 @@ export function buildPrompt(
       "mcp-server": "I need help building a Model Context Protocol (MCP) server that exposes tools and resources for AI assistants like Claude.",
       cli: "I need help building a command-line tool with argument parsing, interactive prompts, help text, and proper exit codes.",
       api: "I need help designing and building API endpoints with routes, validation, authentication, error handling, and documentation.",
+      "security-audit": "I need a security audit — vulnerability assessment, OWASP review, threat modeling, and hardening recommendations.",
+      "auth-sso": "I need help implementing authentication and single sign-on (SSO) with OAuth 2.0, SAML, OpenID Connect, or session management.",
+      "otp-mfa": "I need help implementing multi-factor authentication (MFA) with TOTP, SMS OTP, WebAuthn, or passkeys.",
+      encryption: "I need help with data encryption, key management, hashing, TLS configuration, or secrets management.",
+      compliance: "I need help meeting compliance standards like SOC 2, GDPR, HIPAA, PCI-DSS — audit controls, data handling, and policy documentation.",
       // Business
       summary: "I need a clear summary of the following content.",
       transcript: "I need to summarize this meeting transcript and extract key points.",
@@ -491,8 +730,35 @@ export function buildPrompt(
       "presentation": "I need to outline a presentation or slide deck with key points, narrative flow, and speaker notes.",
       "faq": "I need to build a FAQ document with clear questions and comprehensive answers.",
       "sow": "I need to write a statement of work with scope, deliverables, timeline, and assumptions.",
+      // Marketing
+      "ad-copy": "I need advertising copy with headlines, hooks, value propositions, CTAs, and A/B test variations.",
+      "social-media": "I need social media content with platform-native formatting, hashtags, and engagement hooks.",
+      "landing-page": "I need landing page copy with hero messaging, benefit sections, social proof, and conversion CTAs.",
+      "email-campaign": "I need an email marketing campaign with subject lines, drip sequences, and personalization.",
+      "video-script": "I need a video script with a hook, narrative arc, B-roll direction, and pacing notes.",
+      "ai-avatar": "I need an AI avatar script with natural speech, gesture cues, and teleprompter formatting.",
+      "seo-content": "I need SEO-optimized content with keyword integration, meta descriptions, and heading hierarchy.",
+      "brand-voice": "I need to define or apply brand voice with tone guidelines, vocabulary, and channel adaptations.",
+      "press-release": "I need a press release with newsworthiness, inverted pyramid, quotes, and boilerplate.",
+      "case-study": "I need a case study with challenge/solution/results, metrics, and customer quotes.",
+      "product-launch": "I need product launch content with timeline, channel strategy, and messaging matrix.",
+      "influencer-brief": "I need an influencer brief with brand guidelines, key messages, deliverables, and compliance.",
+      // Research
+      "deep-research": "I need thorough research on a topic — sources, synthesis, findings, and conclusions.",
+      "competitive-analysis": "I need a competitive analysis comparing key players, positioning, features, and market share.",
+      "market-research": "I need market research on size, segments, growth trends, and customer demographics.",
+      "literature-review": "I need a literature review summarizing existing research, methodologies, and key findings.",
+      "trend-analysis": "I need trend analysis identifying emerging patterns, drivers, and future projections.",
+      "feasibility-study": "I need a feasibility study assessing viability, resources, risks, and ROI potential.",
+      "benchmarking": "I need benchmarking against industry standards, best-in-class metrics, and performance gaps.",
+      "survey-design": "I need to design a survey with research objectives, question types, and sampling methodology.",
+      "data-synthesis": "I need to synthesize multiple data sources into unified insights and actionable conclusions.",
+      "gap-analysis": "I need a gap analysis comparing current state to target state with a remediation roadmap.",
+      "swot": "I need a SWOT analysis covering strengths, weaknesses, opportunities, and threats.",
+      "due-diligence": "I need a due diligence investigation with risk assessment, findings, and recommendations.",
     };
-    prompt += `## Task Type\n${modeInstructions[mode] || ""}\n\n`;
+    const instructions = modes.map(m => modeInstructions[m]).filter(Boolean).join("\n");
+    prompt += `## Task Type\n${instructions}\n\n`;
   }
 
   prompt += `## Request\n${transcript}\n\n`;

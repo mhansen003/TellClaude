@@ -23,7 +23,9 @@ The prompt should be thorough and specific. Don't be afraid to expand on what th
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences } = body;
+    const { transcript, modes: modesRaw, mode: legacyMode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences } = body;
+    // Support both new multi-select `modes` array and legacy single `mode` string
+    const modes: string[] = modesRaw || (legacyMode ? [legacyMode] : ["code"]);
 
     // Build context for the AI
     const modeDescriptions: Record<string, string> = {
@@ -45,6 +47,11 @@ export async function POST(request: NextRequest) {
       "mcp-server": "building a Model Context Protocol server - focus on tool definitions, resource endpoints, input schemas, transport setup (stdio/SSE), error handling, and client integration",
       cli: "building a command-line tool - focus on argument parsing, subcommands, interactive prompts, help text, stdout/stderr conventions, exit codes, and shell completions",
       api: "designing and building API endpoints - focus on REST/GraphQL design, route structure, request validation, authentication, error responses, rate limiting, versioning, and OpenAPI documentation",
+      "security-audit": "security auditing and hardening - focus on OWASP Top 10, vulnerability scanning, threat modeling, attack surface analysis, dependency auditing, and remediation recommendations",
+      "auth-sso": "authentication and single sign-on - focus on OAuth 2.0 / OIDC / SAML flows, token management, session handling, identity providers, RBAC, and secure credential storage",
+      "otp-mfa": "multi-factor authentication - focus on TOTP/HOTP implementation, SMS/email OTP, WebAuthn/passkeys, backup codes, recovery flows, and rate limiting brute-force attempts",
+      encryption: "data encryption and key management - focus on AES/RSA/ECC algorithms, at-rest and in-transit encryption, key rotation, secrets vaults, hashing strategies, and TLS configuration",
+      compliance: "regulatory compliance - focus on SOC 2, GDPR, HIPAA, PCI-DSS controls, data classification, audit logging, consent management, retention policies, and documentation",
       // Business modes
       summary: "summarizing content - focus on extracting key points, main ideas, and essential information concisely",
       transcript: "summarizing meeting transcripts - focus on key decisions, action items, participants, and next steps",
@@ -64,6 +71,32 @@ export async function POST(request: NextRequest) {
       "presentation": "outlining presentations - focus on narrative arc, key messages per slide, supporting data points, speaker notes, and audience takeaways",
       "faq": "building FAQ documents - focus on common questions organized by topic, clear and concise answers, cross-references, and escalation paths",
       "sow": "writing statements of work - focus on project scope, deliverables, acceptance criteria, timeline, assumptions, exclusions, and payment terms",
+      // Marketing modes
+      "ad-copy": "writing advertising copy - focus on headlines, hooks, value propositions, CTAs, A/B variations, and platform-specific character limits",
+      "social-media": "creating social media content - focus on platform-native formatting, hashtags, engagement hooks, visual direction, and posting cadence",
+      "landing-page": "writing landing page copy - focus on hero messaging, benefit sections, social proof, objection handling, and conversion-optimized CTAs",
+      "email-campaign": "creating email marketing campaigns - focus on subject lines, preview text, personalization, drip sequences, segmentation, and click-through optimization",
+      "video-script": "writing video scripts - focus on hook (first 3 seconds), narrative arc, B-roll direction, captions, pacing, and platform-specific duration",
+      "ai-avatar": "creating AI avatar content - focus on script tone, gestures/expression cues, talking-head framing, teleprompter formatting, and natural speech patterns",
+      "seo-content": "writing SEO-optimized content - focus on keyword integration, meta descriptions, heading hierarchy, internal linking, featured snippet targeting, and readability",
+      "brand-voice": "defining or applying brand voice - focus on tone guidelines, vocabulary lists, do/don't examples, persona characteristics, and channel-specific adaptations",
+      "press-release": "writing press releases - focus on newsworthiness, inverted pyramid structure, quotes, boilerplate, media contact info, and distribution channels",
+      "case-study": "writing case studies - focus on challenge/solution/results framework, metrics, customer quotes, visual callouts, and lead-gen CTAs",
+      "product-launch": "planning product launch content - focus on launch timeline, channel strategy, messaging matrix, embargo schedules, and coordinated asset lists",
+      "influencer-brief": "creating influencer/creator briefs - focus on brand guidelines, key messages, creative freedom boundaries, deliverables, usage rights, and FTC compliance",
+      // Research modes
+      "deep-research": "thorough topic investigation - focus on source gathering, cross-referencing, evidence synthesis, methodology, findings, and cited conclusions",
+      "competitive-analysis": "competitive analysis - focus on market positioning, feature comparison matrices, pricing analysis, strengths/weaknesses, and strategic recommendations",
+      "market-research": "market research - focus on market size (TAM/SAM/SOM), customer segments, growth drivers, barriers to entry, and demographic insights",
+      "literature-review": "literature review - focus on summarizing existing research, identifying methodological approaches, noting consensus and disagreements, and highlighting gaps",
+      "trend-analysis": "trend analysis - focus on identifying emerging patterns, underlying drivers, historical context, trajectory modeling, and future projections",
+      "feasibility-study": "feasibility study - focus on technical viability, resource requirements, cost estimates, risk factors, timeline, and ROI projections",
+      "benchmarking": "benchmarking - focus on industry standards, best-in-class metrics, performance gaps, peer comparisons, and improvement targets",
+      "survey-design": "survey design - focus on research objectives, question types, response scales, sampling methodology, bias mitigation, and analysis plan",
+      "data-synthesis": "data synthesis - focus on combining multiple data sources, identifying patterns, resolving contradictions, and producing unified actionable insights",
+      "gap-analysis": "gap analysis - focus on current state assessment, desired target state, identified gaps, root causes, and a prioritized remediation roadmap",
+      "swot": "SWOT analysis - focus on internal strengths and weaknesses, external opportunities and threats, cross-quadrant insights, and strategic implications",
+      "due-diligence": "due diligence investigation - focus on risk assessment, financial review, legal considerations, operational evaluation, and red-flag identification",
     };
 
     const detailDescriptions: Record<string, string> = {
@@ -138,7 +171,7 @@ export async function POST(request: NextRequest) {
 USER'S REQUEST:
 "${transcript}"
 
-MODE: ${mode} (${modeDescriptions[mode] || "general assistance"})
+MODES: ${modes.map((m: string) => `${m} (${modeDescriptions[m] || "general assistance"})`).join(" + ")}
 
 DETAIL LEVEL: ${detailLevel}
 ${detailDescriptions[detailLevel] || detailDescriptions.balanced}
@@ -156,7 +189,7 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
     if (!process.env.OPENROUTER_API_KEY) {
       // Fallback when no API key - use enhanced local generation
       return NextResponse.json({
-        prompt: generateFallbackPrompt(transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, modeDescriptions, detailDescriptions, formatDescriptions, modifierDescriptions),
+        prompt: generateFallbackPrompt(transcript, modes, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, modeDescriptions, detailDescriptions, formatDescriptions, modifierDescriptions),
       });
     }
 
@@ -196,7 +229,7 @@ interface FallbackUrlReference {
 
 function generateFallbackPrompt(
   transcript: string,
-  mode: string,
+  modes: string[],
   detailLevel: string,
   outputFormat: string,
   modifiers: string[],
@@ -213,13 +246,16 @@ function generateFallbackPrompt(
     .filter(Boolean)
     .join("\n");
 
-  let prompt = `# ${mode.charAt(0).toUpperCase() + mode.slice(1)} Request
+  const modeLabel = modes.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(" + ");
+  const modeContext = modes.map(m => modeDescriptions[m] || "providing assistance").join("; ");
+
+  let prompt = `# ${modeLabel} Request
 
 ## Overview
 ${transcript}
 
 ## Task Context
-This is a **${mode}** task focused on ${modeDescriptions[mode] || "providing assistance"}.
+This is a **${modeLabel}** task focused on ${modeContext}.
 
 `;
 

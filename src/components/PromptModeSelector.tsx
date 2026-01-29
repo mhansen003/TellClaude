@@ -4,23 +4,41 @@ import { useState } from "react";
 import { PromptModeId } from "@/lib/types";
 import { PROMPT_MODE_OPTIONS } from "@/lib/constants";
 
+type Category = "engineering" | "business" | "marketing" | "research";
+
 interface PromptModeSelectorProps {
-  selected: PromptModeId;
-  onChange: (mode: PromptModeId) => void;
+  selected: PromptModeId[];
+  onChange: (modes: PromptModeId[]) => void;
 }
 
 export default function PromptModeSelector({
   selected,
   onChange,
 }: PromptModeSelectorProps) {
-  const [activeCategory, setActiveCategory] = useState<"engineering" | "business">(
-    PROMPT_MODE_OPTIONS.find(m => m.id === selected)?.category || "engineering"
+  const firstSelected = selected[0];
+  const [activeCategory, setActiveCategory] = useState<Category>(
+    (firstSelected && PROMPT_MODE_OPTIONS.find(m => m.id === firstSelected)?.category as Category) || "engineering"
   );
 
-  const engineeringModes = PROMPT_MODE_OPTIONS.filter(m => m.category === "engineering");
-  const businessModes = PROMPT_MODE_OPTIONS.filter(m => m.category === "business");
+  const categories: { id: Category; label: string }[] = [
+    { id: "engineering", label: "Engineering" },
+    { id: "business", label: "Business" },
+    { id: "marketing", label: "Marketing" },
+    { id: "research", label: "Research" },
+  ];
 
-  const currentModes = activeCategory === "engineering" ? engineeringModes : businessModes;
+  const currentModes = PROMPT_MODE_OPTIONS.filter(m => m.category === activeCategory);
+
+  const handleToggle = (modeId: PromptModeId) => {
+    if (selected.includes(modeId)) {
+      // Remove — but always keep at least one selected
+      if (selected.length > 1) {
+        onChange(selected.filter(id => id !== modeId));
+      }
+    } else {
+      onChange([...selected, modeId]);
+    }
+  };
 
   return (
     <div className="py-3">
@@ -28,41 +46,39 @@ export default function PromptModeSelector({
       <div className="flex items-center gap-2 mb-3">
         <label className="text-sm font-semibold text-text-secondary flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-claude-coral" />
-          Mode
+          Modes
         </label>
+        {selected.length > 1 && (
+          <span className="px-2 py-0.5 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold">
+            {selected.length} selected
+          </span>
+        )}
         <div className="flex-1" />
         <div className="flex rounded-lg bg-bg-card border border-border-subtle p-0.5">
-          <button
-            onClick={() => setActiveCategory("engineering")}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-              activeCategory === "engineering"
-                ? "bg-claude-orange text-white"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            Engineering
-          </button>
-          <button
-            onClick={() => setActiveCategory("business")}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-              activeCategory === "business"
-                ? "bg-claude-orange text-white"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            Business
-          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={`px-2.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                activeCategory === cat.id
+                  ? "bg-claude-orange text-white"
+                  : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Mode Grid - max 4 columns to prevent overflow */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5">
         {currentModes.map((mode) => {
-          const isSelected = selected === mode.id;
+          const isSelected = selected.includes(mode.id);
           return (
             <button
               key={mode.id}
-              onClick={() => onChange(mode.id)}
+              onClick={() => handleToggle(mode.id)}
               className={`
                 relative px-2 py-2 rounded-lg text-left transition-all duration-200
                 border cursor-pointer group min-w-0
