@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
       review: "code review and analysis - focus on code quality, patterns, potential bugs, and improvements",
       documentation: "writing documentation - focus on clarity, completeness, examples, and proper formatting",
       refactoring: "refactoring and improving code structure - focus on clean code, patterns, and maintainability",
+      optimize: "performance optimization - focus on speed, memory efficiency, algorithmic improvements, and benchmarking suggestions",
       // Business modes
       summary: "summarizing content - focus on extracting key points, main ideas, and essential information concisely",
       transcript: "summarizing meeting transcripts - focus on key decisions, action items, participants, and next steps",

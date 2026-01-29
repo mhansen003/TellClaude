@@ -11,6 +11,7 @@ export type PromptModeId =
   | "review"
   | "documentation"
   | "refactoring"
+  | "optimize"
   // Business modes
   | "summary"
   | "transcript"

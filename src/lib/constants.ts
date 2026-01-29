@@ -67,6 +67,14 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     category: "engineering",
   },
   {
+    id: "optimize",
+    label: "Optimize",
+    description: "Performance and efficiency improvements",
+    icon: "⚡",
+    color: "bg-accent-teal",
+    category: "engineering",
+  },
+  {
     id: "technical",
     label: "Technical",
     description: "Deep technical explanations",
@@ -329,6 +337,7 @@ export function buildPrompt(
       review: "I'd like a code review or analysis.",
       documentation: "I need help writing documentation.",
       refactoring: "I need help refactoring and improving code structure.",
+      optimize: "I need help optimizing this code for better performance and efficiency.",
       // Business
       summary: "I need a clear summary of the following content.",
       transcript: "I need to summarize this meeting transcript and extract key points.",
