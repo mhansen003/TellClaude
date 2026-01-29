@@ -277,6 +277,43 @@ export default function Home() {
               />
             </div>
 
+            {/* Mobile Action Buttons - Only visible on mobile, right after transcript */}
+            <div className="flex gap-2 lg:hidden">
+              <button
+                onClick={handleGenerate}
+                disabled={!transcript.trim() || isGenerating}
+                className={`flex-1 h-14 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
+                  transcript.trim() && !isGenerating ? "animate-pulse-glow shadow-[0_0_20px_rgba(255,107,53,0.4)]" : ""
+                }`}
+              >
+                {isGenerating ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Generating...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Generate Prompt
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => setShowInterview(true)}
+                disabled={isGenerating}
+                className="h-14 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 active:scale-[0.98] disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </button>
+            </div>
+
             {/* Mode + Modifiers in one card */}
             <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
               {/* Mode Header */}
@@ -367,8 +404,8 @@ export default function Home() {
 
           {/* RIGHT COLUMN - Actions + Output */}
           <div className="flex flex-col gap-3 lg:min-h-full">
-            {/* Action Buttons - Aligned and consistent height */}
-            <div className="flex gap-2 flex-shrink-0">
+            {/* Action Buttons - Desktop only (mobile buttons are above in left column) */}
+            <div className="hidden lg:flex gap-2 flex-shrink-0">
               <button
                 onClick={handleGenerate}
                 disabled={!transcript.trim() || isGenerating}
