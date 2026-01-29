@@ -19,6 +19,7 @@ import AboutModal from "@/components/AboutModal";
 import FormattedPrompt from "@/components/FormattedPrompt";
 import PromptHistory, { HistoryItem } from "@/components/PromptHistory";
 import { TooltipIcon } from "@/components/Tooltip";
+import { StepNumber } from "@/components/StepBadge";
 
 const HISTORY_STORAGE_KEY = "tellclaude-history";
 
@@ -268,6 +269,46 @@ export default function Home() {
 
       {/* Main Content - Side by Side Layout */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
+        {/* Workflow Progress Bar */}
+        <div className="mb-4 sm:mb-6 p-3 bg-bg-card/50 rounded-xl border border-border-subtle">
+          <div className="flex items-center justify-between max-w-2xl mx-auto">
+            {[
+              { step: 1, label: "Describe", done: transcript.trim().length > 0 },
+              { step: 2, label: "Configure", done: transcript.trim().length > 0 && mode !== "code" },
+              { step: 3, label: "Customize", done: optionsExpanded || detailLevel !== "balanced" || outputFormat !== "structured" || contextInfo.trim().length > 0 },
+              { step: 4, label: "Generate", done: generatedPrompt.length > 0 },
+            ].map((item, idx) => (
+              <div key={item.step} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                      item.done
+                        ? "bg-accent-green text-white"
+                        : item.step === 1 || (item.step === 2 && transcript.trim()) || (item.step === 3 && mode !== "code") || (item.step === 4 && transcript.trim())
+                          ? "bg-gradient-to-br from-claude-orange to-claude-coral text-white"
+                          : "bg-bg-elevated text-text-muted border border-border-subtle"
+                    }`}
+                  >
+                    {item.done ? (
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      item.step
+                    )}
+                  </div>
+                  <span className={`text-xs mt-1 font-medium ${item.done ? "text-accent-green" : "text-text-muted"}`}>
+                    {item.label}
+                  </span>
+                </div>
+                {idx < 3 && (
+                  <div className={`w-8 sm:w-16 h-0.5 mx-1 sm:mx-2 ${item.done ? "bg-accent-green" : "bg-border-subtle"}`} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
 
           {/* LEFT COLUMN - Input */}
@@ -280,8 +321,8 @@ export default function Home() {
               {/* Section Header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-claude-orange" />
-                  <span className="text-sm font-semibold text-text-secondary">Voice Input</span>
+                  <StepNumber step={1} />
+                  <span className="text-sm font-semibold text-text-secondary">Describe Your Request</span>
                 </div>
                 <TooltipIcon
                   content="Click the microphone to speak your request, or type directly below. Your voice is converted to text in real-time."
@@ -306,6 +347,12 @@ export default function Home() {
             </div>
 
             {/* Mobile Action Buttons - Only visible on mobile, right after transcript */}
+            <div className="lg:hidden">
+              <div className="flex items-center gap-2 mb-2">
+                <StepNumber step={4} />
+                <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
+              </div>
+            </div>
             <div className="flex gap-2 lg:hidden">
               <button
                 onClick={handleGenerate}
@@ -347,8 +394,8 @@ export default function Home() {
               {/* Mode Header */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent-purple" />
-                  <span className="text-sm font-semibold text-text-secondary">Prompt Mode</span>
+                  <StepNumber step={2} />
+                  <span className="text-sm font-semibold text-text-secondary">Choose Mode & Modifiers</span>
                 </div>
                 <TooltipIcon
                   content="Select a mode to tell Claude what type of task you need help with. Engineering modes focus on code/technical tasks, Business modes on documents/analysis."
@@ -360,8 +407,7 @@ export default function Home() {
                 {/* Modifiers Header */}
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
-                    <span className="text-sm font-semibold text-text-secondary">Modifiers</span>
+                    <span className="text-sm font-medium text-text-muted">+ Add Modifiers</span>
                   </div>
                   <TooltipIcon
                     content="Add specific requirements to your prompt. Check multiple options to include step-by-step instructions, examples, best practices, and more."
@@ -381,8 +427,8 @@ export default function Home() {
                   className="flex-1 flex items-center justify-between py-1 group"
                 >
                   <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 cursor-pointer">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent-teal" />
-                    Output Options
+                    <StepNumber step={3} />
+                    Customize Output
                     {(detailLevel !== "balanced" || outputFormat !== "structured") && (
                       <span className="px-2 py-0.5 rounded-full bg-accent-teal/20 text-accent-teal text-xs font-semibold">
                         Custom
@@ -436,6 +482,12 @@ export default function Home() {
           {/* RIGHT COLUMN - Actions + Output */}
           <div className="flex flex-col gap-3 lg:min-h-full">
             {/* Action Buttons - Desktop only (mobile buttons are above in left column) */}
+            <div className="hidden lg:block flex-shrink-0 space-y-2">
+              <div className="flex items-center gap-2">
+                <StepNumber step={4} />
+                <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
+              </div>
+            </div>
             <div className="hidden lg:flex gap-2 flex-shrink-0">
               <button
                 onClick={handleGenerate}
@@ -555,23 +607,27 @@ export default function Home() {
                     <p className="text-sm font-medium mb-1">Your prompt will appear here</p>
                     <p className="text-xs mb-6">Speak or type your request, then click Generate</p>
 
-                    {/* Quick Tips integrated into empty state */}
+                    {/* Workflow Guide integrated into empty state */}
                     <div className="w-full max-w-xs border-t border-border-subtle pt-4">
-                      <h3 className="text-xs font-semibold text-text-muted mb-2 flex items-center justify-center gap-1.5">
-                        <span className="text-claude-orange">💡</span> Quick Tips
+                      <h3 className="text-xs font-semibold text-text-muted mb-3 flex items-center justify-center gap-1.5">
+                        <span className="text-claude-orange">🚀</span> Quick Start Guide
                       </h3>
-                      <ul className="text-xs text-text-muted space-y-1.5 text-left">
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-claude-orange/60">•</span>
-                          <span>Be specific about what you want to achieve</span>
+                      <ul className="text-xs text-text-muted space-y-2 text-left">
+                        <li className="flex items-start gap-2">
+                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                          <span><strong>Describe</strong> your request using voice or text</span>
                         </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-claude-orange/60">•</span>
-                          <span>Expand "Prompt Modifiers" to add requirements</span>
+                        <li className="flex items-start gap-2">
+                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                          <span><strong>Choose</strong> a mode that matches your task</span>
                         </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-claude-orange/60">•</span>
-                          <span>Use Interview mode for complex requests</span>
+                        <li className="flex items-start gap-2">
+                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                          <span><strong>Customize</strong> options for more control</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-claude-orange/20 text-claude-orange text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                          <span><strong>Generate</strong> and copy to Claude Code</span>
                         </li>
                       </ul>
                     </div>
