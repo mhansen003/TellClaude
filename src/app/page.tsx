@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { PromptModeId, DetailLevelId, OutputFormatId } from "@/lib/types";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { useClipboard } from "@/hooks/useClipboard";
@@ -74,6 +74,9 @@ export default function Home() {
   // Clipboard
   const { copied, copyToClipboard } = useClipboard();
 
+  // AbortController for cancelling generation
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   // Load history from localStorage
   useEffect(() => {
     try {
@@ -129,6 +132,9 @@ export default function Home() {
       stopListening();
     }
 
+    // Create new AbortController for this request
+    abortControllerRef.current = new AbortController();
+
     setIsGenerating(true);
     setIsEditingOutput(false); // Reset edit mode when generating new prompt
 
@@ -160,6 +166,7 @@ export default function Home() {
           attachments: attachmentData,
           urlReferences: urlData,
         }),
+        signal: abortControllerRef.current.signal,
       });
 
       const data = await response.json();
@@ -173,13 +180,27 @@ export default function Home() {
         throw new Error("No prompt returned");
       }
     } catch (error) {
-      console.error("Generation failed:", error);
-      setToast("Failed to generate. Please try again.");
-      setTimeout(() => setToast(null), 3000);
+      // Check if this was a user-initiated cancellation
+      if (error instanceof Error && error.name === "AbortError") {
+        setToast("Generation cancelled");
+        setTimeout(() => setToast(null), 2000);
+      } else {
+        console.error("Generation failed:", error);
+        setToast("Failed to generate. Please try again.");
+        setTimeout(() => setToast(null), 3000);
+      }
     }
 
+    abortControllerRef.current = null;
     setIsGenerating(false);
-  }, [transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, isGenerating, isListening, stopListening, addToHistory]);
+  }, [transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, isGenerating, isListening, stopListening, addToHistory]);
+
+  // Cancel generation
+  const handleCancelGeneration = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+  }, []);
 
   // Handle interview completion
   const handleInterviewComplete = useCallback((enhancedPrompt: string) => {
@@ -354,30 +375,28 @@ export default function Home() {
               </div>
             </div>
             <div className="flex gap-2 lg:hidden">
-              <button
-                onClick={handleGenerate}
-                disabled={!transcript.trim() || isGenerating}
-                className={`flex-1 h-14 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
-                  transcript.trim() && !isGenerating ? "animate-pulse-glow shadow-[0_0_20px_rgba(255,107,53,0.4)]" : ""
-                }`}
-              >
-                {isGenerating ? (
-                  <span className="flex items-center justify-center gap-2">
+              {isGenerating ? (
+                <>
+                  <div className="flex-1 h-14 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm flex items-center justify-center gap-2">
                     <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
                     Generating...
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
+                  </div>
+                  <button
+                    onClick={handleCancelGeneration}
+                    className="h-14 px-4 rounded-xl bg-bg-card border-2 border-accent-rose/50 text-accent-rose font-semibold text-sm transition-all hover:bg-accent-rose/10 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                  >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    Generate Prompt
-                  </span>
-                )}
-              </button>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                </button>
+              )}
               <button
                 onClick={() => setShowInterview(true)}
                 disabled={isGenerating}
@@ -489,42 +508,54 @@ export default function Home() {
               </div>
             </div>
             <div className="hidden lg:flex gap-2 flex-shrink-0">
-              <button
-                onClick={handleGenerate}
-                disabled={!transcript.trim() || isGenerating}
-                className={`flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer ${
-                  transcript.trim() && !isGenerating ? "animate-pulse-glow shadow-[0_0_20px_rgba(255,107,53,0.4)]" : ""
-                }`}
-              >
-                {isGenerating ? (
-                  <span className="flex items-center justify-center gap-2">
+              {isGenerating ? (
+                <>
+                  <div className="flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm flex items-center justify-center gap-2">
                     <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
                     Generating...
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
+                  </div>
+                  <button
+                    onClick={handleCancelGeneration}
+                    className="h-14 sm:h-12 px-5 rounded-xl bg-bg-card border-2 border-accent-rose/50 text-accent-rose font-semibold text-sm transition-all hover:bg-accent-rose/10 hover:border-accent-rose active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                    title="Cancel generation"
+                  >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    Generate Prompt
-                  </span>
-                )}
-              </button>
-
-              <button
-                onClick={() => setShowInterview(true)}
-                disabled={isGenerating}
-                className="h-14 sm:h-12 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
-                title="AI-assisted interview - helps you build your prompt through conversation"
-              >
-                <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-                <span className="hidden sm:inline">Interview</span>
-              </button>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={handleGenerate}
+                    disabled={!transcript.trim()}
+                    className={`flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer ${
+                      transcript.trim() ? "animate-pulse-glow shadow-[0_0_20px_rgba(255,107,53,0.4)]" : ""
+                    }`}
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Generate Prompt
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setShowInterview(true)}
+                    className="h-14 sm:h-12 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                    title="AI-assisted interview - helps you build your prompt through conversation"
+                  >
+                    <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    <span className="hidden sm:inline">Interview</span>
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Output Panel - Fixed height with internal scroll */}
