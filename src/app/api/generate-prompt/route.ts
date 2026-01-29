@@ -49,6 +49,16 @@ export async function POST(request: NextRequest) {
       email: "drafting professional emails - focus on tone, clarity, call-to-action, and appropriate formatting",
       proposal: "writing proposals or pitches - focus on value proposition, benefits, timeline, and persuasive structure",
       "meeting-notes": "creating meeting notes - focus on attendees, agenda items, decisions made, and action items with owners",
+      "user-story": "writing user stories - focus on user persona, acceptance criteria, edge cases, definition of done, and testable requirements",
+      "prd": "writing product requirements documents - focus on problem statement, goals, scope, user stories, success metrics, constraints, and dependencies",
+      "okrs": "drafting OKRs - focus on clear objectives, measurable key results, alignment to company goals, and tracking methodology",
+      "stakeholder-update": "writing stakeholder status updates - focus on progress summary, key milestones, blockers, risks, decisions needed, and next steps",
+      "release-notes": "writing release notes and changelogs - focus on user-facing changes, new features, bug fixes, breaking changes, and migration steps",
+      "incident-report": "writing post-incident reports - focus on timeline, detection, impact assessment, root cause analysis, remediation steps, and preventive action items",
+      "runbook": "creating operational runbooks - focus on prerequisites, step-by-step procedures, verification steps, rollback plans, and troubleshooting guides",
+      "presentation": "outlining presentations - focus on narrative arc, key messages per slide, supporting data points, speaker notes, and audience takeaways",
+      "faq": "building FAQ documents - focus on common questions organized by topic, clear and concise answers, cross-references, and escalation paths",
+      "sow": "writing statements of work - focus on project scope, deliverables, acceptance criteria, timeline, assumptions, exclusions, and payment terms",
     };
 
     const detailDescriptions: Record<string, string> = {

@@ -21,7 +21,17 @@ export type PromptModeId =
   | "analysis"
   | "email"
   | "proposal"
-  | "meeting-notes";
+  | "meeting-notes"
+  | "user-story"
+  | "prd"
+  | "okrs"
+  | "stakeholder-update"
+  | "release-notes"
+  | "incident-report"
+  | "runbook"
+  | "presentation"
+  | "faq"
+  | "sow";
 
 export type DetailLevelId = "concise" | "balanced" | "comprehensive";
 
