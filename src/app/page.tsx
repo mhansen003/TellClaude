@@ -13,6 +13,7 @@ import ModifierCheckboxes from "@/components/ModifierCheckboxes";
 import DetailLevelSelector from "@/components/DetailLevelSelector";
 import OutputFormatSelector from "@/components/OutputFormatSelector";
 import ContextInput from "@/components/ContextInput";
+import UrlInput, { UrlReference } from "@/components/UrlInput";
 import InterviewModal from "@/components/InterviewModal";
 import AboutModal from "@/components/AboutModal";
 import FormattedPrompt from "@/components/FormattedPrompt";
@@ -43,6 +44,7 @@ export default function Home() {
   const [modifiers, setModifiers] = useState<string[]>([]);
   const [contextInfo, setContextInfo] = useState("");
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [urlReferences, setUrlReferences] = useState<UrlReference[]>([]);
 
   // Generated prompt
   const [generatedPrompt, setGeneratedPrompt] = useState("");
@@ -136,6 +138,14 @@ export default function Home() {
         content: a.content,
       }));
 
+      // Prepare URL references for API
+      const urlData = urlReferences.map(r => ({
+        title: r.title,
+        content: r.content,
+        type: r.type,
+        url: r.url,
+      }));
+
       const response = await fetch("/api/generate-prompt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -147,6 +157,7 @@ export default function Home() {
           modifiers,
           contextInfo,
           attachments: attachmentData,
+          urlReferences: urlData,
         }),
       });
 
@@ -229,6 +240,7 @@ export default function Home() {
     setModifiers([]);
     setContextInfo("");
     setAttachments([]);
+    setUrlReferences([]);
     setMode("code");
     setDetailLevel("balanced");
     setOutputFormat("structured");
@@ -412,6 +424,9 @@ export default function Home() {
                   </div>
                   <div className="border-t border-border-subtle pt-3">
                     <ContextInput value={contextInfo} onChange={setContextInfo} />
+                  </div>
+                  <div className="border-t border-border-subtle pt-3">
+                    <UrlInput references={urlReferences} onReferencesChange={setUrlReferences} />
                   </div>
                 </div>
               )}

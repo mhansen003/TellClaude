@@ -23,7 +23,7 @@ The prompt should be thorough and specific. Don't be afraid to expand on what th
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, attachments } = body;
+    const { transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences } = body;
 
     // Build context for the AI
     const modeDescriptions: Record<string, string> = {
@@ -105,6 +105,19 @@ export async function POST(request: NextRequest) {
         ).join('\n')}`
       : '';
 
+    // Format URL references for inclusion in prompt
+    interface UrlReferenceData {
+      title: string;
+      content: string;
+      type: string;
+      url: string;
+    }
+    const urlSection = urlReferences && urlReferences.length > 0
+      ? `\n\nREFERENCED URLS FOR CONTEXT:\n${urlReferences.map((r: UrlReferenceData) =>
+          `--- ${r.type === 'github_issue' ? 'GitHub Issue: ' : ''}${r.title} ---\nSource: ${r.url}\n\n${r.content.slice(0, 15000)}\n`
+        ).join('\n---\n')}`
+      : '';
+
     const userPrompt = `Transform this into a comprehensive prompt for Claude Code:
 
 USER'S REQUEST:
@@ -120,6 +133,7 @@ ${formatDescriptions[outputFormat] || formatDescriptions.structured}
 
 ${contextInfo ? `ADDITIONAL CONTEXT PROVIDED:\n${contextInfo}\n` : ""}
 ${attachmentSection}
+${urlSection}
 ${selectedModifiers ? `REQUIREMENTS TO INCLUDE:\n- ${selectedModifiers}` : ""}
 
 Generate a detailed, well-structured prompt that incorporates all of the above. If files were attached, reference their contents appropriately in the prompt. The prompt should be ready to paste directly into Claude Code.`;
@@ -127,7 +141,7 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
     if (!process.env.OPENROUTER_API_KEY) {
       // Fallback when no API key - use enhanced local generation
       return NextResponse.json({
-        prompt: generateFallbackPrompt(transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, attachments, modeDescriptions, detailDescriptions, formatDescriptions, modifierDescriptions),
+        prompt: generateFallbackPrompt(transcript, mode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, modeDescriptions, detailDescriptions, formatDescriptions, modifierDescriptions),
       });
     }
 
@@ -158,6 +172,13 @@ interface FallbackAttachment {
   content: string;
 }
 
+interface FallbackUrlReference {
+  title: string;
+  content: string;
+  type: string;
+  url: string;
+}
+
 function generateFallbackPrompt(
   transcript: string,
   mode: string,
@@ -166,6 +187,7 @@ function generateFallbackPrompt(
   modifiers: string[],
   contextInfo: string,
   attachments: FallbackAttachment[] | undefined,
+  urlReferences: FallbackUrlReference[] | undefined,
   modeDescriptions: Record<string, string>,
   detailDescriptions: Record<string, string>,
   formatDescriptions: Record<string, string>,
@@ -201,6 +223,19 @@ ${contextInfo}
 \`\`\`
 ${attachment.content.slice(0, 10000)}
 \`\`\`
+
+`;
+    }
+  }
+
+  // Add URL references section
+  if (urlReferences && urlReferences.length > 0) {
+    prompt += `## Referenced URLs\n`;
+    for (const ref of urlReferences) {
+      prompt += `### ${ref.type === 'github_issue' ? '🐙 ' : '🔗 '}${ref.title}
+**Source:** ${ref.url}
+
+${ref.content.slice(0, 15000)}
 
 `;
     }
