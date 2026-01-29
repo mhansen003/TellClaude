@@ -40,6 +40,11 @@ export async function POST(request: NextRequest) {
       documentation: "writing documentation - focus on clarity, completeness, examples, and proper formatting",
       refactoring: "refactoring and improving code structure - focus on clean code, patterns, and maintainability",
       optimize: "performance optimization - focus on speed, memory efficiency, algorithmic improvements, and benchmarking suggestions",
+      skill: "creating a Claude Code slash command (skill) - focus on markdown command structure, parameter definitions, system instructions, output formatting, and user interaction flow",
+      plugin: "building a plugin or extension - focus on platform APIs, manifest configuration, lifecycle hooks, permissions, packaging, and marketplace listing metadata",
+      "mcp-server": "building a Model Context Protocol server - focus on tool definitions, resource endpoints, input schemas, transport setup (stdio/SSE), error handling, and client integration",
+      cli: "building a command-line tool - focus on argument parsing, subcommands, interactive prompts, help text, stdout/stderr conventions, exit codes, and shell completions",
+      api: "designing and building API endpoints - focus on REST/GraphQL design, route structure, request validation, authentication, error responses, rate limiting, versioning, and OpenAPI documentation",
       // Business modes
       summary: "summarizing content - focus on extracting key points, main ideas, and essential information concisely",
       transcript: "summarizing meeting transcripts - focus on key decisions, action items, participants, and next steps",

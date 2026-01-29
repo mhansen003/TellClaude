@@ -13,6 +13,11 @@ export type PromptModeId =
   | "documentation"
   | "refactoring"
   | "optimize"
+  | "skill"
+  | "plugin"
+  | "mcp-server"
+  | "cli"
+  | "api"
   // Business modes
   | "summary"
   | "transcript"
