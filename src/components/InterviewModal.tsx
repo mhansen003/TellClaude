@@ -14,6 +14,7 @@ interface InterviewModalProps {
   onComplete: (enhancedPrompt: string) => void;
   initialTranscript: string;
   mode: string;
+  existingPrompt?: string; // If provided, interview will enhance this prompt
 }
 
 export default function InterviewModal({
@@ -22,6 +23,7 @@ export default function InterviewModal({
   onComplete,
   initialTranscript,
   mode,
+  existingPrompt = "",
 }: InterviewModalProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -89,6 +91,7 @@ export default function InterviewModal({
           action: "start",
           transcript: initialTranscript,
           mode: mode,
+          existingPrompt: existingPrompt, // Pass existing prompt for enhancement mode
         }),
       });
 
@@ -129,6 +132,7 @@ export default function InterviewModal({
           transcript: initialTranscript,
           mode: mode,
           messages: [...messages, { role: "user", content: userMessage }],
+          existingPrompt: existingPrompt, // Pass existing prompt for context
         }),
       });
 
@@ -139,7 +143,10 @@ export default function InterviewModal({
         setFinalPrompt(data.finalPrompt);
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "I've gathered all the information I need. Here's your enhanced prompt ready to use!" },
+          { role: "assistant", content: existingPrompt
+            ? "I've enhanced your existing prompt with the new details. Here it is!"
+            : "I've gathered all the information I need. Here's your enhanced prompt ready to use!"
+          },
         ]);
       } else if (data.message) {
         setMessages((prev) => [...prev, { role: "assistant", content: data.message }]);
@@ -153,7 +160,7 @@ export default function InterviewModal({
     }
 
     setIsLoading(false);
-  }, [input, isLoading, isListening, stopListening, resetTranscript, messages, initialTranscript, mode]);
+  }, [input, isLoading, isListening, stopListening, resetTranscript, messages, initialTranscript, mode, existingPrompt]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -196,6 +203,7 @@ export default function InterviewModal({
           transcript: initialTranscript,
           mode: mode,
           messages: messages,
+          existingPrompt: existingPrompt, // Pass existing prompt for merging
         }),
       });
 
@@ -206,7 +214,10 @@ export default function InterviewModal({
         setFinalPrompt(data.finalPrompt);
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "Here's your generated prompt based on our conversation!" },
+          { role: "assistant", content: existingPrompt
+            ? "Here's your enhanced prompt with the new details merged in!"
+            : "Here's your generated prompt based on our conversation!"
+          },
         ]);
       }
     } catch (error) {
@@ -214,7 +225,7 @@ export default function InterviewModal({
     }
 
     setIsLoading(false);
-  }, [isLoading, isListening, stopListening, initialTranscript, mode, messages]);
+  }, [isLoading, isListening, stopListening, initialTranscript, mode, messages, existingPrompt]);
 
   const handleClose = () => {
     if (isListening) {

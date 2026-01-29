@@ -504,6 +504,7 @@ export default function Home() {
         onComplete={handleInterviewComplete}
         initialTranscript={transcript}
         mode={mode}
+        existingPrompt={generatedPrompt}
       />
 
       {/* About Modal */}
