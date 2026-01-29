@@ -407,10 +407,10 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Output Panel - Grows to fill space */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex-grow flex flex-col">
+            {/* Output Panel - Fixed height with internal scroll */}
+            <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[500px] lg:h-[calc(100vh-220px)] lg:max-h-[700px] lg:min-h-[400px]">
               {/* Header */}
-              <div className="px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
+              <div className="flex-shrink-0 px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center">
@@ -446,8 +446,8 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Content */}
-              <div className="p-4 sm:p-5 flex-grow flex flex-col justify-center overflow-y-auto">
+              {/* Content - Scrollable */}
+              <div className="p-4 sm:p-5 flex-1 min-h-0 overflow-y-auto">
                 {isGenerating ? (
                   <div className="flex flex-col items-center justify-center h-64 text-text-muted">
                     <div className="relative w-16 h-16 mb-4">
