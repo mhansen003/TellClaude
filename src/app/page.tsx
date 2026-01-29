@@ -725,9 +725,8 @@ export default function Home() {
             {/* /grid */}
             </div>
             {/* /flex wrapper */}
-          </div>
-          {/* /max-w-7xl */}
-        </div>
+      </div>
+      {/* /max-w-7xl */}
 
       {/* Interview Modal */}
       <InterviewModal
