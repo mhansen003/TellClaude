@@ -342,7 +342,7 @@ export default function Home() {
             {showBrowserWarning && <BrowserWarning />}
 
             {/* Mic Hero Section - Centered, with Interview beside it */}
-            <section className="flex flex-col items-center py-2 sm:py-4 mb-4 sm:mb-6">
+            <section className="flex flex-col items-center py-1 sm:py-3 mb-3 sm:mb-5">
               <div className="flex items-center gap-6 sm:gap-10">
                 <VoiceRecorder
                   isListening={isListening}
@@ -351,15 +351,17 @@ export default function Home() {
                   onStart={startListening}
                   onStop={stopListening}
                 />
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-1">
                   <button
                     onClick={() => setShowInterview(true)}
-                    className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer group bg-bg-card hover:bg-bg-elevated border-2 border-accent-purple/40 hover:border-accent-purple shadow-[0_0_15px_rgba(168,85,247,0.2)] hover:shadow-[0_0_25px_rgba(168,85,247,0.4)]"
+                    className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer group bg-bg-card hover:bg-bg-elevated border-2 border-accent-purple/40 hover:border-accent-purple shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)]"
                     aria-label="Start AI interview"
                     title="AI-assisted interview — build your prompt through conversation"
                   >
+                    {/* Outer glow ring */}
+                    <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-accent-purple/30 to-accent-purple/20 blur-sm animate-pulse" />
                     <svg
-                      className="w-7 h-7 sm:w-8 sm:h-8 text-text-secondary group-hover:text-accent-purple transition-colors"
+                      className="w-8 h-8 sm:w-10 sm:h-10 relative z-10 text-text-secondary group-hover:text-accent-purple transition-colors"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -368,7 +370,7 @@ export default function Home() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
                   </button>
-                  <p className="text-sm font-semibold text-text-muted">Interview</p>
+                  <p className="text-xs font-semibold text-text-muted">Interview</p>
                 </div>
               </div>
             </section>

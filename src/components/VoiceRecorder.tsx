@@ -18,7 +18,7 @@ export default function VoiceRecorder({
   if (!isSupported) return null;
 
   return (
-    <div className="flex flex-col items-center gap-3 sm:gap-4 py-2 sm:py-4">
+    <div className="flex flex-col items-center gap-1">
       {/* Mic Button */}
       <button
         onClick={isListening ? onStop : onStart}
@@ -32,6 +32,7 @@ export default function VoiceRecorder({
           }
         `}
         aria-label={isListening ? "Stop recording" : "Start recording"}
+        title={isListening ? "Tap to stop recording" : "Tap to start recording"}
       >
         {/* Outer glow ring - always visible when not listening */}
         {!isListening && (
@@ -70,30 +71,17 @@ export default function VoiceRecorder({
         </svg>
       </button>
 
-      {/* Status Text */}
-      <p
-        className={`text-sm font-semibold transition-colors ${
-          isListening ? "text-claude-orange" : "text-text-muted"
-        }`}
-      >
+      {/* Compact label */}
+      <p className="text-xs font-semibold text-text-muted">
         {isListening ? (
-          <span className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-claude-orange rounded-full animate-pulse" />
-            Listening... tap to stop
+          <span className="flex items-center gap-1.5 text-claude-orange">
+            <span className="w-1.5 h-1.5 bg-claude-orange rounded-full animate-pulse" />
+            Listening...
           </span>
         ) : (
-          "Tap to start recording"
+          "Speak"
         )}
       </p>
-
-      {/* Interim transcript */}
-      {isListening && interimTranscript && (
-        <div className="mx-4 p-4 rounded-xl bg-bg-card/50 border border-claude-orange/20 max-w-lg">
-          <p className="text-text-secondary text-sm italic text-center typing-cursor">
-            {interimTranscript}
-          </p>
-        </div>
-      )}
     </div>
   );
 }

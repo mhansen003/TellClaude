@@ -6,51 +6,55 @@ interface HeaderProps {
 
 export default function Header({ onAboutClick }: HeaderProps) {
   return (
-    <header className="text-center pt-8 pb-4 md:pt-12 md:pb-6 px-4 relative">
-      {/* Version & About - Top Right */}
-      <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2">
-        <span className="text-xs text-text-muted font-mono">v1.0.1</span>
-        <button
-          onClick={onAboutClick}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-card/80 border border-border-subtle text-text-muted hover:text-claude-orange hover:border-claude-orange/30 transition-all text-sm font-medium"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="hidden sm:inline">About</span>
-        </button>
-      </div>
+    <header className="pt-4 pb-2 md:pt-6 md:pb-3 px-4">
+      <div className="max-w-7xl mx-auto flex items-center gap-4">
+        {/* Logo + Title */}
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-gradient-to-br from-claude-orange via-claude-coral to-claude-amber flex items-center justify-center shadow-lg shadow-claude-orange/30 animate-float claude-logo">
+            <svg
+              className="w-5 h-5 md:w-6 md:h-6 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+              />
+            </svg>
+          </div>
+          <div className="text-left">
+            <h1 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-claude-orange via-claude-coral to-claude-amber bg-clip-text text-transparent leading-tight">
+              TellClaude
+            </h1>
+            <p className="text-text-muted text-[10px] md:text-xs font-medium tracking-wide uppercase">
+              Voice to Perfect Prompt
+            </p>
+          </div>
+        </div>
 
-      <div className="flex items-center justify-center gap-3 mb-3">
-        {/* Claude-inspired logo */}
-        <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-claude-orange via-claude-coral to-claude-amber flex items-center justify-center shadow-lg shadow-claude-orange/30 animate-float claude-logo">
-          <svg
-            className="w-6 h-6 md:w-7 md:h-7 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
+        {/* Description - inline, hidden on small screens */}
+        <p className="hidden md:block text-text-secondary text-sm leading-snug flex-1">
+          Speak your thoughts. Transform them into a perfectly structured prompt for{" "}
+          <span className="text-claude-orange font-semibold">Claude Code</span>.
+        </p>
+
+        {/* Version & About */}
+        <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
+          <span className="text-xs text-text-muted font-mono">v1.0.1</span>
+          <button
+            onClick={onAboutClick}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-card/80 border border-border-subtle text-text-muted hover:text-claude-orange hover:border-claude-orange/30 transition-all text-sm font-medium"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-            />
-          </svg>
-        </div>
-        <div className="text-left">
-          <h1 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-claude-orange via-claude-coral to-claude-amber bg-clip-text text-transparent">
-            TellClaude
-          </h1>
-          <p className="text-text-muted text-xs font-medium tracking-wide uppercase">
-            Voice to Perfect Prompt
-          </p>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="hidden sm:inline">About</span>
+          </button>
         </div>
       </div>
-      <p className="text-text-secondary text-sm md:text-base max-w-lg mx-auto leading-relaxed">
-        Speak your thoughts. Transform them into a perfectly structured prompt for{" "}
-        <span className="text-claude-orange font-semibold">Claude Code</span>.
-      </p>
     </header>
   );
 }
