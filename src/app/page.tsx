@@ -235,8 +235,8 @@ export default function Home() {
       <Header />
 
       {/* Main Content - Side by Side Layout */}
-      <div className="max-w-7xl mx-auto px-4 pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
 
           {/* LEFT COLUMN - Input */}
           <div className="space-y-3">
@@ -325,7 +325,7 @@ export default function Home() {
               <button
                 onClick={handleGenerate}
                 disabled={!transcript.trim() || isGenerating}
-                className={`flex-1 h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer ${
+                className={`flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer ${
                   transcript.trim() && !isGenerating ? "animate-pulse-glow shadow-[0_0_20px_rgba(255,107,53,0.4)]" : ""
                 }`}
               >
@@ -349,9 +349,9 @@ export default function Home() {
 
               <button
                 onClick={() => setShowInterview(true)}
-                disabled={!transcript.trim() || isGenerating}
-                className="h-12 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
-                title="AI-assisted interview"
+                disabled={isGenerating}
+                className="h-14 sm:h-12 px-4 rounded-xl bg-bg-card border-2 border-accent-purple/50 text-accent-purple font-semibold text-sm transition-all hover:bg-accent-purple/10 hover:border-accent-purple active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                title="AI-assisted interview - helps you build your prompt through conversation"
               >
                 <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -400,7 +400,7 @@ export default function Home() {
               </div>
 
               {/* Content */}
-              <div className="p-5 min-h-[300px] max-h-[calc(100vh-280px)] overflow-y-auto">
+              <div className="p-4 sm:p-5 min-h-[200px] sm:min-h-[300px] max-h-[50vh] sm:max-h-[calc(100vh-280px)] overflow-y-auto">
                 {isGenerating ? (
                   <div className="flex flex-col items-center justify-center h-64 text-text-muted">
                     <div className="relative w-16 h-16 mb-4">

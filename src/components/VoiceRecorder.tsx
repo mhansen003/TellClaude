@@ -18,12 +18,12 @@ export default function VoiceRecorder({
   if (!isSupported) return null;
 
   return (
-    <div className="flex flex-col items-center gap-4 py-4">
+    <div className="flex flex-col items-center gap-3 sm:gap-4 py-2 sm:py-4">
       {/* Mic Button */}
       <button
         onClick={isListening ? onStop : onStart}
         className={`
-          relative w-24 h-24 rounded-full flex items-center justify-center
+          relative w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center
           transition-all duration-300 cursor-pointer group
           ${
             isListening
@@ -54,7 +54,7 @@ export default function VoiceRecorder({
         )}
 
         <svg
-          className={`w-10 h-10 relative z-10 transition-all ${
+          className={`w-8 h-8 sm:w-10 sm:h-10 relative z-10 transition-all ${
             isListening ? "text-white scale-90" : "text-text-secondary group-hover:text-claude-orange"
           }`}
           fill="currentColor"
