@@ -17,9 +17,9 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl max-h-[85vh] bg-bg-secondary border-2 border-claude-orange/30 rounded-2xl shadow-2xl shadow-claude-orange/10 overflow-hidden animate-fade_in">
+      <div className="relative w-full max-w-2xl max-h-[90vh] bg-bg-secondary border-2 border-claude-orange/30 rounded-2xl shadow-2xl shadow-claude-orange/10 overflow-hidden animate-fade_in flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
+        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -42,7 +42,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(85vh-80px)] space-y-6">
+        <div className="p-6 overflow-y-auto flex-1 min-h-0 space-y-6">
           {/* Overview */}
           <div className="p-4 rounded-xl bg-claude-glow border border-claude-orange/20">
             <h3 className="text-sm font-bold text-claude-orange mb-2 flex items-center gap-2">
@@ -166,7 +166,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         </div>
 
         {/* Close Button */}
-        <div className="p-4 border-t border-border-subtle bg-bg-card/50">
+        <div className="flex-shrink-0 p-4 border-t border-border-subtle bg-bg-card/50">
           <button
             onClick={onClose}
             className="w-full py-3 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm hover:brightness-110 transition-all"

@@ -35,6 +35,14 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     category: "engineering",
   },
   {
+    id: "database",
+    label: "Database",
+    description: "Schema design and data modeling",
+    icon: "🗄️",
+    color: "bg-accent-purple",
+    category: "engineering",
+  },
+  {
     id: "debugging",
     label: "Debug",
     description: "Find and fix issues",
@@ -331,6 +339,7 @@ export function buildPrompt(
       planning: "I need help planning the implementation of a feature or project.",
       brainstorming: "I want to brainstorm ideas and explore different approaches.",
       design: "I need help with architecture or system design.",
+      database: "I need help with database schema design, data modeling, entity relationships, or SQL queries.",
       feedback: "I'm looking for feedback and suggestions on my approach.",
       technical: "I need a deep technical explanation.",
       debugging: "I need help debugging an issue.",
