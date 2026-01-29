@@ -52,6 +52,9 @@ export default function Home() {
   // Interview modal
   const [showInterview, setShowInterview] = useState(false);
 
+  // Options collapse
+  const [optionsExpanded, setOptionsExpanded] = useState(false);
+
   // Toast
   const [toast, setToast] = useState<string | null>(null);
 
@@ -265,15 +268,53 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Options: Detail, Format, Context in one card */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-4">
-              <div className="space-y-3">
-                <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
-                <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
-              </div>
-              <div className="border-t border-border-subtle pt-3">
-                <ContextInput value={contextInfo} onChange={setContextInfo} />
-              </div>
+            {/* Options: Detail, Format, Context - Collapsible */}
+            <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
+              {/* Header - Always visible, clickable to expand/collapse */}
+              <button
+                onClick={() => setOptionsExpanded(!optionsExpanded)}
+                className="w-full flex items-center justify-between py-1 group"
+              >
+                <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 cursor-pointer">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-teal" />
+                  Output Options
+                  {(detailLevel !== "balanced" || outputFormat !== "structured") && (
+                    <span className="px-2 py-0.5 rounded-full bg-accent-teal/20 text-accent-teal text-xs font-semibold">
+                      Custom
+                    </span>
+                  )}
+                </label>
+                <svg
+                  className={`w-5 h-5 text-text-muted transition-transform duration-200 ${optionsExpanded ? "rotate-180" : ""}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Preview when collapsed */}
+              {!optionsExpanded && (
+                <div className="flex flex-wrap gap-2 mt-2 text-xs text-text-muted">
+                  <span className="px-2 py-1 rounded bg-bg-elevated/50">{detailLevel === "comprehensive" ? "Detailed" : detailLevel === "concise" ? "Concise" : "Balanced"}</span>
+                  <span className="px-2 py-1 rounded bg-bg-elevated/50">{outputFormat === "bullet-points" ? "Bullets" : outputFormat === "conversational" ? "Natural" : "Structured"}</span>
+                </div>
+              )}
+
+              {/* Expanded content */}
+              {optionsExpanded && (
+                <div className="space-y-4 mt-3 pt-3 border-t border-border-subtle animate-fade_in">
+                  <div className="space-y-3">
+                    <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
+                    <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
+                  </div>
+                  <div className="border-t border-border-subtle pt-3">
+                    <ContextInput value={contextInfo} onChange={setContextInfo} />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
