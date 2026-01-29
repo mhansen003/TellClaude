@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 
 interface Message {
   role: "assistant" | "user";
@@ -29,6 +30,24 @@ export default function InterviewModal({
   const [finalPrompt, setFinalPrompt] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Speech recognition for voice input
+  const {
+    isListening,
+    transcript: speechTranscript,
+    interimTranscript,
+    isSupported: isVoiceSupported,
+    startListening,
+    stopListening,
+    resetTranscript,
+  } = useSpeechRecognition();
+
+  // Sync speech transcript to input
+  useEffect(() => {
+    if (speechTranscript) {
+      setInput(speechTranscript);
+    }
+  }, [speechTranscript]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -44,6 +63,14 @@ export default function InterviewModal({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  // Stop listening when modal closes
+  useEffect(() => {
+    if (!isOpen && isListening) {
+      stopListening();
+      resetTranscript();
+    }
+  }, [isOpen, isListening, stopListening, resetTranscript]);
 
   const startInterview = async () => {
     setIsLoading(true);
@@ -75,8 +102,14 @@ export default function InterviewModal({
   const sendMessage = useCallback(async () => {
     if (!input.trim() || isLoading) return;
 
+    // Stop listening if we're recording
+    if (isListening) {
+      stopListening();
+    }
+
     const userMessage = input.trim();
     setInput("");
+    resetTranscript();
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setIsLoading(true);
 
@@ -113,12 +146,22 @@ export default function InterviewModal({
     }
 
     setIsLoading(false);
-  }, [input, isLoading, messages, initialTranscript, mode]);
+  }, [input, isLoading, isListening, stopListening, resetTranscript, messages, initialTranscript, mode]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
+    }
+  };
+
+  const toggleVoice = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      resetTranscript();
+      setInput("");
+      startListening();
     }
   };
 
@@ -128,6 +171,10 @@ export default function InterviewModal({
   };
 
   const handleClose = () => {
+    if (isListening) {
+      stopListening();
+    }
+    resetTranscript();
     setMessages([]);
     setInput("");
     setIsComplete(false);
@@ -218,6 +265,15 @@ export default function InterviewModal({
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Interim transcript while recording */}
+        {isListening && interimTranscript && (
+          <div className="px-4 pb-2">
+            <div className="p-3 rounded-xl bg-claude-glow border border-claude-orange/30">
+              <p className="text-sm text-text-secondary italic typing-cursor">{interimTranscript}</p>
+            </div>
+          </div>
+        )}
+
         {/* Input */}
         <div className="p-4 border-t border-border-subtle bg-bg-card/50">
           {isComplete ? (
@@ -236,25 +292,78 @@ export default function InterviewModal({
               </button>
             </div>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex gap-2">
+              {/* Voice Button */}
+              {isVoiceSupported && (
+                <button
+                  onClick={toggleVoice}
+                  disabled={isLoading}
+                  className={`
+                    relative p-3 rounded-xl transition-all duration-200 flex-shrink-0
+                    ${
+                      isListening
+                        ? "bg-claude-orange text-white mic-recording"
+                        : "bg-bg-card border-2 border-border-subtle text-text-secondary hover:border-claude-orange/50 hover:text-claude-orange"
+                    }
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                  `}
+                  title={isListening ? "Stop recording" : "Start recording"}
+                >
+                  {/* Pulse rings when recording */}
+                  {isListening && (
+                    <>
+                      <span className="absolute inset-0 rounded-xl bg-claude-orange/30 animate-pulse_ring" />
+                      <span className="absolute inset-0 rounded-xl bg-claude-orange/20 animate-pulse_ring" style={{ animationDelay: "0.5s" }} />
+                    </>
+                  )}
+                  <svg
+                    className="w-5 h-5 relative z-10"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    {isListening ? (
+                      // Stop icon
+                      <rect x="6" y="6" width="12" height="12" rx="2" />
+                    ) : (
+                      // Mic icon
+                      <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+                    )}
+                  </svg>
+                </button>
+              )}
+
+              {/* Text Input */}
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type your answer..."
+                placeholder={isListening ? "Listening..." : "Type or speak your answer..."}
                 disabled={isLoading}
-                className="flex-1 px-4 py-3 rounded-xl bg-bg-card border-2 border-border-subtle focus:border-claude-orange/50 text-text-primary placeholder:text-text-muted text-sm focus:outline-none transition-all disabled:opacity-50"
+                className={`
+                  flex-1 px-4 py-3 rounded-xl bg-bg-card border-2 text-text-primary placeholder:text-text-muted text-sm focus:outline-none transition-all disabled:opacity-50
+                  ${isListening ? "border-claude-orange/50 bg-claude-glow" : "border-border-subtle focus:border-claude-orange/50"}
+                `}
               />
+
+              {/* Send Button */}
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || isLoading}
-                className="px-5 py-3 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-semibold text-sm hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-5 py-3 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-semibold text-sm hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               </button>
+            </div>
+          )}
+
+          {/* Recording indicator */}
+          {isListening && (
+            <div className="flex items-center justify-center gap-2 mt-3 text-claude-orange text-xs font-semibold">
+              <span className="w-2 h-2 bg-claude-orange rounded-full animate-pulse" />
+              Recording... speak your answer
             </div>
           )}
         </div>
