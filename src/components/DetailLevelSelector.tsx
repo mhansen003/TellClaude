@@ -13,7 +13,7 @@ export default function DetailLevelSelector({
   onChange,
 }: DetailLevelSelectorProps) {
   return (
-    <div className="flex-1">
+    <div>
       <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 mb-2">
         <span className="w-1.5 h-1.5 rounded-full bg-accent-teal" />
         Detail Level

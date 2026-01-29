@@ -267,7 +267,7 @@ export default function Home() {
 
             {/* Options: Detail, Format, Context in one card */}
             <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-3">
                 <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
                 <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
               </div>

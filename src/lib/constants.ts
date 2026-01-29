@@ -163,12 +163,12 @@ export const OUTPUT_FORMAT_OPTIONS: OutputFormatOption[] = [
   },
   {
     id: "conversational",
-    label: "Conversational",
+    label: "Natural",
     description: "Natural dialogue flow",
   },
   {
     id: "bullet-points",
-    label: "Bullet Points",
+    label: "Bullets",
     description: "Scannable list format",
   },
 ];
