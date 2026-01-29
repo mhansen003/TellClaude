@@ -236,7 +236,7 @@ export default function Home() {
 
       {/* Main Content - Side by Side Layout */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
 
           {/* LEFT COLUMN - Input */}
           <div className="space-y-3">
@@ -319,9 +319,9 @@ export default function Home() {
           </div>
 
           {/* RIGHT COLUMN - Actions + Output */}
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3 lg:min-h-full">
             {/* Action Buttons - Aligned and consistent height */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-shrink-0">
               <button
                 onClick={handleGenerate}
                 disabled={!transcript.trim() || isGenerating}
@@ -360,8 +360,8 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Output Panel */}
-            <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden lg:sticky lg:top-4">
+            {/* Output Panel - Grows to fill space */}
+            <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex-grow flex flex-col">
               {/* Header */}
               <div className="px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
                 <div className="flex items-center justify-between">
@@ -400,7 +400,7 @@ export default function Home() {
               </div>
 
               {/* Content */}
-              <div className="p-4 sm:p-5 min-h-[200px] sm:min-h-[300px] max-h-[50vh] sm:max-h-[calc(100vh-280px)] overflow-y-auto">
+              <div className="p-4 sm:p-5 flex-grow flex flex-col justify-center overflow-y-auto">
                 {isGenerating ? (
                   <div className="flex flex-col items-center justify-center h-64 text-text-muted">
                     <div className="relative w-16 h-16 mb-4">
@@ -416,39 +416,38 @@ export default function Home() {
                     </pre>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-64 text-text-muted">
-                    <svg className="w-16 h-16 mb-4 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                  <div className="flex flex-col items-center justify-center text-text-muted py-8">
+                    <svg className="w-12 h-12 mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <p className="text-sm font-medium mb-1">Your prompt will appear here</p>
-                    <p className="text-xs">Speak or type your request, then click Generate</p>
+                    <p className="text-xs mb-6">Speak or type your request, then click Generate</p>
+
+                    {/* Quick Tips integrated into empty state */}
+                    <div className="w-full max-w-xs border-t border-border-subtle pt-4">
+                      <h3 className="text-xs font-semibold text-text-muted mb-2 flex items-center justify-center gap-1.5">
+                        <span className="text-claude-orange">💡</span> Quick Tips
+                      </h3>
+                      <ul className="text-xs text-text-muted space-y-1.5 text-left">
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-claude-orange/60">•</span>
+                          <span>Be specific about what you want to achieve</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-claude-orange/60">•</span>
+                          <span>Expand "Prompt Modifiers" to add requirements</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-claude-orange/60">•</span>
+                          <span>Use Interview mode for complex requests</span>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Quick Tips - Only show when no prompt */}
-            {!generatedPrompt && !isGenerating && (
-              <div className="bg-bg-card/50 rounded-xl border border-border-subtle p-3">
-                <h3 className="text-xs font-semibold text-text-muted mb-2 flex items-center gap-1.5">
-                  <span className="text-claude-orange">💡</span> Quick Tips
-                </h3>
-                <ul className="text-xs text-text-muted space-y-1">
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-claude-orange/60">•</span>
-                    <span>Be specific about what you want to achieve</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-claude-orange/60">•</span>
-                    <span>Expand "Prompt Modifiers" to add requirements</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-claude-orange/60">•</span>
-                    <span>Use Interview mode for complex requests</span>
-                  </li>
-                </ul>
-              </div>
-            )}
           </div>
         </div>
       </div>

@@ -56,13 +56,20 @@ export default function InterviewModal({
     scrollToBottom();
   }, [messages]);
 
-  // Start the interview when modal opens
+  // Start fresh interview when modal opens
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
+    if (isOpen) {
+      // Reset all state for a fresh conversation
+      setMessages([]);
+      setInput("");
+      setIsComplete(false);
+      setFinalPrompt("");
+      resetTranscript();
+      // Start the interview with current form values
       startInterview();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [isOpen, initialTranscript, mode]);
 
   // Stop listening when modal closes
   useEffect(() => {
