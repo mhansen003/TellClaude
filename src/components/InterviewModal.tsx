@@ -338,6 +338,7 @@ export default function InterviewModal({
               </button>
             </div>
           ) : (
+            <>
             <div className="flex gap-2">
               {/* Voice Button */}
               {isVoiceSupported && (
@@ -423,6 +424,7 @@ export default function InterviewModal({
                 Cancel
               </button>
             </div>
+            </>
           )}
 
           {/* Recording indicator */}
