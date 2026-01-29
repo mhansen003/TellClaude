@@ -22,6 +22,7 @@ import { TooltipIcon } from "@/components/Tooltip";
 import { StepNumber } from "@/components/StepBadge";
 
 const HISTORY_STORAGE_KEY = "tellclaude-history";
+const SETTINGS_STORAGE_KEY = "tellclaude-settings";
 
 export default function Home() {
   // Speech recognition
@@ -97,6 +98,36 @@ export default function Home() {
       console.error("Failed to save history:", error);
     }
   }, [history]);
+
+  // Load saved settings from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (saved) {
+        const settings = JSON.parse(saved);
+        if (settings.mode) setMode(settings.mode);
+        if (settings.detailLevel) setDetailLevel(settings.detailLevel);
+        if (settings.outputFormat) setOutputFormat(settings.outputFormat);
+        if (settings.modifiers) setModifiers(settings.modifiers);
+      }
+    } catch (error) {
+      console.error("Failed to load settings:", error);
+    }
+  }, []);
+
+  // Save settings to localStorage when they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({
+        mode,
+        detailLevel,
+        outputFormat,
+        modifiers,
+      }));
+    } catch (error) {
+      console.error("Failed to save settings:", error);
+    }
+  }, [mode, detailLevel, outputFormat, modifiers]);
 
   // Sync speech transcript
   useEffect(() => {
