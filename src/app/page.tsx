@@ -898,6 +898,7 @@ export default function Home() {
         onModesChange={setModes}
         modifiers={modifiers}
         onModifiersChange={setModifiers}
+        transcript={transcript}
       />
 
       {/* Interview Modal */}
