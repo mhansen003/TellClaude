@@ -225,7 +225,7 @@ export default function Home() {
         if (data.modes && Array.isArray(data.modes) && data.modes.length > 0) {
           // Merge inside updater so `prev` is always the true current state
           // (avoids stale closure where `modes` from effect setup is outdated)
-          const suggestedModes = [...new Set(data.modes as string[])] as PromptModeId[];
+          const suggestedModes = Array.from(new Set(data.modes as string[])) as PromptModeId[];
           setModes((prev) => {
             const existing = new Set(prev);
             const toAdd = suggestedModes.filter((id) => !existing.has(id));
@@ -239,7 +239,7 @@ export default function Home() {
         }
 
         if (data.modifiers && Array.isArray(data.modifiers)) {
-          const suggestedMods = [...new Set(data.modifiers as string[])];
+          const suggestedMods = Array.from(new Set(data.modifiers as string[]));
           setModifiers((prev) => {
             const existing = new Set(prev);
             const toAdd = suggestedMods.filter((id) => !existing.has(id));

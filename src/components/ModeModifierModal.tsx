@@ -37,10 +37,10 @@ export default function ModeModifierModal({
       });
       const data = await response.json();
       if (data.modes && Array.isArray(data.modes)) {
-        onModesChange([...new Set(data.modes)] as PromptModeId[]);
+        onModesChange(Array.from(new Set(data.modes)) as PromptModeId[]);
       }
       if (data.modifiers && Array.isArray(data.modifiers)) {
-        onModifiersChange([...new Set(data.modifiers)]);
+        onModifiersChange(Array.from(new Set(data.modifiers)));
       }
     } catch (error) {
       console.error("Suggest modes failed:", error);
