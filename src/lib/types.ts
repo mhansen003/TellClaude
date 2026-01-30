@@ -1,6 +1,6 @@
-// Prompt Mode Types - Engineering + Business
+// Prompt Mode Types - Engineering + Business + Marketing + Research (24 each)
 export type PromptModeId =
-  // Engineering modes
+  // Engineering modes (24)
   | "code"
   | "planning"
   | "brainstorming"
@@ -23,7 +23,9 @@ export type PromptModeId =
   | "otp-mfa"
   | "encryption"
   | "compliance"
-  // Business modes
+  | "test-suite"
+  | "devops"
+  // Business modes (24)
   | "summary"
   | "transcript"
   | "report"
@@ -42,7 +44,14 @@ export type PromptModeId =
   | "presentation"
   | "faq"
   | "sow"
-  // Marketing modes
+  | "budget"
+  | "strategy"
+  | "training"
+  | "process-doc"
+  | "contract"
+  | "business-case"
+  | "risk-register"
+  // Marketing modes (24)
   | "ad-copy"
   | "social-media"
   | "landing-page"
@@ -55,7 +64,19 @@ export type PromptModeId =
   | "case-study"
   | "product-launch"
   | "influencer-brief"
-  // Research modes
+  | "blog-post"
+  | "newsletter"
+  | "webinar-script"
+  | "testimonial"
+  | "content-calendar"
+  | "tagline"
+  | "product-desc"
+  | "whitepaper"
+  | "podcast-script"
+  | "event-promo"
+  | "competitive-pos"
+  | "ab-test-copy"
+  // Research modes (24)
   | "deep-research"
   | "competitive-analysis"
   | "market-research"
@@ -67,7 +88,19 @@ export type PromptModeId =
   | "data-synthesis"
   | "gap-analysis"
   | "swot"
-  | "due-diligence";
+  | "due-diligence"
+  | "user-research"
+  | "ab-test-design"
+  | "roi-analysis"
+  | "tech-evaluation"
+  | "regulatory-review"
+  | "customer-journey"
+  | "patent-research"
+  | "impact-analysis"
+  | "best-practices-review"
+  | "opportunity-assessment"
+  | "risk-modeling"
+  | "expert-synthesis";
 
 export type DetailLevelId = "concise" | "balanced" | "comprehensive";
 
