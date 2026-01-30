@@ -74,6 +74,23 @@ const config: Config = {
             borderColor: "rgba(var(--brand-primary-rgb), 0.7)"
           },
         },
+        "suggest-glow": {
+          "0%": {
+            boxShadow: "0 0 0 rgba(var(--brand-primary-rgb), 0)",
+            transform: "scale(0.85)",
+            opacity: "0",
+          },
+          "30%": {
+            boxShadow: "0 0 12px rgba(var(--brand-primary-rgb), 0.6), 0 0 24px rgba(var(--brand-primary-rgb), 0.3)",
+            transform: "scale(1.05)",
+            opacity: "1",
+          },
+          "100%": {
+            boxShadow: "0 0 0 rgba(var(--brand-primary-rgb), 0)",
+            transform: "scale(1)",
+            opacity: "1",
+          },
+        },
       },
       animation: {
         pulse_ring: "pulse_ring 1.5s ease-out infinite",
@@ -82,6 +99,7 @@ const config: Config = {
         float: "float 3s ease-in-out infinite",
         glow: "glow 2s ease-in-out infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "suggest-glow": "suggest-glow 0.8s ease-out forwards",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

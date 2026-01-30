@@ -78,6 +78,12 @@ export default function Home() {
   // Mode & Modifier modal
   const [showModeModal, setShowModeModal] = useState(false);
 
+  // Auto-suggest: tracks freshly suggested IDs for glow animation
+  const [glowingModes, setGlowingModes] = useState<Set<string>>(new Set());
+  const [glowingModifiers, setGlowingModifiers] = useState<Set<string>>(new Set());
+  const suggestTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suggestAbortRef = useRef<AbortController | null>(null);
+
   // Options collapse
   const [optionsExpanded, setOptionsExpanded] = useState(false);
 
@@ -184,6 +190,65 @@ export default function Home() {
   useEffect(() => {
     setShowBrowserWarning(!isSupported);
   }, [isSupported]);
+
+  // Auto-suggest modes as user types (debounced)
+  useEffect(() => {
+    // Clear previous timer
+    if (suggestTimerRef.current) clearTimeout(suggestTimerRef.current);
+
+    const trimmed = transcript.trim();
+    // Need at least 15 chars and modal must be closed (don't override manual picks)
+    if (trimmed.length < 15 || showModeModal) return;
+
+    suggestTimerRef.current = setTimeout(async () => {
+      // Abort any in-flight request
+      if (suggestAbortRef.current) suggestAbortRef.current.abort();
+      suggestAbortRef.current = new AbortController();
+
+      try {
+        const response = await fetch("/api/suggest-modes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ transcript: trimmed }),
+          signal: suggestAbortRef.current.signal,
+        });
+        const data = await response.json();
+
+        if (data.modes && Array.isArray(data.modes) && data.modes.length > 0) {
+          // Find newly added modes (ones not already selected)
+          const currentModeSet = new Set(modes);
+          const newModes = data.modes.filter((id: string) => !currentModeSet.has(id as PromptModeId));
+
+          setModes(data.modes as PromptModeId[]);
+
+          // Trigger glow on newly added modes
+          if (newModes.length > 0) {
+            setGlowingModes(new Set(newModes));
+            setTimeout(() => setGlowingModes(new Set()), 1000);
+          }
+        }
+
+        if (data.modifiers && Array.isArray(data.modifiers)) {
+          const currentModSet = new Set(modifiers);
+          const newMods = data.modifiers.filter((id: string) => !currentModSet.has(id));
+
+          setModifiers(data.modifiers);
+
+          if (newMods.length > 0) {
+            setGlowingModifiers(new Set(newMods));
+            setTimeout(() => setGlowingModifiers(new Set()), 1000);
+          }
+        }
+      } catch {
+        // Silently ignore aborts and network errors
+      }
+    }, 1500);
+
+    return () => {
+      if (suggestTimerRef.current) clearTimeout(suggestTimerRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transcript, showModeModal]);
 
   // Add to history
   const addToHistory = useCallback((transcriptText: string, promptText: string, modeIds: string) => {
@@ -611,10 +676,11 @@ export default function Home() {
                       {modes.length > 0 ? (
                         modes.map((modeId) => {
                           const modeOption = PROMPT_MODE_OPTIONS.find(m => m.id === modeId);
+                          const isGlowing = glowingModes.has(modeId);
                           return (
                             <span
                               key={modeId}
-                              className="px-2 py-0.5 rounded-md bg-brand-primary/15 text-brand-primary text-[11px] font-semibold"
+                              className={`px-2 py-0.5 rounded-md bg-brand-primary/15 text-brand-primary text-[11px] font-semibold ${isGlowing ? "animate-suggest-glow" : ""}`}
                             >
                               {modeOption?.label || modeId}
                             </span>
@@ -633,10 +699,11 @@ export default function Home() {
                       <div className="flex flex-wrap gap-1.5 mt-1">
                         {modifiers.map((modId) => {
                           const modOption = PROMPT_MODIFIERS.find(m => m.id === modId);
+                          const isGlowing = glowingModifiers.has(modId);
                           return (
                             <span
                               key={modId}
-                              className="px-2 py-0.5 rounded-md bg-bg-elevated text-text-secondary text-[11px] font-medium"
+                              className={`px-2 py-0.5 rounded-md bg-bg-elevated text-text-secondary text-[11px] font-medium ${isGlowing ? "animate-suggest-glow" : ""}`}
                             >
                               {modOption?.label || modId}
                             </span>
