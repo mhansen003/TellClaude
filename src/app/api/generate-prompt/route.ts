@@ -1,5 +1,5 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { generateText } from "ai";
+import { streamText, generateText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 
 const openrouter = createOpenAI({
@@ -190,13 +190,14 @@ The generated prompt will be pasted into this AI model. Optimize the prompt's la
 Generate a detailed, well-structured prompt that incorporates all of the above. If files were attached, reference their contents appropriately in the prompt. The prompt should be ready to paste directly into the target AI.`;
 
     if (!process.env.OPENROUTER_API_KEY) {
-      // Fallback when no API key - use enhanced local generation
-      return NextResponse.json({
-        prompt: generateFallbackPrompt(transcript, modes, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, modeDescriptions, detailDescriptions, formatDescriptions, modifierDescriptions),
+      // Fallback when no API key - return plain text to match streaming format
+      const fallback = generateFallbackPrompt(transcript, modes, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, modeDescriptions, detailDescriptions, formatDescriptions, modifierDescriptions);
+      return new Response(fallback, {
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
       });
     }
 
-    const result = await generateText({
+    const result = streamText({
       model: openrouter("anthropic/claude-opus-4"),
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
@@ -206,9 +207,7 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
       maxTokens: 2000,
     });
 
-    return NextResponse.json({
-      prompt: result.text,
-    });
+    return result.toTextStreamResponse();
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
     const errStack = error instanceof Error ? error.stack : undefined;
