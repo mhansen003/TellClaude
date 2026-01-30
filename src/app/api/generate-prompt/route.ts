@@ -207,9 +207,24 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
       prompt: result.text,
     });
   } catch (error) {
-    console.error("Generate prompt error:", error);
+    const errMsg = error instanceof Error ? error.message : String(error);
+    const errStack = error instanceof Error ? error.stack : undefined;
+    const errCause = error instanceof Error && (error as Record<string, unknown>).cause
+      ? JSON.stringify((error as Record<string, unknown>).cause, null, 2)
+      : undefined;
+    console.error("Generate prompt error:", errMsg);
+    console.error("Stack:", errStack);
+    if (errCause) console.error("Cause:", errCause);
     return NextResponse.json(
-      { error: "Failed to generate prompt" },
+      {
+        error: "Failed to generate prompt",
+        debug: {
+          message: errMsg,
+          cause: errCause,
+          hasApiKey: Boolean(process.env.OPENROUTER_API_KEY),
+          keyPrefix: process.env.OPENROUTER_API_KEY?.slice(0, 8) + "...",
+        },
+      },
       { status: 500 }
     );
   }
