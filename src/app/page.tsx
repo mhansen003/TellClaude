@@ -218,26 +218,23 @@ export default function Home() {
         const data = await response.json();
 
         if (data.modes && Array.isArray(data.modes) && data.modes.length > 0) {
-          // Find newly added modes (ones not already selected)
-          const currentModeSet = new Set(modes);
-          const newModes = data.modes.filter((id: string) => !currentModeSet.has(id as PromptModeId));
+          // Merge: keep existing modes + add new AI suggestions (don't remove existing)
+          const existingModeSet = new Set(modes);
+          const newModes = (data.modes as string[]).filter((id) => !existingModeSet.has(id as PromptModeId));
 
-          setModes(data.modes as PromptModeId[]);
-
-          // Trigger glow on newly added modes
           if (newModes.length > 0) {
+            setModes((prev) => [...prev, ...newModes as PromptModeId[]]);
             setGlowingModes(new Set(newModes));
             setTimeout(() => setGlowingModes(new Set()), 1000);
           }
         }
 
         if (data.modifiers && Array.isArray(data.modifiers)) {
-          const currentModSet = new Set(modifiers);
-          const newMods = data.modifiers.filter((id: string) => !currentModSet.has(id));
-
-          setModifiers(data.modifiers);
+          const existingModSet = new Set(modifiers);
+          const newMods = (data.modifiers as string[]).filter((id) => !existingModSet.has(id));
 
           if (newMods.length > 0) {
+            setModifiers((prev) => [...prev, ...newMods]);
             setGlowingModifiers(new Set(newMods));
             setTimeout(() => setGlowingModifiers(new Set()), 1000);
           }
