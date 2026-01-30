@@ -131,17 +131,14 @@ export default function Home() {
     savePublished(published);
   }, [published]);
 
-  // Load saved settings from localStorage
+  // Load saved settings from localStorage (excludes modes/modifiers — those reset on refresh)
   useEffect(() => {
     try {
       const saved = localStorage.getItem(SETTINGS_STORAGE_KEY);
       if (saved) {
         const settings = JSON.parse(saved);
-        if (settings.modes) setModes(settings.modes);
-        else if (settings.mode) setModes([settings.mode]); // migrate old single mode
         if (settings.detailLevel) setDetailLevel(settings.detailLevel);
         if (settings.outputFormat) setOutputFormat(settings.outputFormat);
-        if (settings.modifiers) setModifiers(settings.modifiers);
         if (settings.provider) setLlmProvider(settings.provider);
         if (settings.model) setLlmModel(settings.model);
       }
@@ -150,21 +147,19 @@ export default function Home() {
     }
   }, []);
 
-  // Save settings to localStorage when they change
+  // Save settings to localStorage when they change (modes/modifiers are dynamic, not persisted)
   useEffect(() => {
     try {
       localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({
-        modes,
         detailLevel,
         outputFormat,
-        modifiers,
         provider: llmProvider,
         model: llmModel,
       }));
     } catch (error) {
       console.error("Failed to save settings:", error);
     }
-  }, [modes, detailLevel, outputFormat, modifiers, llmProvider, llmModel]);
+  }, [detailLevel, outputFormat, llmProvider, llmModel]);
 
   // Apply theme based on LLM provider
   useEffect(() => {
