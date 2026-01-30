@@ -397,6 +397,8 @@ export default function Home() {
   const handleClear = useCallback(() => {
     setTranscript("");
     resetTranscript();
+    setModes([]);
+    setModifiers([]);
   }, [resetTranscript]);
 
   // Publish prompt
