@@ -387,14 +387,6 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     color: "bg-accent-green",
     category: "business",
   },
-  {
-    id: "risk-register",
-    label: "Risk Register",
-    description: "Track and manage project risks",
-    icon: "⚠️",
-    color: "bg-accent-rose",
-    category: "business",
-  },
   // Marketing modes
   {
     id: "ad-copy",
@@ -1002,7 +994,6 @@ export function buildPrompt(
       "process-doc": "I need to document a workflow or standard operating procedure with steps, owners, and decision points.",
       "contract": "I need to draft or review contract terms with scope, obligations, deliverables, and legal considerations.",
       "business-case": "I need to write a business case justifying an investment with costs, benefits, risks, and ROI projections.",
-      "risk-register": "I need to create a risk register tracking identified risks with probability, impact, mitigation, and owners.",
       // Marketing
       "ad-copy": "I need advertising copy with headlines, hooks, value propositions, CTAs, and A/B test variations.",
       "social-media": "I need social media content with platform-native formatting, hashtags, and engagement hooks.",

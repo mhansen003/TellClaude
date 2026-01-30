@@ -50,7 +50,6 @@ export type PromptModeId =
   | "process-doc"
   | "contract"
   | "business-case"
-  | "risk-register"
   // Marketing modes (24)
   | "ad-copy"
   | "social-media"
