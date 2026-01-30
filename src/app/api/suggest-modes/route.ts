@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     }
 
     const result = await generateText({
-      model: openrouter("google/gemini-2.0-flash-001"),
+      model: openrouter("google/gemini-2.0-flash-lite-001"),
       temperature: 0.2,
       maxTokens: 300,
       system: SYSTEM_PROMPT,
