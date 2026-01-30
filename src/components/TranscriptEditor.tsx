@@ -15,6 +15,7 @@ interface TranscriptEditorProps {
   onChange: (value: string) => void;
   onClear: () => void;
   isListening: boolean;
+  interimTranscript?: string;
   attachments: Attachment[];
   onAttachmentsChange: (attachments: Attachment[]) => void;
 }
@@ -36,14 +37,19 @@ export default function TranscriptEditor({
   onChange,
   onClear,
   isListening,
+  interimTranscript,
   attachments,
   onAttachmentsChange,
 }: TranscriptEditorProps) {
+  // While speaking, show finalized text + interim (partial) text for instant feedback
+  const displayValue = isListening && interimTranscript
+    ? (value ? value + " " : "") + interimTranscript
+    : value;
   const [copied, setCopied] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragError, setDragError] = useState<string | null>(null);
 
-  const wordCount = value.trim() ? value.trim().split(/\s+/).length : 0;
+  const wordCount = displayValue.trim() ? displayValue.trim().split(/\s+/).length : 0;
 
   const handleCopy = async () => {
     if (!value.trim()) return;
@@ -171,7 +177,7 @@ export default function TranscriptEditor({
                 {attachments.length} file{attachments.length !== 1 ? 's' : ''} attached
               </span>
             )}
-            {value.trim() && (
+            {displayValue.trim() && (
               <span className="text-xs text-text-muted">
                 {wordCount} word{wordCount !== 1 ? "s" : ""}
               </span>
@@ -187,7 +193,7 @@ export default function TranscriptEditor({
           onDragLeave={handleDragLeave}
         >
           <textarea
-            value={value}
+            value={displayValue}
             onChange={(e) => onChange(e.target.value)}
             placeholder={
               isListening

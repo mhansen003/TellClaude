@@ -627,6 +627,7 @@ export default function Home() {
                     onChange={setTranscript}
                     onClear={handleClear}
                     isListening={isListening}
+                    interimTranscript={interimTranscript}
                     attachments={attachments}
                     onAttachmentsChange={setAttachments}
                   />
