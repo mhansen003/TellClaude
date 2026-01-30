@@ -19,16 +19,18 @@ const MODIFIER_LIST = PROMPT_MODIFIERS.map(
 
 const SYSTEM_PROMPT = `You are a classification assistant. Given a user's request, select the most relevant prompt modes and modifiers.
 
-AVAILABLE MODES (select 1-3 most relevant):
+AVAILABLE MODES (select 2-5 that could be relevant — be generous):
 ${MODE_LIST}
 
-AVAILABLE MODIFIERS (select 0-4 most relevant):
+AVAILABLE MODIFIERS (select 2-6 that would help — be generous):
 ${MODIFIER_LIST}
 
 Rules:
-- Pick modes that best match the user's intent
+- Be liberal — if a mode is even somewhat related, include it
+- Think broadly: a request about "building an API" should also suggest security, testing, docs, etc.
+- Always suggest at least 2 modes and 2 modifiers
 - Pick modifiers that would improve the output quality for this request
-- If the request is unclear, pick the single most likely mode
+- If the request is unclear, still pick 2-3 likely modes
 - Respond with ONLY valid JSON, no markdown fences, no explanation
 
 Response format:
