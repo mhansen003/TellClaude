@@ -76,17 +76,20 @@ const config: Config = {
         },
         "suggest-glow": {
           "0%": {
-            boxShadow: "0 0 0 rgba(var(--brand-primary-rgb), 0)",
+            boxShadow: "0 0 0 rgba(250, 204, 21, 0)",
+            backgroundColor: "rgba(250, 204, 21, 0.35)",
             transform: "scale(0.85)",
             opacity: "0",
           },
-          "30%": {
-            boxShadow: "0 0 12px rgba(var(--brand-primary-rgb), 0.6), 0 0 24px rgba(var(--brand-primary-rgb), 0.3)",
+          "25%": {
+            boxShadow: "0 0 14px rgba(250, 204, 21, 0.7), 0 0 28px rgba(250, 204, 21, 0.3)",
+            backgroundColor: "rgba(250, 204, 21, 0.25)",
             transform: "scale(1.05)",
             opacity: "1",
           },
           "100%": {
-            boxShadow: "0 0 0 rgba(var(--brand-primary-rgb), 0)",
+            boxShadow: "0 0 0 rgba(250, 204, 21, 0)",
+            backgroundColor: "rgba(var(--brand-primary-rgb), 0.15)",
             transform: "scale(1)",
             opacity: "1",
           },
