@@ -192,14 +192,19 @@ export default function Home() {
     setShowBrowserWarning(!isSupported);
   }, [isSupported]);
 
-  // Auto-suggest modes as user types (debounced)
+  // Auto-suggest modes as user types/speaks (debounced)
+  // Uses interimTranscript while speaking so tags update mid-sentence
   useEffect(() => {
     // Clear previous timer
     if (suggestTimerRef.current) clearTimeout(suggestTimerRef.current);
 
-    const trimmed = transcript.trim();
+    // Combine finalized transcript with interim speech for real-time feedback
+    const fullText = isListening && interimTranscript
+      ? (transcript + " " + interimTranscript).trim()
+      : transcript.trim();
+
     // Need at least 15 chars and modal must be closed (don't override manual picks)
-    if (trimmed.length < 15 || showModeModal) return;
+    if (fullText.length < 15 || showModeModal) return;
 
     setIsAutoSuggesting(true);
 
@@ -212,7 +217,7 @@ export default function Home() {
         const response = await fetch("/api/suggest-modes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ transcript: trimmed }),
+          body: JSON.stringify({ transcript: fullText }),
           signal: suggestAbortRef.current.signal,
         });
         const data = await response.json();
@@ -249,7 +254,7 @@ export default function Home() {
       if (suggestTimerRef.current) clearTimeout(suggestTimerRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transcript, showModeModal]);
+  }, [transcript, interimTranscript, isListening, showModeModal]);
 
   // Add to history
   const addToHistory = useCallback((transcriptText: string, promptText: string, modeIds: string) => {
