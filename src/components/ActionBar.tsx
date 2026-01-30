@@ -28,7 +28,7 @@ export default function ActionBar({
               ${
                 copied
                   ? "bg-accent-green text-white"
-                  : "bg-gradient-to-r from-claude-orange to-claude-coral text-white hover:brightness-110 hover:shadow-lg hover:shadow-claude-orange/30 active:scale-[0.99]"
+                  : "bg-gradient-to-r from-brand-primary to-brand-secondary text-white hover:brightness-110 hover:shadow-lg hover:shadow-brand-primary/30 active:scale-[0.99]"
               }
             `}
           >

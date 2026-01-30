@@ -27,8 +27,8 @@ export default function VoiceRecorder({
           transition-all duration-300 cursor-pointer group
           ${
             isListening
-              ? "bg-gradient-to-br from-claude-orange to-claude-coral mic-recording scale-110"
-              : "bg-bg-card hover:bg-bg-elevated border-2 border-claude-orange/40 hover:border-claude-orange shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:shadow-[0_0_30px_rgba(255,107,53,0.5)] animate-pulse-glow"
+              ? "bg-gradient-to-br from-brand-primary to-brand-secondary mic-recording scale-110"
+              : "bg-bg-card hover:bg-bg-elevated border-2 border-brand-primary/40 hover:border-brand-primary shadow-[0_0_20px_rgba(var(--brand-primary-rgb),0.3)] hover:shadow-[0_0_30px_rgba(var(--brand-primary-rgb),0.5)] animate-pulse-glow"
           }
         `}
         aria-label={isListening ? "Stop recording" : "Start recording"}
@@ -36,19 +36,19 @@ export default function VoiceRecorder({
       >
         {/* Outer glow ring - always visible when not listening */}
         {!isListening && (
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-claude-orange/30 to-claude-coral/30 blur-sm animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-brand-primary/30 to-brand-secondary/30 blur-sm animate-pulse" />
         )}
 
         {/* Pulse rings when recording */}
         {isListening && (
           <>
-            <span className="absolute inset-0 rounded-full bg-claude-orange/30 animate-pulse_ring" />
+            <span className="absolute inset-0 rounded-full bg-brand-primary/30 animate-pulse_ring" />
             <span
-              className="absolute inset-0 rounded-full bg-claude-orange/20 animate-pulse_ring"
+              className="absolute inset-0 rounded-full bg-brand-primary/20 animate-pulse_ring"
               style={{ animationDelay: "0.5s" }}
             />
             <span
-              className="absolute inset-0 rounded-full bg-claude-orange/10 animate-pulse_ring"
+              className="absolute inset-0 rounded-full bg-brand-primary/10 animate-pulse_ring"
               style={{ animationDelay: "1s" }}
             />
           </>
@@ -56,7 +56,7 @@ export default function VoiceRecorder({
 
         <svg
           className={`w-8 h-8 sm:w-10 sm:h-10 relative z-10 transition-all ${
-            isListening ? "text-white scale-90" : "text-text-secondary group-hover:text-claude-orange"
+            isListening ? "text-white scale-90" : "text-text-secondary group-hover:text-brand-primary"
           }`}
           fill="currentColor"
           viewBox="0 0 24 24"
@@ -74,8 +74,8 @@ export default function VoiceRecorder({
       {/* Compact label */}
       <p className="text-xs font-semibold text-text-muted">
         {isListening ? (
-          <span className="flex items-center gap-1.5 text-claude-orange">
-            <span className="w-1.5 h-1.5 bg-claude-orange rounded-full animate-pulse" />
+          <span className="flex items-center gap-1.5 text-brand-primary">
+            <span className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-pulse" />
             Listening...
           </span>
         ) : (

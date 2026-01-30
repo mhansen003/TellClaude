@@ -1,6 +1,7 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
+import { ALLOWED_MODELS } from "@/lib/llm-providers";
 
 const openrouter = createOpenAI({
   baseURL: "https://openrouter.ai/api/v1",
@@ -23,9 +24,11 @@ The prompt should be thorough and specific. Don't be afraid to expand on what th
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { transcript, modes: modesRaw, mode: legacyMode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences } = body;
+    const { transcript, modes: modesRaw, mode: legacyMode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, model: requestedModel } = body;
     // Support both new multi-select `modes` array and legacy single `mode` string
     const modes: string[] = Array.isArray(modesRaw) ? modesRaw : (legacyMode ? [legacyMode] : []);
+    // Validate and resolve model
+    const modelId = (requestedModel && ALLOWED_MODELS.includes(requestedModel)) ? requestedModel : "anthropic/claude-opus-4";
 
     // Build context for the AI
     const modeDescriptions: Record<string, string> = {
@@ -194,7 +197,7 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
     }
 
     const result = await generateText({
-      model: openrouter("anthropic/claude-opus-4"), // Using Claude Opus 4.5 for best quality
+      model: openrouter(modelId),
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userPrompt },

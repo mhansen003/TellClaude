@@ -38,7 +38,7 @@ export default function OutputFormatSelector({
                 truncate
                 ${
                   isSelected
-                    ? "bg-gradient-to-r from-claude-orange to-claude-coral text-white shadow-lg shadow-claude-orange/20"
+                    ? "bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-lg shadow-brand-primary/20"
                     : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
                 }
               `}

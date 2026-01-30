@@ -15,6 +15,7 @@ interface InterviewModalProps {
   initialTranscript: string;
   mode: string;
   existingPrompt?: string; // If provided, interview will enhance this prompt
+  model?: string; // LLM model ID to use (e.g. "anthropic/claude-opus-4")
 }
 
 export default function InterviewModal({
@@ -24,6 +25,7 @@ export default function InterviewModal({
   initialTranscript,
   mode,
   existingPrompt = "",
+  model,
 }: InterviewModalProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -92,6 +94,7 @@ export default function InterviewModal({
           transcript: initialTranscript,
           mode: mode,
           existingPrompt: existingPrompt, // Pass existing prompt for enhancement mode
+          model,
         }),
       });
 
@@ -133,6 +136,7 @@ export default function InterviewModal({
           mode: mode,
           messages: [...messages, { role: "user", content: userMessage }],
           existingPrompt: existingPrompt, // Pass existing prompt for context
+          model,
         }),
       });
 
@@ -160,7 +164,7 @@ export default function InterviewModal({
     }
 
     setIsLoading(false);
-  }, [input, isLoading, isListening, stopListening, resetTranscript, messages, initialTranscript, mode, existingPrompt]);
+  }, [input, isLoading, isListening, stopListening, resetTranscript, messages, initialTranscript, mode, existingPrompt, model]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -180,6 +184,7 @@ export default function InterviewModal({
   };
 
   const handleUsePrompt = () => {
+    navigator.clipboard.writeText(finalPrompt).catch(() => {});
     onComplete(finalPrompt);
     handleClose();
   };
@@ -204,6 +209,7 @@ export default function InterviewModal({
           mode: mode,
           messages: messages,
           existingPrompt: existingPrompt, // Pass existing prompt for merging
+          model,
         }),
       });
 
@@ -225,7 +231,7 @@ export default function InterviewModal({
     }
 
     setIsLoading(false);
-  }, [isLoading, isListening, stopListening, initialTranscript, mode, messages, existingPrompt]);
+  }, [isLoading, isListening, stopListening, initialTranscript, mode, messages, existingPrompt, model]);
 
   const handleClose = () => {
     if (isListening) {
@@ -250,11 +256,11 @@ export default function InterviewModal({
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl bg-bg-secondary border-2 border-claude-orange/30 rounded-2xl shadow-2xl shadow-claude-orange/10 overflow-hidden animate-fade_in">
+      <div className="relative w-full max-w-2xl bg-bg-secondary border-2 border-brand-primary/30 rounded-2xl shadow-2xl shadow-brand-primary/10 overflow-hidden animate-fade_in">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
@@ -284,7 +290,7 @@ export default function InterviewModal({
               <div
                 className={`max-w-[80%] px-4 py-3 rounded-2xl ${
                   message.role === "user"
-                    ? "bg-claude-orange text-white rounded-br-sm"
+                    ? "bg-brand-primary text-white rounded-br-sm"
                     : "bg-bg-card border border-border-subtle text-text-primary rounded-bl-sm"
                 }`}
               >
@@ -297,9 +303,9 @@ export default function InterviewModal({
             <div className="flex justify-start">
               <div className="bg-bg-card border border-border-subtle rounded-2xl rounded-bl-sm px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-claude-orange rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <div className="w-2 h-2 bg-claude-orange rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <div className="w-2 h-2 bg-claude-orange rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  <div className="w-2 h-2 bg-brand-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <div className="w-2 h-2 bg-brand-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <div className="w-2 h-2 bg-brand-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                 </div>
               </div>
             </div>
@@ -325,7 +331,7 @@ export default function InterviewModal({
         {/* Interim transcript while recording */}
         {isListening && interimTranscript && (
           <div className="px-4 pb-2">
-            <div className="p-3 rounded-xl bg-claude-glow border border-claude-orange/30">
+            <div className="p-3 rounded-xl bg-brand-glow border border-brand-primary/30">
               <p className="text-sm text-text-secondary italic typing-cursor">{interimTranscript}</p>
             </div>
           </div>
@@ -337,7 +343,7 @@ export default function InterviewModal({
             <div className="flex gap-3">
               <button
                 onClick={handleUsePrompt}
-                className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm hover:brightness-110 transition-all"
+                className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm hover:brightness-110 transition-all"
               >
                 Use This Prompt
               </button>
@@ -360,8 +366,8 @@ export default function InterviewModal({
                     relative p-3 rounded-xl transition-all duration-200 flex-shrink-0
                     ${
                       isListening
-                        ? "bg-claude-orange text-white mic-recording"
-                        : "bg-bg-card border-2 border-border-subtle text-text-secondary hover:border-claude-orange/50 hover:text-claude-orange"
+                        ? "bg-brand-primary text-white mic-recording"
+                        : "bg-bg-card border-2 border-border-subtle text-text-secondary hover:border-brand-primary/50 hover:text-brand-primary"
                     }
                     disabled:opacity-50 disabled:cursor-not-allowed
                   `}
@@ -370,8 +376,8 @@ export default function InterviewModal({
                   {/* Pulse rings when recording */}
                   {isListening && (
                     <>
-                      <span className="absolute inset-0 rounded-xl bg-claude-orange/30 animate-pulse_ring" />
-                      <span className="absolute inset-0 rounded-xl bg-claude-orange/20 animate-pulse_ring" style={{ animationDelay: "0.5s" }} />
+                      <span className="absolute inset-0 rounded-xl bg-brand-primary/30 animate-pulse_ring" />
+                      <span className="absolute inset-0 rounded-xl bg-brand-primary/20 animate-pulse_ring" style={{ animationDelay: "0.5s" }} />
                     </>
                   )}
                   <svg
@@ -400,7 +406,7 @@ export default function InterviewModal({
                 disabled={isLoading}
                 className={`
                   flex-1 px-4 py-3 rounded-xl bg-bg-card border-2 text-text-primary placeholder:text-text-muted text-sm focus:outline-none transition-all disabled:opacity-50
-                  ${isListening ? "border-claude-orange/50 bg-claude-glow" : "border-border-subtle focus:border-claude-orange/50"}
+                  ${isListening ? "border-brand-primary/50 bg-brand-glow" : "border-border-subtle focus:border-brand-primary/50"}
                 `}
               />
 
@@ -408,7 +414,7 @@ export default function InterviewModal({
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || isLoading}
-                className="px-5 py-3 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-semibold text-sm hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                className="px-5 py-3 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold text-sm hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -440,8 +446,8 @@ export default function InterviewModal({
 
           {/* Recording indicator */}
           {isListening && (
-            <div className="flex items-center justify-center gap-2 mt-3 text-claude-orange text-xs font-semibold">
-              <span className="w-2 h-2 bg-claude-orange rounded-full animate-pulse" />
+            <div className="flex items-center justify-center gap-2 mt-3 text-brand-primary text-xs font-semibold">
+              <span className="w-2 h-2 bg-brand-primary rounded-full animate-pulse" />
               Recording... speak your answer
             </div>
           )}

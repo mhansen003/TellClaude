@@ -36,7 +36,7 @@ export default function ModifierCheckboxes({
           <span className="w-1.5 h-1.5 rounded-full bg-accent-purple" />
           Prompt Modifiers
           {selected.length > 0 && (
-            <span className="px-2 py-0.5 rounded-full bg-claude-orange/20 text-claude-orange text-xs font-semibold">
+            <span className="px-2 py-0.5 rounded-full bg-brand-primary/20 text-brand-primary text-xs font-semibold">
               {selected.length}
             </span>
           )}
@@ -58,7 +58,7 @@ export default function ModifierCheckboxes({
           {selectedModifiers.map((modifier) => (
             <span
               key={modifier.id}
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-claude-orange/10 text-claude-orange text-xs font-medium"
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-brand-primary/10 text-brand-primary text-xs font-medium"
             >
               {modifier.label}
               <button
@@ -90,8 +90,8 @@ export default function ModifierCheckboxes({
                   border group
                   ${
                     isChecked
-                      ? "bg-claude-glow border-claude-orange/50"
-                      : "bg-bg-elevated/50 border-border-subtle hover:border-claude-orange/30"
+                      ? "bg-brand-glow border-brand-primary/50"
+                      : "bg-bg-elevated/50 border-border-subtle hover:border-brand-primary/30"
                   }
                 `}
               >
@@ -99,11 +99,11 @@ export default function ModifierCheckboxes({
                   type="checkbox"
                   checked={isChecked}
                   onChange={() => toggleModifier(modifier.id)}
-                  className="checkbox-claude flex-shrink-0"
+                  className="checkbox-brand flex-shrink-0"
                 />
                 <span
                   className={`text-xs font-medium truncate ${
-                    isChecked ? "text-claude-orange" : "text-text-secondary"
+                    isChecked ? "text-brand-primary" : "text-text-secondary"
                   }`}
                   title={modifier.description}
                 >

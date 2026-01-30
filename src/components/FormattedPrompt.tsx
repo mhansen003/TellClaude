@@ -56,10 +56,10 @@ export default function FormattedPrompt({ content }: FormattedPromptProps) {
         <div key={`code-${blockIndex}`} className="my-3 rounded-xl overflow-hidden border border-border-subtle">
           {/* Language badge */}
           <div className="bg-bg-elevated px-3 py-1.5 border-b border-border-subtle flex items-center gap-2">
-            <span className="text-xs font-mono text-claude-orange font-semibold uppercase">{language}</span>
+            <span className="text-xs font-mono text-brand-primary font-semibold uppercase">{language}</span>
             <div className="flex gap-1 ml-auto">
               <span className="w-2.5 h-2.5 rounded-full bg-accent-rose/60"></span>
-              <span className="w-2.5 h-2.5 rounded-full bg-claude-amber/60"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-brand-accent/60"></span>
               <span className="w-2.5 h-2.5 rounded-full bg-accent-green/60"></span>
             </div>
           </div>
@@ -116,7 +116,7 @@ export default function FormattedPrompt({ content }: FormattedPromptProps) {
           <ul key={`${keyPrefix}-list-${listKey++}`} className="list-none space-y-1 my-2 ml-4">
             {currentList.map((item, i) => (
               <li key={i} className="flex items-start gap-2 text-text-secondary">
-                <span className="text-claude-orange mt-0.5">•</span>
+                <span className="text-brand-primary mt-0.5">•</span>
                 <span>{renderInlineFormatting(item)}</span>
               </li>
             ))}
@@ -141,8 +141,8 @@ export default function FormattedPrompt({ content }: FormattedPromptProps) {
         flushList();
         const headingText = trimmedLine.slice(3);
         elements.push(
-          <h3 key={`${keyPrefix}-${index}`} className="text-sm font-bold text-claude-orange mt-4 mb-2 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-claude-orange" />
+          <h3 key={`${keyPrefix}-${index}`} className="text-sm font-bold text-brand-primary mt-4 mb-2 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
             {headingText}
           </h3>
         );
@@ -174,7 +174,7 @@ export default function FormattedPrompt({ content }: FormattedPromptProps) {
         if (match) {
           elements.push(
             <div key={`${keyPrefix}-${index}`} className="flex items-start gap-2 my-1 ml-2">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-claude-orange/20 text-claude-orange text-xs font-bold flex items-center justify-center">
+              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand-primary/20 text-brand-primary text-xs font-bold flex items-center justify-center">
                 {match[1]}
               </span>
               <span className="text-text-secondary">{renderInlineFormatting(match[2])}</span>

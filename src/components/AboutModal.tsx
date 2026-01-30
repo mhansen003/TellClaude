@@ -17,11 +17,11 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] bg-bg-secondary border-2 border-claude-orange/30 rounded-2xl shadow-2xl shadow-claude-orange/10 overflow-hidden animate-fade_in flex flex-col">
+      <div className="relative w-full max-w-2xl max-h-[90vh] bg-bg-secondary border-2 border-brand-primary/30 rounded-2xl shadow-2xl shadow-brand-primary/10 overflow-hidden animate-fade_in flex flex-col">
         {/* Header */}
-        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
+        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -44,8 +44,8 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         {/* Content */}
         <div className="p-6 overflow-y-auto flex-1 min-h-0 space-y-6">
           {/* Overview */}
-          <div className="p-4 rounded-xl bg-claude-glow border border-claude-orange/20">
-            <h3 className="text-sm font-bold text-claude-orange mb-2 flex items-center gap-2">
+          <div className="p-4 rounded-xl bg-brand-glow border border-brand-primary/20">
+            <h3 className="text-sm font-bold text-brand-primary mb-2 flex items-center gap-2">
               <span>✨</span> What is TellClaude?
             </h3>
             <p className="text-sm text-text-secondary leading-relaxed">
@@ -57,13 +57,13 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           {/* Steps */}
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-claude-orange/20 text-claude-orange flex items-center justify-center text-xs font-bold">?</span>
+              <span className="w-6 h-6 rounded-full bg-brand-primary/20 text-brand-primary flex items-center justify-center text-xs font-bold">?</span>
               Step-by-Step Guide
             </h3>
 
             {/* Step 1 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center text-white font-bold text-sm">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white font-bold text-sm">
                 1
               </div>
               <div className="flex-1">
@@ -77,7 +77,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
 
             {/* Step 2 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center text-white font-bold text-sm">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white font-bold text-sm">
                 2
               </div>
               <div className="flex-1">
@@ -91,7 +91,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
 
             {/* Step 3 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center text-white font-bold text-sm">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white font-bold text-sm">
                 3
               </div>
               <div className="flex-1">
@@ -105,7 +105,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
 
             {/* Step 4 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center text-white font-bold text-sm">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white font-bold text-sm">
                 4
               </div>
               <div className="flex-1">
@@ -135,7 +135,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           {/* Tips */}
           <div className="p-4 rounded-xl bg-bg-card border border-border-subtle">
             <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
-              <span className="text-claude-orange">💡</span> Pro Tips
+              <span className="text-brand-primary">💡</span> Pro Tips
             </h3>
             <ul className="text-xs text-text-muted space-y-2">
               <li className="flex items-start gap-2">
@@ -160,7 +160,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           {/* Footer */}
           <div className="text-center pt-2">
             <p className="text-xs text-text-muted">
-              Powered by <span className="text-claude-orange font-semibold">Claude Opus 4.5</span> via OpenRouter
+              Powered by <span className="text-brand-primary font-semibold">Claude Opus 4.5</span> via OpenRouter
             </p>
           </div>
         </div>
@@ -169,7 +169,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         <div className="flex-shrink-0 p-4 border-t border-border-subtle bg-bg-card/50">
           <button
             onClick={onClose}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-bold text-sm hover:brightness-110 transition-all"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm hover:brightness-110 transition-all"
           >
             Got it, let&apos;s go!
           </button>

@@ -7,7 +7,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Code",
     description: "Write or modify code",
     icon: "{ }",
-    color: "bg-claude-orange",
+    color: "bg-brand-primary",
     category: "engineering",
   },
   {
@@ -87,7 +87,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Technical",
     description: "Deep technical explanations",
     icon: "⚙️",
-    color: "bg-claude-deep",
+    color: "bg-brand-deep",
     category: "engineering",
   },
   {
@@ -103,7 +103,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Skill",
     description: "Create a Claude Code slash command",
     icon: "⚡",
-    color: "bg-claude-orange",
+    color: "bg-brand-primary",
     category: "engineering",
   },
   {
@@ -127,7 +127,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "CLI Tool",
     description: "Build command-line interfaces",
     icon: "▶︎",
-    color: "bg-claude-deep",
+    color: "bg-brand-deep",
     category: "engineering",
   },
   {
@@ -167,7 +167,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Encryption",
     description: "Data encryption and key management",
     icon: "🔐",
-    color: "bg-claude-deep",
+    color: "bg-brand-deep",
     category: "engineering",
   },
   {
@@ -208,7 +208,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Vendor Compare",
     description: "Compare vendors or products",
     icon: "⚖️",
-    color: "bg-claude-orange",
+    color: "bg-brand-primary",
     category: "business",
   },
   {
@@ -248,7 +248,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "User Story",
     description: "Write stories with acceptance criteria",
     icon: "📋",
-    color: "bg-claude-orange",
+    color: "bg-brand-primary",
     category: "business",
   },
   {
@@ -296,7 +296,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Runbook",
     description: "Operational procedures",
     icon: "📖",
-    color: "bg-claude-deep",
+    color: "bg-brand-deep",
     category: "business",
   },
   {
@@ -329,7 +329,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Ad Copy",
     description: "Write advertising headlines and copy",
     icon: "📢",
-    color: "bg-claude-orange",
+    color: "bg-brand-primary",
     category: "marketing",
   },
   {
@@ -369,7 +369,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "AI Avatar",
     description: "Scripts for AI talking-head videos",
     icon: "🤖",
-    color: "bg-claude-deep",
+    color: "bg-brand-deep",
     category: "marketing",
   },
   {
@@ -401,7 +401,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Case Study",
     description: "Write customer success stories",
     icon: "🏆",
-    color: "bg-claude-orange",
+    color: "bg-brand-primary",
     category: "marketing",
   },
   {
@@ -442,7 +442,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Market Research",
     description: "Market size, segments, and trends",
     icon: "📊",
-    color: "bg-claude-orange",
+    color: "bg-brand-primary",
     category: "research",
   },
   {
@@ -474,7 +474,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "Benchmarking",
     description: "Compare against industry standards",
     icon: "📏",
-    color: "bg-claude-deep",
+    color: "bg-brand-deep",
     category: "research",
   },
   {
@@ -506,7 +506,7 @@ export const PROMPT_MODE_OPTIONS: PromptModeOption[] = [
     label: "SWOT",
     description: "Strengths, weaknesses, opportunities, threats",
     icon: "🎯",
-    color: "bg-claude-orange",
+    color: "bg-brand-primary",
     category: "research",
   },
   {

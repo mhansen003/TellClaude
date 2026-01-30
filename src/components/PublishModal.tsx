@@ -69,7 +69,7 @@ export default function PublishModal({ isOpen, onClose, shareUrl }: PublishModal
                 className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                   copied
                     ? "bg-accent-green text-white"
-                    : "bg-gradient-to-r from-claude-orange to-claude-coral text-white hover:brightness-110"
+                    : "bg-gradient-to-r from-brand-primary to-brand-secondary text-white hover:brightness-110"
                 }`}
               >
                 {copied ? "Copied!" : "Copy"}

@@ -110,10 +110,10 @@ export default function Tooltip({
           className="fixed z-[200] pointer-events-none animate-fade_in"
           style={{ left: coords.x, top: coords.y }}
         >
-          <div className="relative px-3 py-2 rounded-lg bg-bg-elevated border border-claude-orange/30 shadow-xl shadow-black/20 max-w-xs">
+          <div className="relative px-3 py-2 rounded-lg bg-bg-elevated border border-brand-primary/30 shadow-xl shadow-black/20 max-w-xs">
             {/* Arrow */}
             <div
-              className={`absolute w-2 h-2 bg-bg-elevated border-claude-orange/30 transform rotate-45 ${
+              className={`absolute w-2 h-2 bg-bg-elevated border-brand-primary/30 transform rotate-45 ${
                 position === "top"
                   ? "bottom-[-5px] left-1/2 -translate-x-1/2 border-r border-b"
                   : position === "bottom"
@@ -142,7 +142,7 @@ export function TooltipIcon({ content, position = "top" }: TooltipIconProps) {
     <Tooltip content={content} position={position}>
       <button
         type="button"
-        className="w-4 h-4 rounded-full bg-bg-elevated border border-border-subtle flex items-center justify-center text-text-muted hover:text-claude-orange hover:border-claude-orange/50 transition-colors cursor-help"
+        className="w-4 h-4 rounded-full bg-bg-elevated border border-border-subtle flex items-center justify-center text-text-muted hover:text-brand-primary hover:border-brand-primary/50 transition-colors cursor-help"
         onClick={(e) => e.preventDefault()}
       >
         <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>

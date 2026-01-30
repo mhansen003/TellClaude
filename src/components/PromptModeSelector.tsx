@@ -63,7 +63,7 @@ export default function PromptModeSelector({
       {/* Category Tabs */}
       <div className="flex items-center gap-2 mb-3">
         <label className="text-sm font-semibold text-text-secondary flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-claude-coral" />
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-secondary" />
           Modes
         </label>
         {hasSelections && (
@@ -86,15 +86,15 @@ export default function PromptModeSelector({
                 onClick={() => setActiveCategory(cat.id)}
                 className={`relative px-2.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
                   isActive
-                    ? "bg-claude-orange text-white"
+                    ? "bg-brand-primary text-white"
                     : count > 0
-                      ? "text-claude-orange bg-claude-orange/5"
+                      ? "text-brand-primary bg-brand-primary/5"
                       : "text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {cat.label}
                 {count > 0 && !isActive && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-claude-orange text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-brand-primary text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
                     {count}
                   </span>
                 )}
@@ -120,19 +120,19 @@ export default function PromptModeSelector({
                 border cursor-pointer group min-w-0
                 ${
                   isSelected
-                    ? "bg-claude-glow border-claude-orange text-text-primary"
-                    : "bg-bg-card border-border-subtle hover:border-claude-orange/30 text-text-secondary hover:text-text-primary"
+                    ? "bg-brand-glow border-brand-primary text-text-primary"
+                    : "bg-bg-card border-border-subtle hover:border-brand-primary/30 text-text-secondary hover:text-text-primary"
                 }
               `}
             >
               <div className="flex items-center gap-1 min-w-0">
                 <span className="text-sm flex-shrink-0">{mode.icon}</span>
-                <span className={`text-xs font-semibold truncate ${isSelected ? "text-claude-orange" : ""}`}>
+                <span className={`text-xs font-semibold truncate ${isSelected ? "text-brand-primary" : ""}`}>
                   {mode.label}
                 </span>
               </div>
               {isSelected && (
-                <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-claude-orange" />
+                <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-brand-primary" />
               )}
             </button>
           );
@@ -144,7 +144,7 @@ export default function PromptModeSelector({
         <div className="mt-3 pt-3 border-t border-border-subtle">
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wide">Active Modes</span>
-            <span className="px-1.5 py-0.5 rounded bg-claude-orange/20 text-claude-orange text-[10px] font-bold">
+            <span className="px-1.5 py-0.5 rounded bg-brand-primary/20 text-brand-primary text-[10px] font-bold">
               {selectedOptions.length}
             </span>
           </div>
@@ -157,16 +157,16 @@ export default function PromptModeSelector({
               return (
                 <span
                   key={mode.id}
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-claude-orange/10 border border-claude-orange/20 text-xs font-medium text-claude-orange"
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-brand-primary/10 border border-brand-primary/20 text-xs font-medium text-brand-primary"
                 >
                   <span className="text-xs">{mode.icon}</span>
                   <span className="truncate max-w-[120px]">{mode.label}</span>
-                  <span className="text-[9px] text-claude-orange/50 hidden sm:inline">
+                  <span className="text-[9px] text-brand-primary/50 hidden sm:inline">
                     {catLabel}
                   </span>
                   <button
                     onClick={() => handleRemoveTag(mode.id)}
-                    className="ml-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center hover:bg-claude-orange/20 text-claude-orange/50 hover:text-claude-orange transition-colors cursor-pointer flex-shrink-0"
+                    className="ml-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center hover:bg-brand-primary/20 text-brand-primary/50 hover:text-brand-primary transition-colors cursor-pointer flex-shrink-0"
                     aria-label={`Remove ${mode.label}`}
                   >
                     <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>

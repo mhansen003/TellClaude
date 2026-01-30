@@ -17,7 +17,7 @@ export default function StepBadge({ step, label, isActive = false, isComplete = 
           ${isComplete
             ? "bg-accent-green text-white"
             : isActive
-              ? "bg-claude-orange text-white ring-2 ring-claude-orange/30 ring-offset-2 ring-offset-bg-card"
+              ? "bg-brand-primary text-white ring-2 ring-brand-primary/30 ring-offset-2 ring-offset-bg-card"
               : "bg-bg-elevated text-text-muted border border-border-subtle"
           }
         `}
@@ -32,7 +32,7 @@ export default function StepBadge({ step, label, isActive = false, isComplete = 
       </div>
       <span
         className={`text-sm font-semibold transition-colors ${
-          isActive ? "text-claude-orange" : isComplete ? "text-accent-green" : "text-text-secondary"
+          isActive ? "text-brand-primary" : isComplete ? "text-accent-green" : "text-text-secondary"
         }`}
       >
         {label}
@@ -44,7 +44,7 @@ export default function StepBadge({ step, label, isActive = false, isComplete = 
 // A lightweight version for inline use that just shows the step number
 export function StepNumber({ step }: { step: number }) {
   return (
-    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-claude-orange to-claude-coral text-white text-xs font-bold mr-2">
+    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary text-white text-xs font-bold mr-2">
       {step}
     </span>
   );

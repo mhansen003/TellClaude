@@ -26,7 +26,7 @@ export default function ContextInput({ value, onChange }: ContextInputProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="e.g., React project, TypeScript, specific library..."
-        className="w-full px-4 py-3 rounded-xl bg-bg-card border-2 border-border-subtle focus:border-claude-orange/50 text-text-primary placeholder:text-text-muted text-sm focus:outline-none transition-all"
+        className="w-full px-4 py-3 rounded-xl bg-bg-card border-2 border-border-subtle focus:border-brand-primary/50 text-text-primary placeholder:text-text-muted text-sm focus:outline-none transition-all"
       />
     </div>
   );

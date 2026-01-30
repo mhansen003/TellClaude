@@ -56,8 +56,8 @@ export default function SharedPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="relative w-16 h-16">
-          <div className="absolute inset-0 rounded-full border-4 border-claude-orange/20" />
-          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-claude-orange animate-spin" />
+          <div className="absolute inset-0 rounded-full border-4 border-brand-primary/20" />
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-brand-primary animate-spin" />
         </div>
       </div>
     );
@@ -78,7 +78,7 @@ export default function SharedPage() {
           </p>
           <a
             href="/"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-claude-orange to-claude-coral text-white font-semibold text-sm transition-all hover:brightness-110"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold text-sm transition-all hover:brightness-110"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -96,12 +96,12 @@ export default function SharedPage() {
       <header className="border-b border-border-subtle bg-bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <span className="text-sm font-bold text-text-primary group-hover:text-claude-orange transition-colors">
+            <span className="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors">
               TellClaude
             </span>
           </a>
@@ -111,14 +111,14 @@ export default function SharedPage() {
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 copied
                   ? "bg-accent-green text-white"
-                  : "bg-bg-elevated text-text-secondary hover:text-claude-orange border border-border-subtle"
+                  : "bg-bg-elevated text-text-secondary hover:text-brand-primary border border-border-subtle"
               }`}
             >
               {copied ? "Link Copied!" : "Copy Link"}
             </button>
             <a
               href="/"
-              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-claude-orange to-claude-coral text-white text-xs font-semibold transition-all hover:brightness-110"
+              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-brand-primary to-brand-secondary text-white text-xs font-semibold transition-all hover:brightness-110"
             >
               Create Your Own
             </a>
@@ -137,7 +137,7 @@ export default function SharedPage() {
                   Shared Prompt
                 </span>
                 {data.modes && (
-                  <span className="px-2.5 py-0.5 rounded-full bg-claude-orange/20 text-claude-orange text-xs font-semibold capitalize">
+                  <span className="px-2.5 py-0.5 rounded-full bg-brand-primary/20 text-brand-primary text-xs font-semibold capitalize">
                     {data.modes.split(",").join(" + ")}
                   </span>
                 )}
@@ -151,7 +151,7 @@ export default function SharedPage() {
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                 promptCopied
                   ? "bg-accent-green text-white"
-                  : "bg-gradient-to-r from-claude-orange to-claude-coral text-white hover:brightness-110"
+                  : "bg-gradient-to-r from-brand-primary to-brand-secondary text-white hover:brightness-110"
               }`}
             >
               {promptCopied ? "Copied!" : "Copy Prompt"}
@@ -171,9 +171,9 @@ export default function SharedPage() {
 
         {/* Prompt Output */}
         <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden">
-          <div className="px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-claude-orange/10 to-transparent">
+          <div className="px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-claude-orange to-claude-coral flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>

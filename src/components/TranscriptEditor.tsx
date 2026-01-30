@@ -156,7 +156,7 @@ export default function TranscriptEditor({
         {/* Label */}
         <div className="flex items-center justify-between mb-2">
           <label className="text-sm font-semibold text-text-secondary flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-claude-orange" />
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
             Your Message
             <span className="flex items-center gap-1 text-xs text-text-muted font-normal ml-1 px-1.5 py-0.5 rounded bg-bg-elevated/50">
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -202,8 +202,8 @@ export default function TranscriptEditor({
               ${isDragging
                 ? "border-accent-purple border-dashed bg-accent-purple/5"
                 : isListening
-                  ? "border-claude-orange/50 bg-claude-glow"
-                  : "border-border-subtle hover:border-claude-orange/30 focus:border-claude-orange/50"
+                  ? "border-brand-primary/50 bg-brand-glow"
+                  : "border-border-subtle hover:border-brand-primary/30 focus:border-brand-primary/50"
               }
             `}
           />
@@ -230,7 +230,7 @@ export default function TranscriptEditor({
                 className={`p-1.5 rounded-lg transition-colors ${
                   copied
                     ? "bg-accent-green/20 text-accent-green"
-                    : "bg-bg-elevated/80 text-text-muted hover:text-claude-orange hover:bg-claude-orange/10"
+                    : "bg-bg-elevated/80 text-text-muted hover:text-brand-primary hover:bg-brand-primary/10"
                 }`}
                 title={copied ? "Copied!" : "Copy message"}
               >
@@ -304,7 +304,7 @@ export default function TranscriptEditor({
 
         {/* Recording indicator */}
         {isListening && (
-          <div className="absolute -top-1 -right-1 flex items-center gap-1.5 px-2 py-1 rounded-full bg-claude-orange text-white text-xs font-semibold">
+          <div className="absolute -top-1 -right-1 flex items-center gap-1.5 px-2 py-1 rounded-full bg-brand-primary text-white text-xs font-semibold">
             <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
             Recording
           </div>

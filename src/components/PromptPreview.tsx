@@ -24,10 +24,10 @@ export default function PromptPreview({ prompt, isVisible }: PromptPreviewProps)
 
         {/* Prompt display */}
         <div className="relative group">
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-claude-orange/20 to-claude-coral/10 blur-xl opacity-50" />
-          <div className="relative bg-bg-card border-2 border-claude-orange/30 rounded-xl p-5 overflow-hidden">
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-primary/20 to-brand-secondary/10 blur-xl opacity-50" />
+          <div className="relative bg-bg-card border-2 border-brand-primary/30 rounded-xl p-5 overflow-hidden">
             {/* Decorative corner */}
-            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-claude-orange/10 to-transparent" />
+            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-brand-primary/10 to-transparent" />
 
             {/* Content */}
             <pre className="prompt-output text-sm text-text-primary whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto">

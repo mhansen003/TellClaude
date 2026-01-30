@@ -10,7 +10,7 @@ export default function Header({ onAboutClick }: HeaderProps) {
       <div className="max-w-7xl mx-auto flex items-center gap-4">
         {/* Logo + Title */}
         <div className="flex items-center gap-3 flex-shrink-0">
-          <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-gradient-to-br from-claude-orange via-claude-coral to-claude-amber flex items-center justify-center shadow-lg shadow-claude-orange/30 animate-float claude-logo">
+          <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-accent flex items-center justify-center shadow-lg shadow-brand-primary/30 animate-float brand-logo">
             <svg
               className="w-5 h-5 md:w-6 md:h-6 text-white"
               fill="none"
@@ -26,7 +26,7 @@ export default function Header({ onAboutClick }: HeaderProps) {
             </svg>
           </div>
           <div className="text-left">
-            <h1 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-claude-orange via-claude-coral to-claude-amber bg-clip-text text-transparent leading-tight">
+            <h1 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-accent bg-clip-text text-transparent leading-tight">
               TellClaude
             </h1>
             <p className="text-text-muted text-[10px] md:text-xs font-medium tracking-wide uppercase">
@@ -38,7 +38,7 @@ export default function Header({ onAboutClick }: HeaderProps) {
         {/* Description - inline, hidden on small screens */}
         <p className="hidden md:block text-text-secondary text-sm leading-snug flex-1">
           Speak your thoughts. Transform them into a perfectly structured prompt for{" "}
-          <span className="text-claude-orange font-semibold">Claude Code</span>.
+          <span className="text-brand-primary font-semibold">Claude Code</span>.
         </p>
 
         {/* Version & About */}
@@ -46,7 +46,7 @@ export default function Header({ onAboutClick }: HeaderProps) {
           <span className="text-xs text-text-muted font-mono">v1.0.1</span>
           <button
             onClick={onAboutClick}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-card/80 border border-border-subtle text-text-muted hover:text-claude-orange hover:border-claude-orange/30 transition-all text-sm font-medium"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-card/80 border border-border-subtle text-text-muted hover:text-brand-primary hover:border-brand-primary/30 transition-all text-sm font-medium"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
