@@ -18,7 +18,10 @@ import InterviewModal from "@/components/InterviewModal";
 import AboutModal from "@/components/AboutModal";
 import FormattedPrompt from "@/components/FormattedPrompt";
 import PromptHistory, { HistoryItem } from "@/components/PromptHistory";
+import PublishModal from "@/components/PublishModal";
+import PublishedHistory from "@/components/PublishedHistory";
 import { TooltipIcon } from "@/components/Tooltip";
+import { PublishedItem, buildShareUrl, loadPublished, savePublished } from "@/lib/share";
 
 const HISTORY_STORAGE_KEY = "tellclaude-history";
 const SETTINGS_STORAGE_KEY = "tellclaude-settings";
@@ -55,6 +58,12 @@ export default function Home() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
+
+  // Published prompts
+  const [published, setPublished] = useState<PublishedItem[]>([]);
+  const [publishedOpen, setPublishedOpen] = useState(false);
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [publishUrl, setPublishUrl] = useState("");
 
   // Interview modal
   const [showInterview, setShowInterview] = useState(false);
@@ -97,6 +106,16 @@ export default function Home() {
       console.error("Failed to save history:", error);
     }
   }, [history]);
+
+  // Load published from localStorage
+  useEffect(() => {
+    setPublished(loadPublished());
+  }, []);
+
+  // Save published to localStorage
+  useEffect(() => {
+    savePublished(published);
+  }, [published]);
 
   // Load saved settings from localStorage
   useEffect(() => {
@@ -281,6 +300,40 @@ export default function Home() {
     setTranscript("");
     resetTranscript();
   }, [resetTranscript]);
+
+  // Publish prompt
+  const handlePublish = useCallback(() => {
+    if (!generatedPrompt) return;
+    const url = buildShareUrl({
+      transcript: transcript.trim(),
+      prompt: generatedPrompt,
+      modes: modes.join(","),
+      timestamp: Date.now(),
+    });
+    const newItem: PublishedItem = {
+      id: Date.now().toString(),
+      timestamp: Date.now(),
+      transcript: transcript.trim(),
+      prompt: generatedPrompt,
+      modes: modes.join(","),
+      url,
+    };
+    setPublished((prev) => [newItem, ...prev.slice(0, 49)]);
+    setPublishUrl(url);
+    setShowPublishModal(true);
+    setToast("Prompt published!");
+    setTimeout(() => setToast(null), 3000);
+  }, [generatedPrompt, transcript, modes]);
+
+  // Delete published item
+  const handlePublishedDelete = useCallback((id: string) => {
+    setPublished((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
+  // Clear all published
+  const handlePublishedClear = useCallback(() => {
+    setPublished([]);
+  }, []);
 
   // Reset everything
   const handleReset = useCallback(() => {
@@ -632,6 +685,16 @@ export default function Home() {
                       {generatedPrompt && (
                         <div className="flex gap-2">
                           <button
+                            onClick={handlePublish}
+                            className="px-3 py-1.5 rounded-lg bg-accent-green/20 text-accent-green hover:bg-accent-green hover:text-white text-xs font-semibold transition-all flex items-center gap-1"
+                            title="Publish & get shareable link"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                            Publish
+                          </button>
+                          <button
                             onClick={() => setIsEditingOutput(!isEditingOutput)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                               isEditingOutput
@@ -738,6 +801,22 @@ export default function Home() {
         initialTranscript={transcript}
         mode={modes.join(",")}
         existingPrompt={generatedPrompt}
+      />
+
+      {/* Published History Sidebar - Right side */}
+      <PublishedHistory
+        items={published}
+        onDelete={handlePublishedDelete}
+        onClear={handlePublishedClear}
+        isOpen={publishedOpen}
+        onToggle={() => setPublishedOpen(!publishedOpen)}
+      />
+
+      {/* Publish Modal */}
+      <PublishModal
+        isOpen={showPublishModal}
+        onClose={() => setShowPublishModal(false)}
+        shareUrl={publishUrl}
       />
 
       {/* About Modal */}
