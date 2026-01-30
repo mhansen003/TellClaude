@@ -704,6 +704,16 @@ export default function Home() {
                             Publish
                           </button>
                           <button
+                            onClick={() => setShowInterview(true)}
+                            className="px-3 py-1.5 rounded-lg bg-bg-elevated text-text-secondary hover:text-claude-orange text-xs font-semibold transition-all flex items-center gap-1"
+                            title="Refine your prompt through AI conversation"
+                          >
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            Revise
+                          </button>
+                          <button
                             onClick={() => setIsEditingOutput(!isEditingOutput)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                               isEditingOutput
