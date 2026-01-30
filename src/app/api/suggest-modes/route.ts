@@ -8,33 +8,20 @@ const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY || "",
 });
 
-// Build the classification reference lists from constants (always in sync)
+// Compact format: "id (category)" — minimal tokens for fast classification
 const MODE_LIST = PROMPT_MODE_OPTIONS.map(
-  (m) => `${m.id}: ${m.description} [${m.category}]`
-).join("\n");
+  (m) => `${m.id} (${m.category})`
+).join(", ");
 
-const MODIFIER_LIST = PROMPT_MODIFIERS.map(
-  (m) => `${m.id}: ${m.description}`
-).join("\n");
+const MODIFIER_LIST = PROMPT_MODIFIERS.map((m) => m.id).join(", ");
 
-const SYSTEM_PROMPT = `You are a classification assistant. Given a user's request, select the most relevant prompt modes and modifiers.
+const SYSTEM_PROMPT = `Classify user request into modes and modifiers. Return JSON only.
 
-AVAILABLE MODES (select 2-5 that could be relevant — be generous):
-${MODE_LIST}
+MODES (pick 2-5): ${MODE_LIST}
 
-AVAILABLE MODIFIERS (select 2-6 that would help — be generous):
-${MODIFIER_LIST}
+MODIFIERS (pick 2-6): ${MODIFIER_LIST}
 
-Rules:
-- Be liberal — if a mode is even somewhat related, include it
-- Think broadly: a request about "building an API" should also suggest security, testing, docs, etc.
-- Always suggest at least 2 modes and 2 modifiers
-- Pick modifiers that would improve the output quality for this request
-- If the request is unclear, still pick 2-3 likely modes
-- Respond with ONLY valid JSON, no markdown fences, no explanation
-
-Response format:
-{"modes":["mode-id-1","mode-id-2"],"modifiers":["modifier-id-1"]}`;
+Be generous. Think broadly. {"modes":[...],"modifiers":[...]}`;
 
 // Valid ID sets for server-side filtering
 const VALID_MODE_IDS = new Set<string>(PROMPT_MODE_OPTIONS.map((m) => m.id));
@@ -55,7 +42,7 @@ export async function POST(request: Request) {
     const result = await generateText({
       model: openrouter("google/gemini-2.0-flash-lite-001"),
       temperature: 0.2,
-      maxTokens: 300,
+      maxTokens: 150,
       system: SYSTEM_PROMPT,
       prompt: transcript.trim(),
     });

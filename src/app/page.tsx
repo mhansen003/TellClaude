@@ -243,7 +243,7 @@ export default function Home() {
         // Silently ignore aborts and network errors
       }
       setIsAutoSuggesting(false);
-    }, 750);
+    }, 500);
 
     return () => {
       if (suggestTimerRef.current) clearTimeout(suggestTimerRef.current);
