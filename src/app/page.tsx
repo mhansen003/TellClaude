@@ -19,7 +19,6 @@ import AboutModal from "@/components/AboutModal";
 import FormattedPrompt from "@/components/FormattedPrompt";
 import PromptHistory, { HistoryItem } from "@/components/PromptHistory";
 import PublishModal from "@/components/PublishModal";
-import PublishedHistory from "@/components/PublishedHistory";
 import { TooltipIcon } from "@/components/Tooltip";
 import { PublishedItem, buildShareUrl, loadPublished, savePublished } from "@/lib/share";
 
@@ -61,7 +60,6 @@ export default function Home() {
 
   // Published prompts
   const [published, setPublished] = useState<PublishedItem[]>([]);
-  const [publishedOpen, setPublishedOpen] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [publishUrl, setPublishUrl] = useState("");
 
@@ -383,6 +381,9 @@ export default function Home() {
         onClear={handleHistoryClear}
         isOpen={historyOpen}
         onToggle={() => setHistoryOpen(!historyOpen)}
+        published={published}
+        onPublishedDelete={handlePublishedDelete}
+        onPublishedClear={handlePublishedClear}
       />
 
       {/* Header - Full width */}
@@ -801,15 +802,6 @@ export default function Home() {
         initialTranscript={transcript}
         mode={modes.join(",")}
         existingPrompt={generatedPrompt}
-      />
-
-      {/* Published History Sidebar - Right side */}
-      <PublishedHistory
-        items={published}
-        onDelete={handlePublishedDelete}
-        onClear={handlePublishedClear}
-        isOpen={publishedOpen}
-        onToggle={() => setPublishedOpen(!publishedOpen)}
       />
 
       {/* Publish Modal */}
