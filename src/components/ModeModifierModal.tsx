@@ -32,7 +32,7 @@ export default function ModeModifierModal({
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl h-[85vh] bg-bg-secondary border-2 border-brand-primary/30 rounded-2xl shadow-2xl shadow-brand-primary/10 overflow-hidden animate-fade_in flex flex-col">
+      <div className="relative w-full max-w-2xl max-h-[85vh] bg-bg-secondary border-2 border-brand-primary/30 rounded-2xl shadow-2xl shadow-brand-primary/10 overflow-hidden animate-fade_in flex flex-col">
         {/* Header */}
         <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
           <div className="flex items-center gap-3">
