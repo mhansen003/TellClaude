@@ -83,6 +83,7 @@ export default function Home() {
   const [glowingModifiers, setGlowingModifiers] = useState<Set<string>>(new Set());
   const suggestTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const suggestAbortRef = useRef<AbortController | null>(null);
+  const [isAutoSuggesting, setIsAutoSuggesting] = useState(false);
 
   // Options collapse
   const [optionsExpanded, setOptionsExpanded] = useState(false);
@@ -200,6 +201,8 @@ export default function Home() {
     // Need at least 15 chars and modal must be closed (don't override manual picks)
     if (trimmed.length < 15 || showModeModal) return;
 
+    setIsAutoSuggesting(true);
+
     suggestTimerRef.current = setTimeout(async () => {
       // Abort any in-flight request
       if (suggestAbortRef.current) suggestAbortRef.current.abort();
@@ -242,7 +245,8 @@ export default function Home() {
       } catch {
         // Silently ignore aborts and network errors
       }
-    }, 1500);
+      setIsAutoSuggesting(false);
+    }, 1000);
 
     return () => {
       if (suggestTimerRef.current) clearTimeout(suggestTimerRef.current);
@@ -659,6 +663,15 @@ export default function Home() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                       </svg>
                       Mode & Modifiers
+                      {isAutoSuggesting && (
+                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-purple/15 text-accent-purple text-[10px] font-semibold animate-pulse">
+                          <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                          AI analyzing...
+                        </span>
+                      )}
                     </span>
                     <button
                       onClick={() => setShowModeModal(true)}
