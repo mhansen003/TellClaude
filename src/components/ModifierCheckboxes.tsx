@@ -79,18 +79,18 @@ export default function ModifierCheckboxes({
 
       {/* Expanded Grid */}
       {isExpanded && (
-        <div className="grid grid-cols-2 gap-1.5 mt-3 animate-fade_in">
+        <div className="grid grid-cols-2 gap-2 mt-3 animate-fade_in">
           {PROMPT_MODIFIERS.map((modifier) => {
             const isChecked = selected.includes(modifier.id);
             return (
               <label
                 key={modifier.id}
                 className={`
-                  flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-all duration-200
-                  border group
+                  flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200
+                  border-2 group
                   ${
                     isChecked
-                      ? "bg-brand-glow border-brand-primary/50"
+                      ? "bg-brand-glow border-brand-primary/50 shadow-sm shadow-brand-primary/10"
                       : "bg-bg-elevated/50 border-border-subtle hover:border-brand-primary/30"
                   }
                 `}
@@ -99,16 +99,20 @@ export default function ModifierCheckboxes({
                   type="checkbox"
                   checked={isChecked}
                   onChange={() => toggleModifier(modifier.id)}
-                  className="checkbox-brand flex-shrink-0"
+                  className="checkbox-brand flex-shrink-0 mt-0.5"
                 />
-                <span
-                  className={`text-xs font-medium truncate ${
-                    isChecked ? "text-brand-primary" : "text-text-secondary"
-                  }`}
-                  title={modifier.description}
-                >
-                  {modifier.label}
-                </span>
+                <div className="min-w-0">
+                  <span
+                    className={`text-sm font-semibold block ${
+                      isChecked ? "text-brand-primary" : "text-text-secondary"
+                    }`}
+                  >
+                    {modifier.label}
+                  </span>
+                  <span className="text-[10px] text-text-muted block mt-0.5 leading-tight">
+                    {modifier.description}
+                  </span>
+                </div>
               </label>
             );
           })}

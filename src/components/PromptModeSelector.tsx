@@ -108,7 +108,7 @@ export default function PromptModeSelector({
       </div>
 
       {/* Mode Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {currentModes.map((mode) => {
           const isSelected = selected.includes(mode.id);
           return (
@@ -116,23 +116,26 @@ export default function PromptModeSelector({
               key={mode.id}
               onClick={() => handleToggle(mode.id)}
               className={`
-                relative px-2 py-2 rounded-lg text-left transition-all duration-200
-                border cursor-pointer group min-w-0
+                relative px-3 py-3 rounded-xl text-left transition-all duration-200
+                border-2 cursor-pointer group min-w-0
                 ${
                   isSelected
-                    ? "bg-brand-glow border-brand-primary text-text-primary"
+                    ? "bg-brand-glow border-brand-primary text-text-primary shadow-sm shadow-brand-primary/10"
                     : "bg-bg-card border-border-subtle hover:border-brand-primary/30 text-text-secondary hover:text-text-primary"
                 }
               `}
             >
-              <div className="flex items-center gap-1 min-w-0">
-                <span className="text-sm flex-shrink-0">{mode.icon}</span>
-                <span className={`text-xs font-semibold truncate ${isSelected ? "text-brand-primary" : ""}`}>
-                  {mode.label}
-                </span>
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-lg flex-shrink-0">{mode.icon}</span>
+                <div className="min-w-0">
+                  <span className={`text-sm font-bold block truncate ${isSelected ? "text-brand-primary" : ""}`}>
+                    {mode.label}
+                  </span>
+                  <span className="text-[10px] text-text-muted block truncate">{mode.description}</span>
+                </div>
               </div>
               {isSelected && (
-                <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-brand-primary" />
+                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-primary" />
               )}
             </button>
           );
