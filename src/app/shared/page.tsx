@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { decodePromptData, SharedPromptData } from "@/lib/share";
+import { getModelLabel } from "@/lib/llm-providers";
 import { useClipboard } from "@/hooks/useClipboard";
 import FormattedPrompt from "@/components/FormattedPrompt";
 
@@ -24,6 +25,9 @@ export default function SharedPage() {
       setError(true);
     } else {
       setData(decoded);
+      // Apply the theme from the shared data (defaults to Claude if absent)
+      const theme = decoded.theme || "claude";
+      document.documentElement.setAttribute("data-theme", theme);
     }
     setLoading(false);
   }, []);
@@ -180,7 +184,9 @@ export default function SharedPage() {
               </div>
               <div>
                 <h2 className="text-base font-bold text-text-primary">Generated Prompt</h2>
-                <p className="text-xs text-text-muted">Powered by Claude Opus 4.5</p>
+                <p className="text-xs text-text-muted">
+                  Powered by {data.model ? getModelLabel(data.model) : "TellClaude"}
+                </p>
               </div>
             </div>
           </div>

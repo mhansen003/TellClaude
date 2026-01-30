@@ -5,6 +5,8 @@ export interface SharedPromptData {
   prompt: string;
   modes: string;
   timestamp: number;
+  theme?: string;
+  model?: string;
 }
 
 export interface PublishedItem {

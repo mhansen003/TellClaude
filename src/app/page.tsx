@@ -415,6 +415,8 @@ export default function Home() {
       prompt: generatedPrompt,
       modes: modes.join(","),
       timestamp: Date.now(),
+      theme: getProvider(llmProvider).theme,
+      model: llmModel,
     });
     const newItem: PublishedItem = {
       id: Date.now().toString(),
@@ -429,7 +431,7 @@ export default function Home() {
     setShowPublishModal(true);
     setToast("Prompt published!");
     setTimeout(() => setToast(null), 3000);
-  }, [generatedPrompt, transcript, modes]);
+  }, [generatedPrompt, transcript, modes, llmProvider, llmModel]);
 
   // Delete published item
   const handlePublishedDelete = useCallback((id: string) => {
