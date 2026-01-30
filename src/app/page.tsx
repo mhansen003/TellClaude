@@ -8,8 +8,7 @@ import Header from "@/components/Header";
 import BrowserWarning from "@/components/BrowserWarning";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import TranscriptEditor, { Attachment } from "@/components/TranscriptEditor";
-import PromptModeSelector from "@/components/PromptModeSelector";
-import ModifierCheckboxes from "@/components/ModifierCheckboxes";
+import ModeModifierModal from "@/components/ModeModifierModal";
 import DetailLevelSelector from "@/components/DetailLevelSelector";
 import OutputFormatSelector from "@/components/OutputFormatSelector";
 import ContextInput from "@/components/ContextInput";
@@ -23,6 +22,7 @@ import LLMSelector from "@/components/LLMSelector";
 import { TooltipIcon } from "@/components/Tooltip";
 import { PublishedItem, buildShareUrl, loadPublished, savePublished } from "@/lib/share";
 import { type LLMProviderId, getProvider, getModelLabel } from "@/lib/llm-providers";
+import { PROMPT_MODE_OPTIONS, PROMPT_MODIFIERS } from "@/lib/constants";
 
 const HISTORY_STORAGE_KEY = "tellclaude-history";
 const SETTINGS_STORAGE_KEY = "tellclaude-settings";
@@ -74,6 +74,9 @@ export default function Home() {
 
   // About modal
   const [showAbout, setShowAbout] = useState(false);
+
+  // Mode & Modifier modal
+  const [showModeModal, setShowModeModal] = useState(false);
 
   // Options collapse
   const [optionsExpanded, setOptionsExpanded] = useState(false);
@@ -581,26 +584,67 @@ export default function Home() {
                   onModelChange={setLlmModel}
                 />
 
-                {/* Mode + Modifiers Card */}
+                {/* Mode + Modifiers Compact Summary Card */}
                 <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-text-secondary">Choose Mode & Modifiers</span>
-                    <TooltipIcon
-                      content="Select a mode to tell Claude what type of task you need help with. Engineering modes focus on code/technical tasks, Business modes on documents/analysis."
-                      position="left"
-                    />
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-text-secondary flex items-center gap-2">
+                      <svg className="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                      </svg>
+                      Mode & Modifiers
+                    </span>
+                    <button
+                      onClick={() => setShowModeModal(true)}
+                      className="px-3 py-1.5 rounded-lg bg-brand-primary/15 text-brand-primary text-xs font-semibold hover:bg-brand-primary/25 transition-all cursor-pointer flex items-center gap-1"
+                    >
+                      Modify
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
                   </div>
-                  <PromptModeSelector selected={modes} onChange={setModes} />
-                  <div className="border-t border-border-subtle pt-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-text-muted">+ Add Modifiers</span>
-                      <TooltipIcon
-                        content="Add specific requirements to your prompt. Check multiple options to include step-by-step instructions, examples, best practices, and more."
-                        position="left"
-                      />
+
+                  {/* Selected Modes */}
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold">Modes</span>
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      {modes.length > 0 ? (
+                        modes.map((modeId) => {
+                          const modeOption = PROMPT_MODE_OPTIONS.find(m => m.id === modeId);
+                          return (
+                            <span
+                              key={modeId}
+                              className="px-2 py-0.5 rounded-md bg-brand-primary/15 text-brand-primary text-[11px] font-semibold"
+                            >
+                              {modeOption?.label || modeId}
+                            </span>
+                          );
+                        })
+                      ) : (
+                        <span className="text-xs text-text-muted italic">None selected</span>
+                      )}
                     </div>
-                    <ModifierCheckboxes selected={modifiers} onChange={setModifiers} />
                   </div>
+
+                  {/* Selected Modifiers */}
+                  {modifiers.length > 0 && (
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold">Modifiers</span>
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {modifiers.map((modId) => {
+                          const modOption = PROMPT_MODIFIERS.find(m => m.id === modId);
+                          return (
+                            <span
+                              key={modId}
+                              className="px-2 py-0.5 rounded-md bg-bg-elevated text-text-secondary text-[11px] font-medium"
+                            >
+                              {modOption?.label || modId}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Customize Output Card - Collapsible */}
@@ -845,6 +889,16 @@ export default function Home() {
             {/* /flex wrapper */}
       </div>
       {/* /max-w-7xl */}
+
+      {/* Mode & Modifier Modal */}
+      <ModeModifierModal
+        isOpen={showModeModal}
+        onClose={() => setShowModeModal(false)}
+        modes={modes}
+        onModesChange={setModes}
+        modifiers={modifiers}
+        onModifiersChange={setModifiers}
+      />
 
       {/* Interview Modal */}
       <InterviewModal
