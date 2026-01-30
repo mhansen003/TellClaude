@@ -389,16 +389,18 @@ export default function Home() {
   // Step progress logic
   const steps = [
     { step: 1, label: "Describe", done: transcript.trim().length > 0 },
-    { step: 2, label: "Configure", done: transcript.trim().length > 0 && !(modes.length === 1 && modes[0] === "code") },
-    { step: 3, label: "Customize", done: optionsExpanded || detailLevel !== "balanced" || outputFormat !== "structured" || contextInfo.trim().length > 0 },
-    { step: 4, label: "Generate", done: generatedPrompt.length > 0 },
+    { step: 2, label: "AI Model", done: llmProvider !== "claude" },
+    { step: 3, label: "Configure", done: transcript.trim().length > 0 && !(modes.length === 1 && modes[0] === "code") },
+    { step: 4, label: "Customize", done: optionsExpanded || detailLevel !== "balanced" || outputFormat !== "structured" || contextInfo.trim().length > 0 },
+    { step: 5, label: "Generate", done: generatedPrompt.length > 0 },
   ];
 
   const isStepActive = (step: number) => {
     if (step === 1) return true;
     if (step === 2) return !!transcript.trim();
-    if (step === 3) return !(modes.length === 1 && modes[0] === "code");
-    if (step === 4) return !!transcript.trim();
+    if (step === 3) return !!transcript.trim();
+    if (step === 4) return !(modes.length === 1 && modes[0] === "code");
+    if (step === 5) return !!transcript.trim();
     return false;
   };
 
@@ -419,7 +421,7 @@ export default function Home() {
       />
 
       {/* Header - Full width */}
-      <Header onAboutClick={() => setShowAbout(true)} />
+      <Header onAboutClick={() => setShowAbout(true)} provider={llmProvider} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
@@ -571,6 +573,14 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* LLM Selector Card */}
+                <LLMSelector
+                  provider={llmProvider}
+                  model={llmModel}
+                  onProviderChange={handleProviderChange}
+                  onModelChange={setLlmModel}
+                />
+
                 {/* Mode + Modifiers Card */}
                 <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
                   <div className="flex items-center justify-between mb-2">
@@ -592,14 +602,6 @@ export default function Home() {
                     <ModifierCheckboxes selected={modifiers} onChange={setModifiers} />
                   </div>
                 </div>
-
-                {/* LLM Selector Card */}
-                <LLMSelector
-                  provider={llmProvider}
-                  model={llmModel}
-                  onProviderChange={handleProviderChange}
-                  onModelChange={setLlmModel}
-                />
 
                 {/* Customize Output Card - Collapsible */}
                 <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">

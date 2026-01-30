@@ -1,21 +1,20 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
-import { ALLOWED_MODELS } from "@/lib/llm-providers";
 
 const openrouter = createOpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY || "",
 });
 
-const SYSTEM_PROMPT = `You are an expert prompt engineer. Your job is to transform a user's rough idea into a comprehensive, well-structured prompt that will get excellent results from Claude Code (an AI coding assistant).
+const SYSTEM_PROMPT = `You are an expert prompt engineer. Your job is to transform a user's rough idea into a comprehensive, well-structured prompt that will get excellent results from the user's chosen AI model.
 
 Given the user's input and their selected preferences, generate a detailed, actionable prompt that:
 1. Clearly states the task and expected outcome
 2. Provides all necessary context and constraints
 3. Specifies the format and level of detail expected
 4. Includes all the modifier requirements they selected
-5. Is written in a way that will get the best possible response
+5. Is written in a way that will get the best possible response from the target AI model
 
 Output ONLY the generated prompt - no explanations, no meta-commentary, just the prompt itself.
 
@@ -24,11 +23,9 @@ The prompt should be thorough and specific. Don't be afraid to expand on what th
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { transcript, modes: modesRaw, mode: legacyMode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, model: requestedModel } = body;
+    const { transcript, modes: modesRaw, mode: legacyMode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, model: targetModel } = body;
     // Support both new multi-select `modes` array and legacy single `mode` string
     const modes: string[] = Array.isArray(modesRaw) ? modesRaw : (legacyMode ? [legacyMode] : []);
-    // Validate and resolve model
-    const modelId = (requestedModel && ALLOWED_MODELS.includes(requestedModel)) ? requestedModel : "anthropic/claude-opus-4";
 
     // Build context for the AI
     const modeDescriptions: Record<string, string> = {
@@ -187,7 +184,10 @@ ${attachmentSection}
 ${urlSection}
 ${selectedModifiers ? `REQUIREMENTS TO INCLUDE:\n- ${selectedModifiers}` : ""}
 
-Generate a detailed, well-structured prompt that incorporates all of the above. If files were attached, reference their contents appropriately in the prompt. The prompt should be ready to paste directly into Claude Code.`;
+TARGET AI MODEL: ${targetModel || "Claude"}
+The generated prompt will be pasted into this AI model. Optimize the prompt's language, structure, and conventions for this target model.
+
+Generate a detailed, well-structured prompt that incorporates all of the above. If files were attached, reference their contents appropriately in the prompt. The prompt should be ready to paste directly into the target AI.`;
 
     if (!process.env.OPENROUTER_API_KEY) {
       // Fallback when no API key - use enhanced local generation
@@ -197,7 +197,7 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
     }
 
     const result = await generateText({
-      model: openrouter(modelId),
+      model: openrouter("anthropic/claude-opus-4"),
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userPrompt },

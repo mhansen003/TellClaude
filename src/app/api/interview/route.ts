@@ -1,7 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
-import { ALLOWED_MODELS } from "@/lib/llm-providers";
 
 const openrouter = createOpenAI({
   baseURL: "https://openrouter.ai/api/v1",
@@ -77,10 +76,8 @@ The enhanced prompt should:
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, transcript, mode, messages, existingPrompt, model: requestedModel } = body;
+    const { action, transcript, mode, messages, existingPrompt } = body;
     const hasExistingPrompt = Boolean(existingPrompt?.trim());
-    // Validate and resolve model — default to fast-tier for interview (haiku)
-    const modelId = (requestedModel && ALLOWED_MODELS.includes(requestedModel)) ? requestedModel : "anthropic/claude-3.5-haiku";
 
     if (!process.env.OPENROUTER_API_KEY) {
       // Fallback for when API key is not set
@@ -219,7 +216,7 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await generateText({
-      model: openrouter(modelId),
+      model: openrouter("anthropic/claude-3.5-haiku"),
       messages: allMessages,
       temperature: 0.7,
       maxTokens: 1000,

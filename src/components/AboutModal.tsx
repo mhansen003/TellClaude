@@ -46,11 +46,11 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           {/* Overview */}
           <div className="p-4 rounded-xl bg-brand-glow border border-brand-primary/20">
             <h3 className="text-sm font-bold text-brand-primary mb-2 flex items-center gap-2">
-              <span>✨</span> What is TellClaude?
+              <span>✨</span> What is this?
             </h3>
             <p className="text-sm text-text-secondary leading-relaxed">
-              TellClaude transforms your spoken or typed ideas into well-structured prompts optimized for Claude Code.
-              Whether you&apos;re coding, planning, or analyzing - get better results by expressing your needs naturally.
+              Transform your spoken or typed ideas into well-structured prompts optimized for your AI of choice — Claude, ChatGPT, or Gemini.
+              Whether you&apos;re coding, planning, or analyzing — get better results by expressing your needs naturally.
             </p>
           </div>
 
@@ -81,10 +81,11 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
                 2
               </div>
               <div className="flex-1">
-                <h4 className="text-sm font-semibold text-text-primary mb-1">Choose Your Mode</h4>
+                <h4 className="text-sm font-semibold text-text-primary mb-1">Pick Your AI Model</h4>
                 <p className="text-xs text-text-muted leading-relaxed">
-                  Select from <strong>Engineering</strong> modes (Code, Debug, Design, etc.) or <strong>Business</strong> modes
-                  (Summary, Report, Email, etc.) to tailor the prompt to your task type.
+                  Choose between <strong>Claude</strong>, <strong>ChatGPT</strong>, or <strong>Gemini</strong>.
+                  The entire app theme changes to match, and your prompt is optimized for that model.
+                  Your selection is saved automatically.
                 </p>
               </div>
             </div>
@@ -95,10 +96,11 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
                 3
               </div>
               <div className="flex-1">
-                <h4 className="text-sm font-semibold text-text-primary mb-1">Customize with Modifiers (Optional)</h4>
+                <h4 className="text-sm font-semibold text-text-primary mb-1">Choose Mode & Modifiers</h4>
                 <p className="text-xs text-text-muted leading-relaxed">
-                  Expand &quot;Prompt Modifiers&quot; to add specific requirements like step-by-step instructions,
-                  code examples, error handling, or executive summaries.
+                  Select from <strong>Engineering</strong> modes (Code, Debug, Design, etc.) or <strong>Business</strong> modes
+                  (Summary, Report, Email, etc.). Add modifiers for step-by-step instructions,
+                  examples, error handling, or executive summaries.
                 </p>
               </div>
             </div>
@@ -109,10 +111,24 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
                 4
               </div>
               <div className="flex-1">
+                <h4 className="text-sm font-semibold text-text-primary mb-1">Customize Output (Optional)</h4>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  Fine-tune detail level (concise to comprehensive), output format (structured, natural, or bullets),
+                  and add extra context or URL references.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 5 */}
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white font-bold text-sm">
+                5
+              </div>
+              <div className="flex-1">
                 <h4 className="text-sm font-semibold text-text-primary mb-1">Generate & Copy</h4>
                 <p className="text-xs text-text-muted leading-relaxed">
-                  Click the glowing &quot;Generate Prompt&quot; button. Claude Opus 4.5 will transform your input
-                  into a structured prompt. Copy it and paste into Claude Code!
+                  Click &quot;Generate Prompt&quot; and your input is transformed into a structured prompt
+                  optimized for your chosen AI. Copy it and paste it in!
                 </p>
               </div>
             </div>
@@ -160,7 +176,10 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           {/* Footer */}
           <div className="text-center pt-2">
             <p className="text-xs text-text-muted">
-              Powered by <span className="text-brand-primary font-semibold">Claude Opus 4.5</span> via OpenRouter
+              Prompt generation powered by <span className="text-brand-primary font-semibold">Claude Opus 4</span> via OpenRouter
+            </p>
+            <p className="text-xs text-text-muted mt-1">
+              v1.1.0 &middot; Multi-AI support: Claude, ChatGPT, Gemini
             </p>
           </div>
         </div>
