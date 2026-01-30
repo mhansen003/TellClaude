@@ -223,26 +223,33 @@ export default function Home() {
         const data = await response.json();
 
         if (data.modes && Array.isArray(data.modes) && data.modes.length > 0) {
-          // Merge: keep existing modes + add new AI suggestions (don't remove existing)
-          const existingModeSet = new Set(modes);
-          const newModes = (data.modes as string[]).filter((id) => !existingModeSet.has(id as PromptModeId));
-
-          if (newModes.length > 0) {
-            setModes((prev) => [...prev, ...newModes as PromptModeId[]]);
-            setGlowingModes(new Set(newModes));
-            setTimeout(() => setGlowingModes(new Set()), 1000);
-          }
+          // Merge inside updater so `prev` is always the true current state
+          // (avoids stale closure where `modes` from effect setup is outdated)
+          const suggestedModes = [...new Set(data.modes as string[])] as PromptModeId[];
+          setModes((prev) => {
+            const existing = new Set(prev);
+            const toAdd = suggestedModes.filter((id) => !existing.has(id));
+            if (toAdd.length > 0) {
+              setGlowingModes(new Set(toAdd as string[]));
+              setTimeout(() => setGlowingModes(new Set()), 1000);
+              return [...prev, ...toAdd];
+            }
+            return prev;
+          });
         }
 
         if (data.modifiers && Array.isArray(data.modifiers)) {
-          const existingModSet = new Set(modifiers);
-          const newMods = (data.modifiers as string[]).filter((id) => !existingModSet.has(id));
-
-          if (newMods.length > 0) {
-            setModifiers((prev) => [...prev, ...newMods]);
-            setGlowingModifiers(new Set(newMods));
-            setTimeout(() => setGlowingModifiers(new Set()), 1000);
-          }
+          const suggestedMods = [...new Set(data.modifiers as string[])];
+          setModifiers((prev) => {
+            const existing = new Set(prev);
+            const toAdd = suggestedMods.filter((id) => !existing.has(id));
+            if (toAdd.length > 0) {
+              setGlowingModifiers(new Set(toAdd));
+              setTimeout(() => setGlowingModifiers(new Set()), 1000);
+              return [...prev, ...toAdd];
+            }
+            return prev;
+          });
         }
       } catch {
         // Silently ignore aborts and network errors
