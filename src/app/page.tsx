@@ -508,10 +508,10 @@ export default function Home() {
             </aside>
 
             {/* Two-Column Grid: Left (message/config) + Right (generate/output) */}
-            <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
+            <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
 
               {/* LEFT COLUMN - Your Message + Config */}
-              <div className="space-y-3">
+              <div className="flex flex-col gap-3">
 
                 {/* Your Message Card (TranscriptEditor only, no mic) */}
                 <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-4">
@@ -648,7 +648,7 @@ export default function Home() {
                 </div>
 
                 {/* Customize Output Card - Collapsible */}
-                <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
+                <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 flex-1">
                   <div className="flex items-center justify-between">
                     <button
                       onClick={() => setOptionsExpanded(!optionsExpanded)}
@@ -754,7 +754,7 @@ export default function Home() {
                 </div>
 
                 {/* Output Panel */}
-                <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[500px] lg:h-[calc(100vh-280px)] lg:max-h-[700px] lg:min-h-[400px]">
+                <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[500px] lg:flex-1 lg:min-h-[400px]">
                   {/* Header */}
                   <div className="flex-shrink-0 px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
                     <div className="flex items-center justify-between">
