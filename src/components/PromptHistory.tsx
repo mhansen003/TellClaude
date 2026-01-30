@@ -90,7 +90,6 @@ export default function PromptHistory({
     }
   };
 
-  const totalBadge = history.length + published.length;
   const activeList = activeTab === "history" ? history : published;
 
   return (
@@ -105,11 +104,18 @@ export default function PromptHistory({
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          {totalBadge > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-claude-orange text-white text-xs font-bold flex items-center justify-center">
-              {totalBadge > 99 ? "99+" : totalBadge}
-            </span>
-          )}
+          <div className="absolute -top-2 -right-2 flex flex-col gap-0.5 items-end">
+            {history.length > 0 && (
+              <span className="w-5 h-5 rounded-full bg-claude-orange text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                {history.length > 99 ? "99+" : history.length}
+              </span>
+            )}
+            {published.length > 0 && (
+              <span className="w-5 h-5 rounded-full bg-accent-green text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                {published.length > 99 ? "99+" : published.length}
+              </span>
+            )}
+          </div>
         </button>
       )}
 
