@@ -19,6 +19,7 @@ import FormattedPrompt from "@/components/FormattedPrompt";
 import PromptHistory, { HistoryItem } from "@/components/PromptHistory";
 import PublishModal from "@/components/PublishModal";
 import LLMSelector from "@/components/LLMSelector";
+import MobileBottomSheet from "@/components/MobileBottomSheet";
 import { TooltipIcon } from "@/components/Tooltip";
 import { PublishedItem, buildShareUrl, loadPublished, savePublished } from "@/lib/share";
 import { type LLMProviderId, getProvider, getModelLabel } from "@/lib/llm-providers";
@@ -99,6 +100,13 @@ export default function Home() {
   // Options collapse
   const [optionsExpanded, setOptionsExpanded] = useState(false);
 
+  // Mobile bottom sheets
+  const [showMobileTargetAI, setShowMobileTargetAI] = useState(false);
+  const [showMobileCustomize, setShowMobileCustomize] = useState(false);
+
+  // Auto-scroll ref for streaming output
+  const outputScrollRef = useRef<HTMLDivElement>(null);
+
   // Edit mode for output
   const [isEditingOutput, setIsEditingOutput] = useState(false);
 
@@ -177,6 +185,13 @@ export default function Home() {
     const provider = getProvider(llmProvider);
     document.documentElement.setAttribute("data-theme", provider.theme);
   }, [llmProvider]);
+
+  // Auto-scroll output panel during streaming
+  useEffect(() => {
+    if (isGenerating && outputScrollRef.current) {
+      outputScrollRef.current.scrollTop = outputScrollRef.current.scrollHeight;
+    }
+  }, [generatedPrompt, isGenerating]);
 
   // Provider change handler — reset model to default
   const handleProviderChange = useCallback((newProvider: LLMProviderId) => {
@@ -649,13 +664,11 @@ export default function Home() {
               ))}
             </aside>
 
-            {/* Two-Column Grid: Left (message/config) + Right (generate/output) */}
-            <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+            {/* Two-Column Grid: Flattened for mobile reordering via order- classes */}
+            <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
 
-              {/* LEFT COLUMN - Your Message + Config */}
-              <div className="flex flex-col gap-3">
-
-                {/* Your Message Card (TranscriptEditor only, no mic) */}
+              {/* Section A: Your Message (mobile: order-1, desktop: left col row 1) */}
+              <div className="order-1 lg:col-start-1 lg:row-start-1 flex flex-col gap-3">
                 <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-text-secondary">Your Message</span>
@@ -674,234 +687,31 @@ export default function Home() {
                     onAttachmentsChange={setAttachments}
                   />
                 </div>
-
-                {/* Mobile Action Buttons - Only visible on mobile, right after transcript */}
-                {transcript.trim() && (
-                <div className="lg:hidden space-y-2">
-                  <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
-                  {/* Engine selector */}
-                  <div className="flex gap-1.5">
-                    {ENGINE_OPTIONS.map((opt) => (
-                      <button
-                        key={opt.id}
-                        onClick={() => setEngineModel(opt.id)}
-                        className={`flex-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                          engineModel === opt.id
-                            ? "bg-brand-primary/20 text-brand-primary border border-brand-primary/40"
-                            : "bg-bg-elevated/50 text-text-muted border border-border-subtle hover:text-text-secondary"
-                        }`}
-                      >
-                        <span className="block">{opt.label}</span>
-                        <span className={`block text-[10px] ${engineModel === opt.id ? "text-brand-primary/70" : "text-text-muted/60"}`}>{opt.tag}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    {isGenerating ? (
-                      <>
-                        <div className="flex-1 h-14 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm flex items-center justify-center gap-2">
-                          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                          </svg>
-                          Generating...
-                        </div>
-                        <button
-                          onClick={handleCancelGeneration}
-                          className="h-14 px-4 rounded-xl bg-bg-card border-2 border-accent-rose/50 text-accent-rose font-semibold text-sm transition-all hover:bg-accent-rose/10 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={handleGenerate}
-                          disabled={!transcript.trim()}
-                          className={`flex-1 h-14 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-brand-primary/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
-                            transcript.trim() ? "animate-generate-yellow-pulse border-2 border-yellow-400/50" : ""
-                          }`}
-                        >
-                          <span className="flex items-center justify-center gap-2">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                            Generate Prompt
-                          </span>
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-                )}
-
-                {/* LLM Selector Card */}
-                <LLMSelector
-                  provider={llmProvider}
-                  onProviderChange={handleProviderChange}
-                />
-
-                {/* Mode + Modifiers Compact Summary Card */}
-                <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-text-secondary flex items-center gap-2">
-                      <svg className="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                      </svg>
-                      Mode & Modifiers
-                      {isAutoSuggesting && (
-                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-purple/15 text-accent-purple text-[10px] font-semibold animate-pulse">
-                          <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                          </svg>
-                          AI analyzing...
-                        </span>
-                      )}
-                    </span>
-                    <button
-                      onClick={() => setShowModeModal(true)}
-                      className="px-3 py-1.5 rounded-lg border border-border-subtle text-text-secondary text-xs font-medium hover:text-text-primary hover:border-brand-primary/40 hover:bg-brand-primary/5 transition-all cursor-pointer flex items-center gap-1 active:scale-[0.97]"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                      </svg>
-                      Edit
-                    </button>
-                  </div>
-
-                  {/* Selected Modes */}
-                  <div>
-                    <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold">Modes</span>
-                    <div className="flex flex-wrap gap-1.5 mt-1">
-                      {modes.length > 0 ? (
-                        modes.map((modeId) => {
-                          const modeOption = PROMPT_MODE_OPTIONS.find(m => m.id === modeId);
-                          const isGlowing = glowingModes.has(modeId);
-                          return (
-                            <span
-                              key={modeId}
-                              className={`px-2 py-0.5 rounded-md bg-brand-primary/15 text-brand-primary text-[11px] font-semibold ${isGlowing ? "animate-suggest-glow" : ""}`}
-                            >
-                              {modeOption?.label || modeId}
-                            </span>
-                          );
-                        })
-                      ) : (
-                        <span className="text-xs text-text-muted italic">None selected</span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Selected Modifiers */}
-                  {modifiers.length > 0 && (
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold">Modifiers</span>
-                      <div className="flex flex-wrap gap-1.5 mt-1">
-                        {modifiers.map((modId) => {
-                          const modOption = PROMPT_MODIFIERS.find(m => m.id === modId);
-                          const isGlowing = glowingModifiers.has(modId);
-                          return (
-                            <span
-                              key={modId}
-                              className={`px-2 py-0.5 rounded-md bg-bg-elevated text-text-secondary text-[11px] font-medium ${isGlowing ? "animate-suggest-glow" : ""}`}
-                            >
-                              {modOption?.label || modId}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Customize Output Card - Collapsible */}
-                <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 flex-1">
-                  <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => setOptionsExpanded(!optionsExpanded)}
-                      className="flex-1 flex items-center justify-between py-1 group"
-                    >
-                      <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 cursor-pointer">
-                        Customize Output
-                        {(detailLevel !== "balanced" || outputFormat !== "structured") && (
-                          <span className="px-2 py-0.5 rounded-full bg-accent-teal/20 text-accent-teal text-xs font-semibold">
-                            Custom
-                          </span>
-                        )}
-                      </label>
-                      <svg
-                        className={`w-5 h-5 text-text-muted transition-transform duration-200 ${optionsExpanded ? "rotate-180" : ""}`}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    <div className="ml-2">
-                      <TooltipIcon
-                        content="Customize how your prompt is generated. Choose detail level (concise to detailed), output format (structured, natural, or bullets), and add extra context."
-                        position="left"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Preview when collapsed */}
-                  {!optionsExpanded && (
-                    <div className="flex flex-wrap gap-2 mt-2 text-xs text-text-muted">
-                      <span className="px-2 py-1 rounded bg-bg-elevated/50">{detailLevel === "comprehensive" ? "Detailed" : detailLevel === "concise" ? "Concise" : "Balanced"}</span>
-                      <span className="px-2 py-1 rounded bg-bg-elevated/50">{outputFormat === "bullet-points" ? "Bullets" : outputFormat === "conversational" ? "Natural" : "Structured"}</span>
-                    </div>
-                  )}
-
-                  {/* Expanded content */}
-                  {optionsExpanded && (
-                    <div className="space-y-4 mt-3 pt-3 border-t border-border-subtle animate-fade_in">
-                      <div className="space-y-3">
-                        <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
-                        <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
-                      </div>
-                      <div className="border-t border-border-subtle pt-3">
-                        <ContextInput value={contextInfo} onChange={setContextInfo} />
-                      </div>
-                      <div className="border-t border-border-subtle pt-3">
-                        <UrlInput references={urlReferences} onReferencesChange={setUrlReferences} />
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
 
-              {/* RIGHT COLUMN - Generate + Output (hidden until transcript has text) */}
-              {(transcript.trim() || generatedPrompt || isGenerating) && (
-              <div className="flex flex-col gap-3">
-                {/* Action Buttons - Desktop only */}
-                <div className="hidden lg:block flex-shrink-0 space-y-2">
-                  <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
-                  {/* Engine selector */}
-                  <div className="flex gap-1.5">
-                    {ENGINE_OPTIONS.map((opt) => (
-                      <button
-                        key={opt.id}
-                        onClick={() => setEngineModel(opt.id)}
-                        className={`flex-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                          engineModel === opt.id
-                            ? "bg-brand-primary/20 text-brand-primary border border-brand-primary/40"
-                            : "bg-bg-elevated/50 text-text-muted border border-border-subtle hover:text-text-secondary"
-                        }`}
-                      >
-                        <span className="block">{opt.label}</span>
-                        <span className={`block text-[10px] ${engineModel === opt.id ? "text-brand-primary/70" : "text-text-muted/60"}`}>{opt.tag}</span>
-                      </button>
-                    ))}
-                  </div>
+              {/* Section B: Engine + Generate (mobile: order-2, desktop: right col row 1) */}
+              {(transcript.trim() || isGenerating) && (
+              <div className="order-2 lg:col-start-2 lg:row-start-1 space-y-2">
+                <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
+                {/* Engine selector */}
+                <div className="flex gap-1.5">
+                  {ENGINE_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.id}
+                      onClick={() => setEngineModel(opt.id)}
+                      className={`flex-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                        engineModel === opt.id
+                          ? "bg-brand-primary/20 text-brand-primary border border-brand-primary/40"
+                          : "bg-bg-elevated/50 text-text-muted border border-border-subtle hover:text-text-secondary"
+                      }`}
+                    >
+                      <span className="block">{opt.label}</span>
+                      <span className={`block text-[10px] ${engineModel === opt.id ? "text-brand-primary/70" : "text-text-muted/60"}`}>{opt.tag}</span>
+                    </button>
+                  ))}
                 </div>
-                <div className="hidden lg:flex gap-2 flex-shrink-0">
+                {/* Generate / Cancel buttons */}
+                <div className="flex gap-2">
                   {isGenerating ? (
                     <>
                       <div className="flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm flex items-center justify-center gap-2">
@@ -913,8 +723,7 @@ export default function Home() {
                       </div>
                       <button
                         onClick={handleCancelGeneration}
-                        className="h-14 sm:h-12 px-5 rounded-xl bg-bg-card border-2 border-accent-rose/50 text-accent-rose font-semibold text-sm transition-all hover:bg-accent-rose/10 hover:border-accent-rose active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                        title="Cancel generation"
+                        className="h-14 sm:h-12 px-4 sm:px-5 rounded-xl bg-bg-card border-2 border-accent-rose/50 text-accent-rose font-semibold text-sm transition-all hover:bg-accent-rose/10 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -923,29 +732,31 @@ export default function Home() {
                       </button>
                     </>
                   ) : (
-                    <>
-                      <button
-                        onClick={handleGenerate}
-                        disabled={!transcript.trim()}
-                        className={`flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-brand-primary/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer ${
-                          transcript.trim() ? "animate-generate-yellow-pulse border-2 border-yellow-400/50" : ""
-                        }`}
-                      >
-                        <span className="flex items-center justify-center gap-2">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                          </svg>
-                          Generate Prompt
-                        </span>
-                      </button>
-                    </>
+                    <button
+                      onClick={handleGenerate}
+                      disabled={!transcript.trim()}
+                      className={`flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-brand-primary/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
+                        transcript.trim() ? "animate-generate-yellow-pulse border-2 border-yellow-400/50" : ""
+                      }`}
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Generate Prompt
+                      </span>
+                    </button>
                   )}
                 </div>
+              </div>
+              )}
 
-                {/* Output Panel */}
-                <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[500px]">
+              {/* Section C: Output Panel (mobile: order-3, desktop: right col row 2, spans rows) */}
+              {(transcript.trim() || generatedPrompt || isGenerating) && (
+              <div className="order-3 lg:col-start-2 lg:row-start-2 lg:row-span-4">
+                <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[350px] sm:h-[500px]">
                   {/* Header */}
-                  <div className="flex-shrink-0 px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
+                  <div className="flex-shrink-0 px-4 sm:px-5 py-3 sm:py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
@@ -954,35 +765,35 @@ export default function Home() {
                           </svg>
                         </div>
                         <div>
-                          <h2 className="text-base font-bold text-text-primary">Generated Prompt</h2>
-                          <p className="text-xs text-text-muted">Powered by {engineLabel}</p>
+                          <h2 className="text-sm sm:text-base font-bold text-text-primary">Generated Prompt</h2>
+                          <p className="text-[10px] sm:text-xs text-text-muted">Powered by {engineLabel}</p>
                         </div>
                       </div>
-                      {generatedPrompt && (
-                        <div className="flex gap-2">
+                      {generatedPrompt && !isGenerating && (
+                        <div className="flex gap-1.5 sm:gap-2 flex-wrap justify-end">
                           <button
                             onClick={handlePublish}
-                            className="px-3 py-1.5 rounded-lg bg-accent-green/20 text-accent-green hover:bg-accent-green hover:text-white text-xs font-semibold transition-all flex items-center gap-1"
+                            className="px-2 sm:px-3 py-1.5 rounded-lg bg-accent-green/20 text-accent-green hover:bg-accent-green hover:text-white text-xs font-semibold transition-all flex items-center gap-1"
                             title="Publish & get shareable link"
                           >
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                             </svg>
-                            Publish
+                            <span className="hidden sm:inline">Publish</span>
                           </button>
                           <button
                             onClick={() => setShowInterview(true)}
-                            className="px-3 py-1.5 rounded-lg bg-bg-elevated text-text-secondary hover:text-brand-primary text-xs font-semibold transition-all flex items-center gap-1"
+                            className="px-2 sm:px-3 py-1.5 rounded-lg bg-bg-elevated text-text-secondary hover:text-brand-primary text-xs font-semibold transition-all flex items-center gap-1"
                             title="Refine your prompt through AI conversation"
                           >
                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                             </svg>
-                            Revise
+                            <span className="hidden sm:inline">Revise</span>
                           </button>
                           <button
                             onClick={() => setIsEditingOutput(!isEditingOutput)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                            className={`px-2 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                               isEditingOutput
                                 ? "bg-accent-purple text-white"
                                 : "bg-bg-elevated text-text-secondary hover:text-accent-purple"
@@ -992,7 +803,7 @@ export default function Home() {
                           </button>
                           <button
                             onClick={handleCopy}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                            className={`px-2 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                               copied
                                 ? "bg-accent-green text-white"
                                 : "bg-bg-elevated text-text-secondary hover:text-brand-primary"
@@ -1002,7 +813,7 @@ export default function Home() {
                           </button>
                           <button
                             onClick={handleReset}
-                            className="px-3 py-1.5 rounded-lg bg-bg-elevated text-text-secondary hover:text-accent-rose text-xs font-semibold transition-all"
+                            className="px-2 sm:px-3 py-1.5 rounded-lg bg-bg-elevated text-text-secondary hover:text-accent-rose text-xs font-semibold transition-all"
                           >
                             Clear
                           </button>
@@ -1011,30 +822,39 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Content - Scrollable */}
-                  <div className="p-4 sm:p-5 flex-1 min-h-0 overflow-y-auto">
-                    {isGenerating ? (
-                      <div className="flex flex-col items-center justify-center h-64 text-text-muted">
-                        <div className="relative w-16 h-16 mb-4">
-                          <div className="absolute inset-0 rounded-full border-4 border-brand-primary/20" />
-                          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-brand-primary animate-spin" />
-                        </div>
-                        <p className="text-sm font-medium">{engineLabel} is crafting your prompt...</p>
-                      </div>
-                    ) : generatedPrompt ? (
+                  {/* Content - Scrollable with auto-scroll ref */}
+                  <div ref={outputScrollRef} className="p-4 sm:p-5 flex-1 min-h-0 overflow-y-auto">
+                    {(isGenerating || generatedPrompt) ? (
                       <div className="relative h-full">
-                        {isEditingOutput ? (
-                          <textarea
-                            value={generatedPrompt}
-                            onChange={(e) => setGeneratedPrompt(e.target.value)}
-                            className="w-full h-full min-h-[300px] p-4 rounded-xl bg-bg-elevated border-2 border-accent-purple/30 text-text-primary font-mono text-sm resize-none focus:outline-none focus:border-accent-purple/50 transition-colors"
-                            placeholder="Edit your prompt..."
-                          />
+                        {generatedPrompt ? (
+                          <>
+                            {isEditingOutput ? (
+                              <textarea
+                                value={generatedPrompt}
+                                onChange={(e) => setGeneratedPrompt(e.target.value)}
+                                className="w-full h-full min-h-[200px] sm:min-h-[300px] p-4 rounded-xl bg-bg-elevated border-2 border-accent-purple/30 text-text-primary font-mono text-sm resize-none focus:outline-none focus:border-accent-purple/50 transition-colors"
+                                placeholder="Edit your prompt..."
+                              />
+                            ) : (
+                              <FormattedPrompt content={generatedPrompt} />
+                            )}
+                            {/* Streaming cursor */}
+                            {isGenerating && (
+                              <span className="inline-block w-2 h-4 bg-brand-primary/70 animate-pulse ml-1 rounded-sm" />
+                            )}
+                          </>
                         ) : (
-                          <FormattedPrompt content={generatedPrompt} />
+                          /* Initial loading state before first chunk arrives */
+                          <div className="flex flex-col items-center justify-center h-48 text-text-muted">
+                            <div className="relative w-12 h-12 mb-3">
+                              <div className="absolute inset-0 rounded-full border-4 border-brand-primary/20" />
+                              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-brand-primary animate-spin" />
+                            </div>
+                            <p className="text-sm font-medium">{engineLabel} is crafting your prompt...</p>
+                          </div>
                         )}
-                        {/* Token & cost stats */}
-                        {generationStats && (
+                        {/* Token & cost stats - only after generation completes */}
+                        {generationStats && !isGenerating && (
                           <div className="mt-3 pt-2 border-t border-border-subtle flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-text-muted">
                             <span>⏱ {(generationStats.timeMs / 1000).toFixed(1)}s</span>
                             <span>↑ ~{Math.ceil(generationStats.inputChars / 4)} tokens in</span>
@@ -1094,6 +914,186 @@ export default function Home() {
               </div>
               )}
 
+              {/* Section D: Mobile Settings Toolbar (mobile: order-4, desktop: hidden) */}
+              <div className="order-4 lg:hidden flex gap-2">
+                <button
+                  onClick={() => setShowMobileTargetAI(true)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-bg-card border border-border-subtle text-text-secondary hover:text-brand-primary hover:border-brand-primary/30 transition-all text-xs font-semibold"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Target AI
+                </button>
+                <button
+                  onClick={() => setShowModeModal(true)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-bg-card border border-border-subtle text-text-secondary hover:text-brand-primary hover:border-brand-primary/30 transition-all text-xs font-semibold"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                  </svg>
+                  Modes
+                  {modes.length > 0 && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-brand-primary/20 text-brand-primary text-[10px] font-bold">
+                      {modes.length}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setShowMobileCustomize(true)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-bg-card border border-border-subtle text-text-secondary hover:text-brand-primary hover:border-brand-primary/30 transition-all text-xs font-semibold"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Options
+                  {(detailLevel !== "balanced" || outputFormat !== "structured") && (
+                    <span className="w-2 h-2 rounded-full bg-accent-teal" />
+                  )}
+                </button>
+              </div>
+
+              {/* Section E: LLM Selector (mobile: hidden, desktop: left col row 2) */}
+              <div className="hidden lg:block lg:col-start-1 lg:row-start-2">
+                <LLMSelector
+                  provider={llmProvider}
+                  onProviderChange={handleProviderChange}
+                />
+              </div>
+
+              {/* Section F: Mode & Modifiers (mobile: hidden, desktop: left col row 3) */}
+              <div className="hidden lg:block lg:col-start-1 lg:row-start-3">
+                <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-text-secondary flex items-center gap-2">
+                      <svg className="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                      </svg>
+                      Mode & Modifiers
+                      {isAutoSuggesting && (
+                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-purple/15 text-accent-purple text-[10px] font-semibold animate-pulse">
+                          <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                          AI analyzing...
+                        </span>
+                      )}
+                    </span>
+                    <button
+                      onClick={() => setShowModeModal(true)}
+                      className="px-3 py-1.5 rounded-lg border border-border-subtle text-text-secondary text-xs font-medium hover:text-text-primary hover:border-brand-primary/40 hover:bg-brand-primary/5 transition-all cursor-pointer flex items-center gap-1 active:scale-[0.97]"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                      Edit
+                    </button>
+                  </div>
+                  {/* Selected Modes */}
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold">Modes</span>
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      {modes.length > 0 ? (
+                        modes.map((modeId) => {
+                          const modeOption = PROMPT_MODE_OPTIONS.find(m => m.id === modeId);
+                          const isGlowing = glowingModes.has(modeId);
+                          return (
+                            <span
+                              key={modeId}
+                              className={`px-2 py-0.5 rounded-md bg-brand-primary/15 text-brand-primary text-[11px] font-semibold ${isGlowing ? "animate-suggest-glow" : ""}`}
+                            >
+                              {modeOption?.label || modeId}
+                            </span>
+                          );
+                        })
+                      ) : (
+                        <span className="text-xs text-text-muted italic">None selected</span>
+                      )}
+                    </div>
+                  </div>
+                  {/* Selected Modifiers */}
+                  {modifiers.length > 0 && (
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold">Modifiers</span>
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {modifiers.map((modId) => {
+                          const modOption = PROMPT_MODIFIERS.find(m => m.id === modId);
+                          const isGlowing = glowingModifiers.has(modId);
+                          return (
+                            <span
+                              key={modId}
+                              className={`px-2 py-0.5 rounded-md bg-bg-elevated text-text-secondary text-[11px] font-medium ${isGlowing ? "animate-suggest-glow" : ""}`}
+                            >
+                              {modOption?.label || modId}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Section G: Customize Output (mobile: hidden, desktop: left col row 4) */}
+              <div className="hidden lg:block lg:col-start-1 lg:row-start-4">
+                <div className="bg-bg-card rounded-2xl border border-border-subtle p-4">
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setOptionsExpanded(!optionsExpanded)}
+                      className="flex-1 flex items-center justify-between py-1 group"
+                    >
+                      <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 cursor-pointer">
+                        Customize Output
+                        {(detailLevel !== "balanced" || outputFormat !== "structured") && (
+                          <span className="px-2 py-0.5 rounded-full bg-accent-teal/20 text-accent-teal text-xs font-semibold">
+                            Custom
+                          </span>
+                        )}
+                      </label>
+                      <svg
+                        className={`w-5 h-5 text-text-muted transition-transform duration-200 ${optionsExpanded ? "rotate-180" : ""}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    <div className="ml-2">
+                      <TooltipIcon
+                        content="Customize how your prompt is generated. Choose detail level (concise to detailed), output format (structured, natural, or bullets), and add extra context."
+                        position="left"
+                      />
+                    </div>
+                  </div>
+                  {/* Preview when collapsed */}
+                  {!optionsExpanded && (
+                    <div className="flex flex-wrap gap-2 mt-2 text-xs text-text-muted">
+                      <span className="px-2 py-1 rounded bg-bg-elevated/50">{detailLevel === "comprehensive" ? "Detailed" : detailLevel === "concise" ? "Concise" : "Balanced"}</span>
+                      <span className="px-2 py-1 rounded bg-bg-elevated/50">{outputFormat === "bullet-points" ? "Bullets" : outputFormat === "conversational" ? "Natural" : "Structured"}</span>
+                    </div>
+                  )}
+                  {/* Expanded content */}
+                  {optionsExpanded && (
+                    <div className="space-y-4 mt-3 pt-3 border-t border-border-subtle animate-fade_in">
+                      <div className="space-y-3">
+                        <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
+                        <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
+                      </div>
+                      <div className="border-t border-border-subtle pt-3">
+                        <ContextInput value={contextInfo} onChange={setContextInfo} />
+                      </div>
+                      <div className="border-t border-border-subtle pt-3">
+                        <UrlInput references={urlReferences} onReferencesChange={setUrlReferences} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
             </div>
             {/* /grid */}
             </div>
@@ -1135,6 +1135,36 @@ export default function Home() {
         isOpen={showAbout}
         onClose={() => setShowAbout(false)}
       />
+
+      {/* Mobile Target AI Bottom Sheet */}
+      <MobileBottomSheet
+        isOpen={showMobileTargetAI}
+        onClose={() => setShowMobileTargetAI(false)}
+        title="Target AI"
+      >
+        <div className="space-y-3">
+          <p className="text-xs text-text-muted">Which AI will you paste this prompt into?</p>
+          <LLMSelector provider={llmProvider} onProviderChange={handleProviderChange} />
+        </div>
+      </MobileBottomSheet>
+
+      {/* Mobile Customize Output Bottom Sheet */}
+      <MobileBottomSheet
+        isOpen={showMobileCustomize}
+        onClose={() => setShowMobileCustomize(false)}
+        title="Customize Output"
+      >
+        <div className="space-y-4">
+          <DetailLevelSelector selected={detailLevel} onChange={setDetailLevel} />
+          <OutputFormatSelector selected={outputFormat} onChange={setOutputFormat} />
+          <div className="border-t border-border-subtle pt-3">
+            <ContextInput value={contextInfo} onChange={setContextInfo} />
+          </div>
+          <div className="border-t border-border-subtle pt-3">
+            <UrlInput references={urlReferences} onReferencesChange={setUrlReferences} />
+          </div>
+        </div>
+      </MobileBottomSheet>
 
       {/* Footer */}
       <footer className="border-t border-border-subtle mt-8">

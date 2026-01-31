@@ -21,11 +21,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         {/* Header */}
         <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
+            <img src="/logo.png" alt="Clear AI" className="w-10 h-10 object-contain" />
             <div>
               <h2 className="text-lg font-bold text-text-primary">How to Use Tell AI</h2>
               <p className="text-xs text-text-muted">Transform your voice into perfect prompts</p>

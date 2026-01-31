@@ -94,6 +94,10 @@ const config: Config = {
             borderColor: "rgba(250, 204, 21, 0.7)",
           },
         },
+        "slide-up": {
+          "0%": { transform: "translateY(100%)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
         "suggest-glow": {
           "0%": {
             boxShadow: "0 0 0 rgba(250, 204, 21, 0)",
@@ -125,6 +129,7 @@ const config: Config = {
         "mic-green-pulse": "mic-green-pulse 2s ease-in-out infinite",
         "generate-yellow-pulse": "generate-yellow-pulse 2s ease-in-out infinite",
         "suggest-glow": "suggest-glow 0.8s ease-out forwards",
+        "slide-up": "slide-up 0.3s ease-out",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
