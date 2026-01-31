@@ -28,15 +28,15 @@ export default function VoiceRecorder({
           ${
             isListening
               ? "bg-gradient-to-br from-brand-primary to-brand-secondary mic-recording scale-110"
-              : "bg-bg-card hover:bg-bg-elevated border-2 border-brand-primary/40 hover:border-brand-primary shadow-[0_0_20px_rgba(var(--brand-primary-rgb),0.3)] hover:shadow-[0_0_30px_rgba(var(--brand-primary-rgb),0.5)] animate-pulse-glow"
+              : "bg-bg-card hover:bg-bg-elevated border-2 border-green-400/50 hover:border-green-400 shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:shadow-[0_0_35px_rgba(34,197,94,0.6)] animate-mic-green-pulse"
           }
         `}
         aria-label={isListening ? "Stop recording" : "Start recording"}
         title={isListening ? "Tap to stop recording" : "Tap to start recording"}
       >
-        {/* Outer glow ring - always visible when not listening */}
+        {/* Outer glow ring - green pulse when idle to invite clicking */}
         {!isListening && (
-          <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-brand-primary/30 to-brand-secondary/30 blur-sm animate-pulse" />
+          <span className="absolute -inset-1 rounded-full bg-green-400/25 blur-sm animate-pulse" />
         )}
 
         {/* Pulse rings when recording */}

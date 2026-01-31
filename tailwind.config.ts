@@ -74,6 +74,16 @@ const config: Config = {
             borderColor: "rgba(var(--brand-primary-rgb), 0.7)"
           },
         },
+        "mic-green-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 0 15px rgba(34, 197, 94, 0.3), 0 0 30px rgba(34, 197, 94, 0.1)",
+            borderColor: "rgba(34, 197, 94, 0.4)",
+          },
+          "50%": {
+            boxShadow: "0 0 25px rgba(34, 197, 94, 0.55), 0 0 50px rgba(34, 197, 94, 0.25)",
+            borderColor: "rgba(34, 197, 94, 0.7)",
+          },
+        },
         "suggest-glow": {
           "0%": {
             boxShadow: "0 0 0 rgba(250, 204, 21, 0)",
@@ -102,6 +112,7 @@ const config: Config = {
         float: "float 3s ease-in-out infinite",
         glow: "glow 2s ease-in-out infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "mic-green-pulse": "mic-green-pulse 2s ease-in-out infinite",
         "suggest-glow": "suggest-glow 0.8s ease-out forwards",
       },
       backgroundImage: {
