@@ -33,6 +33,11 @@ export default function InterviewModal({
   const [isComplete, setIsComplete] = useState(false);
   const [finalPrompt, setFinalPrompt] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const autoSendRef = useRef(false);
+  const sendMessageRef = useRef<() => void>(() => {});
+  const justSentRef = useRef(false);
+  const sentTextRef = useRef("");
 
   // Speech recognition for voice input
   const {
@@ -45,12 +50,69 @@ export default function InterviewModal({
     resetTranscript,
   } = useSpeechRecognition();
 
-  // Sync speech transcript to input
+  const pauseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastTranscriptRef = useRef("");
+  const hadInterimRef = useRef(false);
+
+  // Sync speech → input + auto-send on 1.5s pause
   useEffect(() => {
     if (speechTranscript) {
+      // If we just sent, ignore stale transcript echoes
+      if (justSentRef.current) {
+        if (speechTranscript === sentTextRef.current || speechTranscript.length <= sentTextRef.current.length) {
+          return;
+        }
+        // New words after send — clear the flag
+        justSentRef.current = false;
+        sentTextRef.current = "";
+      }
+
       setInput(speechTranscript);
+
+      // Clear existing timer
+      if (pauseTimerRef.current) {
+        clearTimeout(pauseTimerRef.current);
+      }
+
+      // Only start timer if transcript actually changed (new words spoken)
+      if (speechTranscript !== lastTranscriptRef.current) {
+        lastTranscriptRef.current = speechTranscript;
+
+        // Auto-send after 1.5 seconds of silence
+        pauseTimerRef.current = setTimeout(() => {
+          if (speechTranscript.trim() && !isLoading && !isComplete) {
+            autoSendRef.current = true;
+            sendMessageRef.current();
+          }
+        }, 1500);
+      }
     }
-  }, [speechTranscript]);
+  }, [speechTranscript, isLoading, isComplete]);
+
+  // Secondary trigger: when interim transcript goes empty after speech, it means
+  // the recognition finalized — good signal user stopped talking
+  useEffect(() => {
+    if (interimTranscript) {
+      hadInterimRef.current = true;
+    } else if (hadInterimRef.current && isListening && input.trim() && !isLoading && !isComplete) {
+      hadInterimRef.current = false;
+      // Short delay to let final transcript settle
+      if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
+      pauseTimerRef.current = setTimeout(() => {
+        if (input.trim() && !isLoading && !isComplete) {
+          autoSendRef.current = true;
+          sendMessageRef.current();
+        }
+      }, 800);
+    }
+  }, [interimTranscript, isListening, input, isLoading, isComplete]);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
+    };
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -68,6 +130,9 @@ export default function InterviewModal({
       setInput("");
       setIsComplete(false);
       setFinalPrompt("");
+      justSentRef.current = false;
+      sentTextRef.current = "";
+      lastTranscriptRef.current = "";
       resetTranscript();
       // Start the interview with current form values
       startInterview();
@@ -115,14 +180,23 @@ export default function InterviewModal({
   const sendMessage = useCallback(async () => {
     if (!input.trim() || isLoading) return;
 
-    // Stop listening if we're recording
-    if (isListening) {
-      stopListening();
-    }
+    const isAutoSend = autoSendRef.current;
+    autoSendRef.current = false;
 
     const userMessage = input.trim();
-    setInput("");
+
+    // Track what we just sent to reject stale echoes
+    justSentRef.current = true;
+    sentTextRef.current = userMessage;
+
+    // Only stop mic if manually sending (not auto-send)
+    if (!isAutoSend && isListening) {
+      stopListening();
+    }
     resetTranscript();
+    lastTranscriptRef.current = "";
+
+    setInput("");
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setIsLoading(true);
 
@@ -166,6 +240,11 @@ export default function InterviewModal({
     setIsLoading(false);
   }, [input, isLoading, isListening, stopListening, resetTranscript, messages, initialTranscript, mode, existingPrompt, model]);
 
+  // Keep ref in sync so timer callback can call latest sendMessage
+  useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -177,6 +256,8 @@ export default function InterviewModal({
     if (isListening) {
       stopListening();
     } else {
+      justSentRef.current = false;
+      sentTextRef.current = "";
       resetTranscript();
       setInput("");
       startListening();
@@ -357,27 +438,27 @@ export default function InterviewModal({
           ) : (
             <>
             <div className="flex gap-2">
-              {/* Voice Button */}
+              {/* Voice Button with glow */}
               {isVoiceSupported && (
                 <button
                   onClick={toggleVoice}
                   disabled={isLoading}
                   className={`
-                    relative p-3 rounded-xl transition-all duration-200 flex-shrink-0
+                    relative p-3 rounded-xl transition-all duration-200 flex-shrink-0 cursor-pointer
                     ${
                       isListening
-                        ? "bg-brand-primary text-white mic-recording"
-                        : "bg-bg-card border-2 border-border-subtle text-text-secondary hover:border-brand-primary/50 hover:text-brand-primary"
+                        ? "bg-brand-primary text-white"
+                        : "bg-bg-card border border-brand-primary/40 text-brand-primary interview-mic-glow"
                     }
                     disabled:opacity-50 disabled:cursor-not-allowed
                   `}
-                  title={isListening ? "Stop recording" : "Start recording"}
+                  title={isListening ? "Stop recording" : "Start continuous voice"}
                 >
                   {/* Pulse rings when recording */}
                   {isListening && (
                     <>
-                      <span className="absolute inset-0 rounded-xl bg-brand-primary/30 animate-pulse_ring" />
-                      <span className="absolute inset-0 rounded-xl bg-brand-primary/20 animate-pulse_ring" style={{ animationDelay: "0.5s" }} />
+                      <span className="absolute inset-0 rounded-xl bg-brand-primary/30 animate-pulse" />
+                      <span className="absolute inset-0 rounded-xl bg-brand-primary/20 animate-pulse" style={{ animationDelay: "0.5s" }} />
                     </>
                   )}
                   <svg
@@ -398,6 +479,7 @@ export default function InterviewModal({
 
               {/* Text Input */}
               <input
+                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -414,42 +496,35 @@ export default function InterviewModal({
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || isLoading}
-                className="px-5 py-3 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold text-sm hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                className="p-3 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold text-sm hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 cursor-pointer"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7" />
                 </svg>
               </button>
             </div>
 
             {/* Action buttons - Generate Prompt / Cancel */}
-            <div className="flex gap-2 mt-3">
+            {messages.length >= 3 && !isLoading && (
               <button
                 onClick={handleGeneratePrompt}
-                disabled={messages.length === 0 || isLoading}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-accent-green/20 border border-accent-green/50 text-accent-green font-semibold text-sm hover:bg-accent-green/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-2 rounded-xl bg-bg-card border border-accent-green/30 text-accent-green font-medium text-xs transition-all hover:bg-accent-green/10 active:scale-[0.98] cursor-pointer mt-2"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Generate Prompt
+                Generate Prompt Now
               </button>
-              <button
-                onClick={handleClose}
-                className="py-2.5 px-4 rounded-xl bg-bg-elevated border border-border-subtle text-text-muted font-semibold text-sm hover:text-text-primary hover:border-border-subtle transition-all"
-              >
-                Cancel
-              </button>
-            </div>
+            )}
             </>
           )}
 
-          {/* Recording indicator */}
-          {isListening && (
-            <div className="flex items-center justify-center gap-2 mt-3 text-brand-primary text-xs font-semibold">
-              <span className="w-2 h-2 bg-brand-primary rounded-full animate-pulse" />
-              Recording... speak your answer
-            </div>
+          {/* Continuous voice status */}
+          {isVoiceSupported && !isComplete && (
+            <p className={`text-xs font-medium text-center mt-2 ${
+              isListening ? "text-brand-primary animate-pulse" : "text-brand-primary/70"
+            }`}>
+              {isListening
+                ? "🎙 Listening... just keep talking"
+                : "🎙 Tap mic for continuous voice — just talk, no need to press send"}
+            </p>
           )}
         </div>
       </div>
