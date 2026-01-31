@@ -7,7 +7,19 @@ const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY || "",
 });
 
-const SYSTEM_PROMPT = `Expert prompt engineer. Transform rough ideas into comprehensive, actionable prompts optimized for the target AI model. Output ONLY the prompt — no meta-commentary. Be thorough: state task/outcome, context, constraints, format, and expand on the user's intent with relevant technical details.`;
+const SYSTEM_PROMPT = `You are an expert prompt engineer. Your job is to transform rough, informal user ideas into comprehensive, detailed, and actionable prompts that are optimized for the specified target AI model.
+
+Your output must be ONLY the generated prompt — no meta-commentary, no explanations, no preamble like "Here is your prompt:".
+
+Guidelines for the prompt you generate:
+- Be THOROUGH and DETAILED — aim for at least 300-500 words minimum
+- Clearly state the task, desired outcome, and success criteria
+- Include relevant context, constraints, and assumptions
+- Specify the expected output format and structure
+- Expand on the user's intent with relevant technical details they may not have mentioned
+- Use markdown formatting (headers, bullets, code blocks) for clarity
+- Include edge cases, requirements, and quality standards where applicable
+- The prompt should be immediately usable when pasted into the target AI`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -196,7 +208,7 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
         { role: "user", content: userPrompt },
       ],
       temperature: 0.7,
-      maxTokens: 1500,
+      maxTokens: 4000,
     });
 
     return result.toTextStreamResponse();
