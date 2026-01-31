@@ -12,6 +12,7 @@ interface InterviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: (enhancedPrompt: string) => void;
+  onRequestGenerate?: (conversationContext: string) => void; // Close modal & trigger main generation
   initialTranscript: string;
   mode: string;
   existingPrompt?: string; // If provided, interview will enhance this prompt
@@ -22,6 +23,7 @@ export default function InterviewModal({
   isOpen,
   onClose,
   onComplete,
+  onRequestGenerate,
   initialTranscript,
   mode,
   existingPrompt = "",
@@ -270,49 +272,31 @@ export default function InterviewModal({
     handleClose();
   };
 
-  // Manually generate prompt from conversation
-  const handleGeneratePrompt = useCallback(async () => {
+  // Generate prompt — close modal and trigger main page generation with conversation context
+  const handleGeneratePrompt = useCallback(() => {
     if (isLoading) return;
 
     if (isListening) {
       stopListening();
     }
 
-    setIsLoading(true);
+    // Build conversation context from all user messages
+    const userMessages = messages
+      .filter((m) => m.role === "user")
+      .map((m) => m.content);
+    const conversationContext = userMessages.join("\n");
 
-    try {
-      const response = await fetch("/api/interview", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "generate",
-          transcript: initialTranscript,
-          mode: mode,
-          messages: messages,
-          existingPrompt: existingPrompt, // Pass existing prompt for merging
-          model,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.finalPrompt) {
-        setIsComplete(true);
-        setFinalPrompt(data.finalPrompt);
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: existingPrompt
-            ? "Here's your enhanced prompt with the new details merged in!"
-            : "Here's your generated prompt based on our conversation!"
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Generate prompt error:", error);
+    if (onRequestGenerate && conversationContext.trim()) {
+      // Close modal and trigger main generation pipeline
+      if (isListening) stopListening();
+      resetTranscript();
+      onClose();
+      onRequestGenerate(conversationContext);
+      return;
     }
 
     setIsLoading(false);
-  }, [isLoading, isListening, stopListening, initialTranscript, mode, messages, existingPrompt, model]);
+  }, [isLoading, isListening, stopListening, resetTranscript, messages, onRequestGenerate, onClose]);
 
   const handleClose = () => {
     if (isListening) {

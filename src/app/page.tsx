@@ -114,6 +114,9 @@ export default function Home() {
   // Auto-scroll ref for streaming output
   const outputScrollRef = useRef<HTMLDivElement>(null);
 
+  // Pending generate trigger (set by interview → main generate flow)
+  const pendingGenerateRef = useRef(false);
+
   // Edit mode for output
   const [isEditingOutput, setIsEditingOutput] = useState(false);
 
@@ -199,6 +202,14 @@ export default function Home() {
       outputScrollRef.current.scrollTop = outputScrollRef.current.scrollHeight;
     }
   }, [generatedPrompt, isGenerating]);
+
+  // Interview → main generate: trigger after transcript state commits
+  useEffect(() => {
+    if (pendingGenerateRef.current && transcript.trim()) {
+      pendingGenerateRef.current = false;
+      handleGenerate();
+    }
+  }, [transcript, handleGenerate]);
 
   // Provider change handler — reset model to default
   const handleProviderChange = useCallback((newProvider: LLMProviderId) => {
@@ -426,6 +437,16 @@ export default function Home() {
     setToast("Enhanced prompt ready!");
     setTimeout(() => setToast(null), 3000);
   }, [transcript, modes, addToHistory]);
+
+  // Interview → main generate: close modal, enrich transcript, auto-trigger generation
+  const handleInterviewGenerate = useCallback((conversationContext: string) => {
+    setShowInterview(false);
+    const enriched = transcript.trim()
+      ? `${transcript.trim()}\n\n${conversationContext}`
+      : conversationContext;
+    setTranscript(enriched);
+    pendingGenerateRef.current = true;
+  }, [transcript]);
 
   // Select from history
   const handleHistorySelect = useCallback((item: HistoryItem) => {
@@ -1137,6 +1158,7 @@ export default function Home() {
         isOpen={showInterview}
         onClose={() => setShowInterview(false)}
         onComplete={handleInterviewComplete}
+        onRequestGenerate={handleInterviewGenerate}
         initialTranscript={transcript}
         mode={modes.join(",")}
         existingPrompt={generatedPrompt}
