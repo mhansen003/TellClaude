@@ -9,8 +9,8 @@ function generateCode(): string {
   let code = "";
   const bytes = new Uint8Array(7);
   crypto.getRandomValues(bytes);
-  for (const b of bytes) {
-    code += chars[b % chars.length];
+  for (let i = 0; i < bytes.length; i++) {
+    code += chars[bytes[i] % chars.length];
   }
   return code;
 }
