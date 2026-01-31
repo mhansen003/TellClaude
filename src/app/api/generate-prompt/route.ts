@@ -1,5 +1,5 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { streamText, generateText } from "ai";
+import { streamText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 
 const openrouter = createOpenAI({
@@ -7,18 +7,7 @@ const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY || "",
 });
 
-const SYSTEM_PROMPT = `You are an expert prompt engineer. Your job is to transform a user's rough idea into a comprehensive, well-structured prompt that will get excellent results from the user's chosen AI model.
-
-Given the user's input and their selected preferences, generate a detailed, actionable prompt that:
-1. Clearly states the task and expected outcome
-2. Provides all necessary context and constraints
-3. Specifies the format and level of detail expected
-4. Includes all the modifier requirements they selected
-5. Is written in a way that will get the best possible response from the target AI model
-
-Output ONLY the generated prompt - no explanations, no meta-commentary, just the prompt itself.
-
-The prompt should be thorough and specific. Don't be afraid to expand on what the user said to make it clearer and more actionable. Include relevant technical considerations based on their mode selection.`;
+const SYSTEM_PROMPT = `Expert prompt engineer. Transform rough ideas into comprehensive, actionable prompts optimized for the target AI model. Output ONLY the prompt — no meta-commentary. Be thorough: state task/outcome, context, constraints, format, and expand on the user's intent with relevant technical details.`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -198,13 +187,13 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
     }
 
     const result = streamText({
-      model: openrouter("anthropic/claude-opus-4"),
+      model: openrouter("google/gemini-2.5-flash"),
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userPrompt },
       ],
       temperature: 0.7,
-      maxTokens: 2000,
+      maxTokens: 1500,
     });
 
     return result.toTextStreamResponse();
