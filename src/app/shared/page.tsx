@@ -2,9 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { decodePromptData, SharedPromptData } from "@/lib/share";
-import { getModelLabel } from "@/lib/llm-providers";
+import { getModelLabel, getProviderForModel } from "@/lib/llm-providers";
 import { useClipboard } from "@/hooks/useClipboard";
 import FormattedPrompt from "@/components/FormattedPrompt";
+
+const THEME_APP_NAME: Record<string, string> = {
+  claude: "Tell Claude",
+  chatgpt: "Tell ChatGPT",
+  gemini: "Tell Gemini",
+};
 
 export default function SharedPage() {
   const [data, setData] = useState<SharedPromptData | null>(null);
@@ -87,7 +93,7 @@ export default function SharedPage() {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
-            Go to TellClaude
+            Go to Tell AI
           </a>
         </div>
       </div>
@@ -106,7 +112,7 @@ export default function SharedPage() {
               </svg>
             </div>
             <span className="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors">
-              TellClaude
+              {THEME_APP_NAME[data.theme || "claude"] || "Tell AI"}
             </span>
           </a>
           <div className="flex items-center gap-2">
@@ -147,7 +153,7 @@ export default function SharedPage() {
                 )}
               </div>
               <p className="text-sm text-text-muted mt-2">
-                {data.timestamp ? `Published ${formatDate(data.timestamp)}` : "Shared via TellClaude"}
+                {data.timestamp ? `Published ${formatDate(data.timestamp)}` : "Shared via Tell AI"}
               </p>
             </div>
             <button
@@ -185,7 +191,7 @@ export default function SharedPage() {
               <div>
                 <h2 className="text-base font-bold text-text-primary">Generated Prompt</h2>
                 <p className="text-xs text-text-muted">
-                  Powered by {data.model ? getModelLabel(data.model) : "TellClaude"}
+                  Powered by {data.model ? getModelLabel(data.model) : "Tell AI"}
                 </p>
               </div>
             </div>

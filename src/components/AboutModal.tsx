@@ -27,7 +27,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
               </svg>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-text-primary">How to Use TellClaude</h2>
+              <h2 className="text-lg font-bold text-text-primary">How to Use Tell AI</h2>
               <p className="text-xs text-text-muted">Transform your voice into perfect prompts</p>
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           {/* Footer */}
           <div className="text-center pt-2">
             <p className="text-xs text-text-muted">
-              Prompt generation powered by <span className="text-brand-primary font-semibold">Claude Opus 4</span> via OpenRouter
+              Prompt generation powered by <span className="text-brand-primary font-semibold">Gemini 2.5 Flash</span> via OpenRouter
             </p>
             <p className="text-xs text-text-muted mt-1">
               v1.1.0 &middot; Multi-AI support: Claude, ChatGPT, Gemini
