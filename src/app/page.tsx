@@ -866,7 +866,7 @@ export default function Home() {
                 </div>
 
                 {/* Output Panel */}
-                <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[500px] lg:flex-1 lg:min-h-[400px]">
+                <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[500px] lg:max-h-[600px]">
                   {/* Header */}
                   <div className="flex-shrink-0 px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
                     <div className="flex items-center justify-between">
