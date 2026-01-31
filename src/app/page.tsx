@@ -764,12 +764,12 @@ export default function Home() {
                     </span>
                     <button
                       onClick={() => setShowModeModal(true)}
-                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white text-sm font-bold hover:brightness-110 hover:shadow-lg hover:shadow-brand-primary/25 transition-all cursor-pointer flex items-center gap-1.5 active:scale-[0.97]"
+                      className="px-3 py-1.5 rounded-lg border border-border-subtle text-text-secondary text-xs font-medium hover:text-text-primary hover:border-brand-primary/40 hover:bg-brand-primary/5 transition-all cursor-pointer flex items-center gap-1 active:scale-[0.97]"
                     >
-                      Modify
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                       </svg>
+                      Edit
                     </button>
                   </div>
 
