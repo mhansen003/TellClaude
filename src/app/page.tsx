@@ -432,17 +432,39 @@ export default function Home() {
     setModifiers([]);
   }, [resetTranscript]);
 
-  // Publish prompt
-  const handlePublish = useCallback(() => {
+  // Publish prompt — try short URL via KV, fall back to hash URL
+  const handlePublish = useCallback(async () => {
     if (!generatedPrompt) return;
-    const url = buildShareUrl({
+
+    const shareData = {
       transcript: transcript.trim(),
       prompt: generatedPrompt,
       modes: modes.join(","),
       timestamp: Date.now(),
       theme: getProvider(llmProvider).theme,
       model: llmModel,
-    });
+    };
+
+    // Try short URL first (requires Vercel KV)
+    let url: string;
+    try {
+      const res = await fetch("/api/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(shareData),
+      });
+      if (res.ok) {
+        const result = await res.json();
+        url = result.url;
+      } else {
+        // KV not configured — fall back to hash URL
+        url = buildShareUrl(shareData);
+      }
+    } catch {
+      // Network error — fall back to hash URL
+      url = buildShareUrl(shareData);
+    }
+
     const newItem: PublishedItem = {
       id: Date.now().toString(),
       timestamp: Date.now(),
