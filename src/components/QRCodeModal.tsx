@@ -25,7 +25,7 @@ export default function QRCodeModal({ isOpen, onClose }: QRCodeModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Clear AI" className="w-8 h-8 object-contain" />
+            <img src="/logo.png" alt="Clear AI" className="h-9 w-auto object-contain" />
             <div>
               <h2 className="text-base font-bold text-text-primary">Share This App</h2>
               <p className="text-xs text-text-muted">Scan to open on any device</p>

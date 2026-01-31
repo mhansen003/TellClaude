@@ -21,7 +21,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         {/* Header */}
         <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Clear AI" className="w-10 h-10 object-contain" />
+            <img src="/logo.png" alt="Clear AI" className="h-11 w-auto object-contain" />
             <div>
               <h2 className="text-lg font-bold text-text-primary">How to Use Tell AI</h2>
               <p className="text-xs text-text-muted">Transform your voice into perfect prompts</p>
