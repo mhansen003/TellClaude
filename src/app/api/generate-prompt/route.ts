@@ -12,7 +12,7 @@ const SYSTEM_PROMPT = `Expert prompt engineer. Transform rough ideas into compre
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { transcript, modes: modesRaw, mode: legacyMode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, model: targetModel } = body;
+    const { transcript, modes: modesRaw, mode: legacyMode, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, model: targetModel, engineModel } = body;
     // Support both new multi-select `modes` array and legacy single `mode` string
     const modes: string[] = Array.isArray(modesRaw) ? modesRaw : (legacyMode ? [legacyMode] : []);
 
@@ -186,8 +186,11 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
       });
     }
 
+    const ALLOWED_ENGINES = ["google/gemini-2.5-pro", "openai/gpt-4.1", "anthropic/claude-opus-4"];
+    const engine = ALLOWED_ENGINES.includes(engineModel) ? engineModel : "google/gemini-2.5-pro";
+
     const result = streamText({
-      model: openrouter("openai/gpt-5"),
+      model: openrouter(engine),
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userPrompt },

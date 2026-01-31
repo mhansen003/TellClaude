@@ -4,9 +4,7 @@ import { LLM_PROVIDERS, type LLMProviderId } from "@/lib/llm-providers";
 
 interface LLMSelectorProps {
   provider: LLMProviderId;
-  model: string;
   onProviderChange: (provider: LLMProviderId) => void;
-  onModelChange: (modelId: string) => void;
 }
 
 const PROVIDER_ICONS: Record<LLMProviderId, React.ReactNode> = {
@@ -27,22 +25,15 @@ const PROVIDER_ICONS: Record<LLMProviderId, React.ReactNode> = {
   ),
 };
 
-const TIER_LABELS: Record<string, { label: string; color: string }> = {
-  flagship: { label: "Best", color: "text-accent-purple" },
-  standard: { label: "Balanced", color: "text-accent-blue" },
-  fast: { label: "Fast", color: "text-accent-teal" },
-};
 
-export default function LLMSelector({ provider, model, onProviderChange, onModelChange }: LLMSelectorProps) {
-  const currentProvider = LLM_PROVIDERS.find(p => p.id === provider) || LLM_PROVIDERS[0];
-
+export default function LLMSelector({ provider, onProviderChange }: LLMSelectorProps) {
   return (
     <div className="bg-bg-card rounded-2xl border border-border-subtle p-4 space-y-3">
       <span className="text-sm font-semibold text-text-secondary flex items-center gap-2">
         <svg className="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
-        AI Model
+        Target AI
       </span>
 
       {/* Provider Pills */}
@@ -61,29 +52,6 @@ export default function LLMSelector({ provider, model, onProviderChange, onModel
             {p.label}
           </button>
         ))}
-      </div>
-
-      {/* Model Selector */}
-      <div className="flex gap-1.5">
-        {currentProvider.models.map((m) => {
-          const tier = TIER_LABELS[m.tier];
-          return (
-            <button
-              key={m.id}
-              onClick={() => onModelChange(m.id)}
-              className={`flex-1 px-2 py-2 rounded-lg text-[11px] font-medium transition-all text-center ${
-                model === m.id
-                  ? "bg-brand-primary/15 text-brand-primary border border-brand-primary/30"
-                  : "bg-bg-elevated/50 text-text-muted hover:text-text-secondary border border-transparent"
-              }`}
-            >
-              <div className="font-semibold">{m.label}</div>
-              <div className={`text-[9px] mt-0.5 ${model === m.id ? "text-brand-primary/70" : tier.color}`}>
-                {tier.label}
-              </div>
-            </button>
-          );
-        })}
       </div>
     </div>
   );

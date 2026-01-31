@@ -55,6 +55,15 @@ export default function Home() {
   const [llmProvider, setLlmProvider] = useState<LLMProviderId>("claude");
   const [llmModel, setLlmModel] = useState("anthropic/claude-opus-4");
 
+  // Engine model for prompt generation (not the target AI — the model that writes the prompt)
+  const ENGINE_OPTIONS = [
+    { id: "google/gemini-2.5-pro", label: "Gemini Pro", tag: "⚡ Fastest" },
+    { id: "openai/gpt-4.1", label: "GPT 4.1", tag: "Balanced" },
+    { id: "anthropic/claude-opus-4", label: "Opus 4", tag: "Highest quality" },
+  ] as const;
+  type EngineModelId = typeof ENGINE_OPTIONS[number]["id"];
+  const [engineModel, setEngineModel] = useState<EngineModelId>("google/gemini-2.5-pro");
+
   // Generated prompt
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -313,6 +322,7 @@ export default function Home() {
           attachments: attachmentData,
           urlReferences: urlData,
           model: llmModel,
+          engineModel,
         }),
         signal: abortControllerRef.current.signal,
       });
@@ -372,7 +382,7 @@ export default function Home() {
 
     abortControllerRef.current = null;
     setIsGenerating(false);
-  }, [transcript, modes, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, isGenerating, isListening, stopListening, addToHistory, llmModel]);
+  }, [transcript, modes, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, isGenerating, isListening, stopListening, addToHistory, llmModel, engineModel]);
 
   // Cancel generation
   const handleCancelGeneration = useCallback(() => {
@@ -630,7 +640,7 @@ export default function Home() {
             </aside>
 
             {/* Two-Column Grid: Left (message/config) + Right (generate/output) */}
-            <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+            <div className={`flex-1 min-w-0 grid grid-cols-1 ${transcript.trim() || generatedPrompt || isGenerating ? "lg:grid-cols-2" : ""} gap-4 sm:gap-6 items-stretch`}>
 
               {/* LEFT COLUMN - Your Message + Config */}
               <div className="flex flex-col gap-3">
@@ -656,8 +666,26 @@ export default function Home() {
                 </div>
 
                 {/* Mobile Action Buttons - Only visible on mobile, right after transcript */}
+                {transcript.trim() && (
                 <div className="lg:hidden space-y-2">
                   <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
+                  {/* Engine selector */}
+                  <div className="flex gap-1.5">
+                    {ENGINE_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => setEngineModel(opt.id)}
+                        className={`flex-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                          engineModel === opt.id
+                            ? "bg-brand-primary/20 text-brand-primary border border-brand-primary/40"
+                            : "bg-bg-elevated/50 text-text-muted border border-border-subtle hover:text-text-secondary"
+                        }`}
+                      >
+                        <span className="block">{opt.label}</span>
+                        <span className={`block text-[10px] ${engineModel === opt.id ? "text-brand-primary/70" : "text-text-muted/60"}`}>{opt.tag}</span>
+                      </button>
+                    ))}
+                  </div>
                   <div className="flex gap-2">
                     {isGenerating ? (
                       <>
@@ -698,13 +726,12 @@ export default function Home() {
                     )}
                   </div>
                 </div>
+                )}
 
                 {/* LLM Selector Card */}
                 <LLMSelector
                   provider={llmProvider}
-                  model={llmModel}
                   onProviderChange={handleProviderChange}
-                  onModelChange={setLlmModel}
                 />
 
                 {/* Mode + Modifiers Compact Summary Card */}
@@ -840,11 +867,29 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* RIGHT COLUMN - Generate + Output */}
+              {/* RIGHT COLUMN - Generate + Output (hidden until transcript has text) */}
+              {(transcript.trim() || generatedPrompt || isGenerating) && (
               <div className="flex flex-col gap-3">
                 {/* Action Buttons - Desktop only */}
                 <div className="hidden lg:block flex-shrink-0 space-y-2">
                   <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
+                  {/* Engine selector */}
+                  <div className="flex gap-1.5">
+                    {ENGINE_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => setEngineModel(opt.id)}
+                        className={`flex-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                          engineModel === opt.id
+                            ? "bg-brand-primary/20 text-brand-primary border border-brand-primary/40"
+                            : "bg-bg-elevated/50 text-text-muted border border-border-subtle hover:text-text-secondary"
+                        }`}
+                      >
+                        <span className="block">{opt.label}</span>
+                        <span className={`block text-[10px] ${engineModel === opt.id ? "text-brand-primary/70" : "text-text-muted/60"}`}>{opt.tag}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div className="hidden lg:flex gap-2 flex-shrink-0">
                   {isGenerating ? (
@@ -1016,6 +1061,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+              )}
 
             </div>
             {/* /grid */}
