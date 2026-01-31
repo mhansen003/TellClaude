@@ -187,7 +187,7 @@ Generate a detailed, well-structured prompt that incorporates all of the above. 
     }
 
     const result = streamText({
-      model: openrouter("google/gemini-2.5-flash"),
+      model: openrouter("openai/gpt-5"),
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userPrompt },
