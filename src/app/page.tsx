@@ -627,47 +627,6 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Content with Left Rail + Two-Column Grid */}
-            <div className="flex gap-4 sm:gap-6 items-start">
-
-            {/* Vertical Progress Rail - Desktop only, left side */}
-            <aside className="hidden lg:flex flex-col items-center gap-0 sticky top-24 self-start pt-1 pr-2">
-              {steps.map((item, idx) => (
-                <div key={item.step} className="flex flex-col items-center">
-                  {/* Step circle */}
-                  <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                      item.done
-                        ? "bg-accent-green text-white"
-                        : isStepActive(item.step)
-                          ? "bg-gradient-to-br from-brand-primary to-brand-secondary text-white"
-                          : "bg-bg-elevated text-text-muted border border-border-subtle"
-                    }`}
-                  >
-                    {item.done ? (
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      item.step
-                    )}
-                  </div>
-                  {/* Step label */}
-                  <span className={`text-[10px] mt-1 font-semibold whitespace-nowrap ${
-                    item.done ? "text-accent-green" : isStepActive(item.step) ? "text-brand-primary" : "text-text-muted"
-                  }`}>
-                    {item.label}
-                  </span>
-                  {/* Connector line */}
-                  {idx < steps.length - 1 && (
-                    <div className={`w-0.5 h-8 my-1 rounded-full transition-colors ${
-                      item.done ? "bg-accent-green" : "bg-border-subtle"
-                    }`} />
-                  )}
-                </div>
-              ))}
-            </aside>
-
             {/* Two-Column Grid: Flattened for mobile reordering via order- classes */}
             <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
 
@@ -1100,8 +1059,44 @@ export default function Home() {
 
             </div>
             {/* /grid */}
+
+            {/* Horizontal Progress Rail - Desktop only, bottom */}
+            <div className="hidden lg:flex items-center justify-center gap-0 mt-4 pb-2">
+              {steps.map((item, idx) => (
+                <div key={item.step} className="flex items-center">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                        item.done
+                          ? "bg-accent-green text-white"
+                          : isStepActive(item.step)
+                            ? "bg-gradient-to-br from-brand-primary to-brand-secondary text-white"
+                            : "bg-bg-elevated text-text-muted border border-border-subtle"
+                      }`}
+                    >
+                      {item.done ? (
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        item.step
+                      )}
+                    </div>
+                    <span className={`text-[10px] mt-1 font-semibold whitespace-nowrap ${
+                      item.done ? "text-accent-green" : isStepActive(item.step) ? "text-brand-primary" : "text-text-muted"
+                    }`}>
+                      {item.label}
+                    </span>
+                  </div>
+                  {idx < steps.length - 1 && (
+                    <div className={`w-10 h-0.5 mx-2 -mt-4 rounded-full transition-colors ${
+                      item.done ? "bg-accent-green" : "bg-border-subtle"
+                    }`} />
+                  )}
+                </div>
+              ))}
             </div>
-            {/* /flex wrapper */}
+
       </div>
       {/* /max-w-7xl */}
 
