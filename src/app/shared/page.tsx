@@ -106,11 +106,7 @@ export default function SharedPage() {
       <header className="border-b border-border-subtle bg-bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
+            <img src="/logo.png" alt="Clear AI" className="h-7 w-auto" />
             <span className="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors">
               {THEME_APP_NAME[data.theme || "claude"] || "Tell AI"}
             </span>
