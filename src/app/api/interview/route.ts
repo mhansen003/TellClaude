@@ -87,8 +87,13 @@ export async function POST(request: NextRequest) {
             message: `I see you already have a prompt generated. Let me help you enhance it!\n\nWhat would you like to add, change, or clarify in your existing prompt?`,
           });
         }
+        if (transcript?.trim()) {
+          return NextResponse.json({
+            message: `I see you want help with a ${mode} task. Let me ask a few questions to craft the perfect prompt for you.\n\nWhat specific outcome are you hoping to achieve with this?`,
+          });
+        }
         return NextResponse.json({
-          message: `I see you want help with a ${mode} task. Let me ask a few questions to craft the perfect prompt for you.\n\nWhat specific outcome are you hoping to achieve with this?`,
+          message: `Hey there! 👋 I'm here to help you build the perfect prompt. Just tell me — what are you working on or trying to accomplish? I'll ask a few quick questions and craft a great prompt for you.`,
         });
       }
 
@@ -167,16 +172,21 @@ export async function POST(request: NextRequest) {
     ];
 
     // Build context string including existing prompt if available
+    const hasTranscript = Boolean(transcript?.trim());
     const contextString = hasExistingPrompt
-      ? `The user wants help with a "${mode}" task. Their initial request was: "${transcript}"\n\nThey already have this generated prompt that they want to ENHANCE:\n\n---EXISTING PROMPT---\n${existingPrompt}\n---END EXISTING PROMPT---\n\nHelp them improve and add to this existing prompt.`
-      : `The user wants help with a "${mode}" task. Their initial request is:\n\n"${transcript}"`;
+      ? `The user wants help with a "${mode}" task.${hasTranscript ? ` Their initial request was: "${transcript}"` : ""}\n\nThey already have this generated prompt that they want to ENHANCE:\n\n---EXISTING PROMPT---\n${existingPrompt}\n---END EXISTING PROMPT---\n\nHelp them improve and add to this existing prompt.`
+      : hasTranscript
+        ? `The user wants help with a "${mode}" task. Their initial request is:\n\n"${transcript}"`
+        : `The user has opened interview mode to build a prompt from scratch. Their selected mode is "${mode}". They haven't described their task yet — give them a warm welcome and ask what they'd like to work on.`;
 
     if (action === "start") {
       allMessages.push({
         role: "user",
         content: hasExistingPrompt
           ? `${contextString}\n\nPlease acknowledge their existing prompt and ask what they'd like to add, change, or clarify.`
-          : `${contextString}\n\nPlease greet them and ask your first clarifying question.`,
+          : hasTranscript
+            ? `${contextString}\n\nPlease greet them and ask your first clarifying question.`
+            : `${contextString}\n\nGive a brief, friendly welcome and ask what they'd like to build or work on. Keep it warm and conversational — don't mention anything being "empty".`,
       });
     } else if (action === "continue" && messages) {
       allMessages.push({
