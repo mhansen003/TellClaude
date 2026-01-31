@@ -203,14 +203,6 @@ export default function Home() {
     }
   }, [generatedPrompt, isGenerating]);
 
-  // Interview → main generate: trigger after transcript state commits
-  useEffect(() => {
-    if (pendingGenerateRef.current && transcript.trim()) {
-      pendingGenerateRef.current = false;
-      handleGenerate();
-    }
-  }, [transcript, handleGenerate]);
-
   // Provider change handler — reset model to default
   const handleProviderChange = useCallback((newProvider: LLMProviderId) => {
     setLlmProvider(newProvider);
@@ -422,6 +414,14 @@ export default function Home() {
     abortControllerRef.current = null;
     setIsGenerating(false);
   }, [transcript, modes, detailLevel, outputFormat, modifiers, contextInfo, attachments, urlReferences, isGenerating, isListening, stopListening, addToHistory, llmModel, engineModel]);
+
+  // Interview → main generate: trigger after transcript state commits
+  useEffect(() => {
+    if (pendingGenerateRef.current && transcript.trim()) {
+      pendingGenerateRef.current = false;
+      handleGenerate();
+    }
+  }, [transcript, handleGenerate]);
 
   // Cancel generation
   const handleCancelGeneration = useCallback(() => {
