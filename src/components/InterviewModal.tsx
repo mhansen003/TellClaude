@@ -219,15 +219,12 @@ export default function InterviewModal({
       const data = await response.json();
 
       if (data.isComplete && data.finalPrompt) {
-        setIsComplete(true);
-        setFinalPrompt(data.finalPrompt);
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: existingPrompt
-            ? "I've enhanced your existing prompt with the new details. Here it is!"
-            : "I've gathered all the information I need. Here's your enhanced prompt ready to use!"
-          },
-        ]);
+        // Auto-close modal and send prompt to main page
+        if (isListening) stopListening();
+        resetTranscript();
+        onComplete(data.finalPrompt);
+        onClose();
+        return;
       } else if (data.message) {
         setMessages((prev) => [...prev, { role: "assistant", content: data.message }]);
       }
@@ -240,7 +237,7 @@ export default function InterviewModal({
     }
 
     setIsLoading(false);
-  }, [input, isLoading, isListening, stopListening, resetTranscript, messages, initialTranscript, mode, existingPrompt, model]);
+  }, [input, isLoading, isListening, stopListening, resetTranscript, messages, initialTranscript, mode, existingPrompt, model, onComplete, onClose]);
 
   // Keep ref in sync so timer callback can call latest sendMessage
   useEffect(() => {
