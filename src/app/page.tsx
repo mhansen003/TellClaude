@@ -943,7 +943,7 @@ export default function Home() {
                 </div>
 
                 {/* Output Panel */}
-                <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[500px] lg:max-h-[600px]">
+                <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col flex-1 min-h-[400px]">
                   {/* Header */}
                   <div className="flex-shrink-0 px-5 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
                     <div className="flex items-center justify-between">
@@ -1135,6 +1135,24 @@ export default function Home() {
         isOpen={showAbout}
         onClose={() => setShowAbout(false)}
       />
+
+      {/* Footer */}
+      <footer className="border-t border-border-subtle mt-8">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="Clear AI" className="h-5 w-auto opacity-60" />
+            <span className="text-xs text-text-muted">
+              {llmProvider === "claude" ? "Tell Claude" : llmProvider === "chatgpt" ? "Tell ChatGPT" : "Tell Gemini"}
+              {" "}— Voice to Perfect Prompt
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-[10px] text-text-muted">
+            <span>Powered by <span className="text-brand-primary font-semibold">Clear AI</span></span>
+            <span className="hidden sm:inline">·</span>
+            <span className="hidden sm:inline">Prompts optimized for <span className="text-brand-primary">{llmProvider === "claude" ? "Claude" : llmProvider === "chatgpt" ? "ChatGPT" : "Gemini"}</span></span>
+          </div>
+        </div>
+      </footer>
 
       {/* Toast notification */}
       {toast && (
