@@ -18,7 +18,7 @@ export interface PublishedItem {
   url: string;
 }
 
-const PUBLISHED_STORAGE_KEY = "tellclaude-published";
+const PUBLISHED_STORAGE_KEY = "tellai-published";
 
 /**
  * Compress prompt data into a URL-safe string for sharing.

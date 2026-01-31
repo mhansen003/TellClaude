@@ -7,9 +7,9 @@ import { useClipboard } from "@/hooks/useClipboard";
 import FormattedPrompt from "@/components/FormattedPrompt";
 
 const THEME_APP_NAME: Record<string, string> = {
-  claude: "Tell Claude",
-  chatgpt: "Tell ChatGPT",
-  gemini: "Tell Gemini",
+  claude: "Tell AI",
+  chatgpt: "Tell AI",
+  gemini: "Tell AI",
 };
 
 export default function SharedPage() {

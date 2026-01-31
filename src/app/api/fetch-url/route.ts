@@ -49,7 +49,7 @@ async function fetchGitHubIssue(owner: string, repo: string, issueNumber: string
   try {
     const headers: Record<string, string> = {
       Accept: "application/vnd.github.v3+json",
-      "User-Agent": "TellClaude-App",
+      "User-Agent": "TellAI-App",
     };
 
     // Add GitHub token if available for higher rate limits

@@ -3,9 +3,9 @@
 import type { LLMProviderId } from "@/lib/llm-providers";
 
 const HEADER_TEXT: Record<LLMProviderId, { title: string; target: string }> = {
-  claude: { title: "Tell Claude", target: "Claude Code" },
-  chatgpt: { title: "Tell ChatGPT", target: "ChatGPT" },
-  gemini: { title: "Tell Gemini", target: "Gemini" },
+  claude: { title: "Tell AI", target: "Claude Code" },
+  chatgpt: { title: "Tell AI", target: "ChatGPT" },
+  gemini: { title: "Tell AI", target: "Gemini" },
 };
 
 interface HeaderProps {

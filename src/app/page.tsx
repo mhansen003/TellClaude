@@ -26,8 +26,8 @@ import { PublishedItem, buildShareUrl, loadPublished, savePublished } from "@/li
 import { type LLMProviderId, getProvider, getModelLabel } from "@/lib/llm-providers";
 import { PROMPT_MODE_OPTIONS, PROMPT_MODIFIERS } from "@/lib/constants";
 
-const HISTORY_STORAGE_KEY = "tellclaude-history";
-const SETTINGS_STORAGE_KEY = "tellclaude-settings";
+const HISTORY_STORAGE_KEY = "tellai-history";
+const SETTINGS_STORAGE_KEY = "tellai-settings";
 
 export default function Home() {
   // Speech recognition
@@ -1277,7 +1277,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Clear AI" className="h-5 w-auto opacity-60" />
             <span className="text-xs text-text-muted">
-              {llmProvider === "claude" ? "Tell Claude" : llmProvider === "chatgpt" ? "Tell ChatGPT" : "Tell Gemini"}
+              Tell AI
               {" "}— Voice to Perfect Prompt
             </span>
           </div>
