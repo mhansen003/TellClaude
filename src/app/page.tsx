@@ -640,7 +640,7 @@ export default function Home() {
             </aside>
 
             {/* Two-Column Grid: Left (message/config) + Right (generate/output) */}
-            <div className={`flex-1 min-w-0 grid grid-cols-1 ${transcript.trim() || generatedPrompt || isGenerating ? "lg:grid-cols-2" : ""} gap-4 sm:gap-6 items-stretch`}>
+            <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
 
               {/* LEFT COLUMN - Your Message + Config */}
               <div className="flex flex-col gap-3">
