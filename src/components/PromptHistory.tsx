@@ -98,7 +98,7 @@ export default function PromptHistory({
       {!isOpen && (
         <button
           onClick={onToggle}
-          className="fixed left-4 top-1/2 -translate-y-1/2 z-40 p-3 rounded-xl bg-bg-card border-2 border-border-subtle hover:border-brand-primary/50 text-text-secondary hover:text-brand-primary transition-all shadow-lg group"
+          className="fixed left-4 bottom-4 z-40 p-3 rounded-xl bg-bg-card border-2 border-border-subtle hover:border-brand-primary/50 text-text-secondary hover:text-brand-primary transition-all shadow-lg group"
           title="Open prompt history"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

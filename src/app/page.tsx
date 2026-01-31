@@ -652,9 +652,12 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Section B: Engine + Generate (mobile: order-2, desktop: right col row 1) */}
+              {/* Right column wrapper: contents on mobile (children are grid items), flex-col on desktop (single cell) */}
+              <div className="contents lg:flex lg:flex-col lg:gap-0 lg:col-start-2 lg:row-start-1 lg:row-span-4">
+
+              {/* Section B: Engine + Generate */}
               {(transcript.trim() || isGenerating) && (
-              <div className="order-2 lg:col-start-2 lg:row-start-1 space-y-2 -mb-2 sm:-mb-3">
+              <div className="order-2 lg:order-none space-y-2">
                 <span className="text-sm font-semibold text-text-secondary">Generate Your Prompt</span>
                 {/* Engine selector */}
                 <div className="flex gap-1.5">
@@ -714,9 +717,9 @@ export default function Home() {
               </div>
               )}
 
-              {/* Section C: Output Panel (mobile: order-3, desktop: right col row 2, spans rows) */}
+              {/* Section C: Output Panel */}
               {(transcript.trim() || generatedPrompt || isGenerating) && (
-              <div className="order-3 lg:col-start-2 lg:row-start-2 lg:row-span-4 -mt-2 sm:-mt-3">
+              <div className="order-3 lg:order-none mt-4 sm:mt-6 lg:mt-2">
                 <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden flex flex-col h-[350px] sm:h-[500px]">
                   {/* Header */}
                   <div className="flex-shrink-0 px-4 sm:px-5 py-3 sm:py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
@@ -876,6 +879,9 @@ export default function Home() {
                 </div>
               </div>
               )}
+
+              </div>
+              {/* /Right column wrapper */}
 
               {/* Section D: Mobile Settings Toolbar (mobile: order-4, desktop: hidden) */}
               <div className="order-4 lg:hidden flex gap-2">
