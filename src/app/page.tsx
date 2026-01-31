@@ -574,9 +574,9 @@ export default function Home() {
             {/* Browser Warning */}
             {showBrowserWarning && <BrowserWarning />}
 
-            {/* Mic Hero Section - Aligned with left column, with Interview beside it */}
-            <section className="py-1 sm:py-3 mb-3 sm:mb-5">
-              <div className="flex items-center justify-center gap-6 sm:gap-10 lg:w-1/2">
+            {/* Mic Hero Section - Centered, with Interview beside it */}
+            <section className="flex flex-col items-center py-1 sm:py-3 mb-3 sm:mb-5">
+              <div className="flex items-center gap-6 sm:gap-10">
                 <VoiceRecorder
                   isListening={isListening}
                   isSupported={isSupported}
