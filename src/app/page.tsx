@@ -712,7 +712,7 @@ export default function Home() {
                           onClick={handleGenerate}
                           disabled={!transcript.trim()}
                           className={`flex-1 h-14 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-brand-primary/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
-                            transcript.trim() ? "animate-pulse-glow shadow-[0_0_20px_rgba(var(--brand-primary-rgb),0.4)]" : ""
+                            transcript.trim() ? "animate-generate-yellow-pulse border-2 border-yellow-400/50" : ""
                           }`}
                         >
                           <span className="flex items-center justify-center gap-2">
@@ -918,7 +918,7 @@ export default function Home() {
                         onClick={handleGenerate}
                         disabled={!transcript.trim()}
                         className={`flex-1 h-14 sm:h-12 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm transition-all hover:brightness-110 hover:shadow-lg hover:shadow-brand-primary/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:hover:shadow-none cursor-pointer ${
-                          transcript.trim() ? "animate-pulse-glow shadow-[0_0_20px_rgba(var(--brand-primary-rgb),0.4)]" : ""
+                          transcript.trim() ? "animate-generate-yellow-pulse border-2 border-yellow-400/50" : ""
                         }`}
                       >
                         <span className="flex items-center justify-center gap-2">
