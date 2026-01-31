@@ -91,6 +91,9 @@ export default function Home() {
   // QR Code / Share modal
   const [showQRCode, setShowQRCode] = useState(false);
 
+  // Expanded prompt modal
+  const [showExpandedPrompt, setShowExpandedPrompt] = useState(false);
+
   // Mode & Modifier modal
   const [showModeModal, setShowModeModal] = useState(false);
 
@@ -778,6 +781,16 @@ export default function Home() {
                             {copied ? "Copied!" : "Copy"}
                           </button>
                           <button
+                            onClick={() => setShowExpandedPrompt(true)}
+                            className="px-2 sm:px-3 py-1.5 rounded-lg bg-bg-elevated text-text-secondary hover:text-brand-primary text-xs font-semibold transition-all flex items-center gap-1"
+                            title="View prompt in full screen"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                            </svg>
+                            <span className="hidden sm:inline">Expand</span>
+                          </button>
+                          <button
                             onClick={handleReset}
                             className="px-2 sm:px-3 py-1.5 rounded-lg bg-bg-elevated text-text-secondary hover:text-accent-rose text-xs font-semibold transition-all"
                           >
@@ -1146,6 +1159,63 @@ export default function Home() {
         isOpen={showQRCode}
         onClose={() => setShowQRCode(false)}
       />
+
+      {/* Expanded Prompt Modal */}
+      {showExpandedPrompt && generatedPrompt && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setShowExpandedPrompt(false)}
+          />
+          <div className="relative w-full max-w-4xl max-h-[90vh] bg-bg-secondary border-2 border-brand-primary/30 rounded-2xl shadow-2xl shadow-brand-primary/10 overflow-hidden animate-fade_in flex flex-col">
+            {/* Header */}
+            <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-gradient-to-r from-brand-primary/10 to-transparent">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-brand-primary/20 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-text-primary">Generated Prompt</h2>
+                  <p className="text-xs text-text-muted">Full view — scroll to read</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { handleCopy(); }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    copied ? "bg-accent-green text-white" : "bg-bg-elevated text-text-secondary hover:text-brand-primary"
+                  }`}
+                >
+                  {copied ? "Copied!" : "Copy"}
+                </button>
+                <button
+                  onClick={() => setShowExpandedPrompt(false)}
+                  className="p-2 rounded-lg hover:bg-bg-elevated text-text-muted hover:text-text-primary transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            {/* Content */}
+            <div className="p-6 overflow-y-auto flex-1 min-h-0">
+              <FormattedPrompt content={generatedPrompt} />
+            </div>
+            {/* Footer */}
+            <div className="flex-shrink-0 p-4 border-t border-border-subtle bg-bg-card/50">
+              <button
+                onClick={() => setShowExpandedPrompt(false)}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm hover:brightness-110 transition-all cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Target AI Bottom Sheet */}
       <MobileBottomSheet
