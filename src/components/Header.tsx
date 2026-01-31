@@ -10,10 +10,11 @@ const HEADER_TEXT: Record<LLMProviderId, { title: string; target: string }> = {
 
 interface HeaderProps {
   onAboutClick: () => void;
+  onShareClick: () => void;
   provider?: LLMProviderId;
 }
 
-export default function Header({ onAboutClick, provider = "claude" }: HeaderProps) {
+export default function Header({ onAboutClick, onShareClick, provider = "claude" }: HeaderProps) {
   const header = HEADER_TEXT[provider] || HEADER_TEXT.claude;
   return (
     <header className="pt-4 pb-2 md:pt-6 md:pb-3 px-4">
@@ -44,6 +45,16 @@ export default function Header({ onAboutClick, provider = "claude" }: HeaderProp
         {/* Version & About */}
         <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
           <span className="text-xs text-text-muted font-mono">v1.1.0</span>
+          <button
+            onClick={onShareClick}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-card/80 border border-border-subtle text-text-muted hover:text-brand-primary hover:border-brand-primary/30 transition-all text-sm font-medium"
+            title="Share this app via QR code"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM17 14v3m0 3h.01M14 17h3m3 0h.01M14 14h.01" />
+            </svg>
+            <span className="hidden sm:inline">Share</span>
+          </button>
           <button
             onClick={onAboutClick}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-card/80 border border-border-subtle text-text-muted hover:text-brand-primary hover:border-brand-primary/30 transition-all text-sm font-medium"

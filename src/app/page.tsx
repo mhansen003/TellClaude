@@ -20,6 +20,7 @@ import PromptHistory, { HistoryItem } from "@/components/PromptHistory";
 import PublishModal from "@/components/PublishModal";
 import LLMSelector from "@/components/LLMSelector";
 import MobileBottomSheet from "@/components/MobileBottomSheet";
+import QRCodeModal from "@/components/QRCodeModal";
 import { TooltipIcon } from "@/components/Tooltip";
 import { PublishedItem, buildShareUrl, loadPublished, savePublished } from "@/lib/share";
 import { type LLMProviderId, getProvider, getModelLabel } from "@/lib/llm-providers";
@@ -86,6 +87,9 @@ export default function Home() {
 
   // About modal
   const [showAbout, setShowAbout] = useState(false);
+
+  // QR Code / Share modal
+  const [showQRCode, setShowQRCode] = useState(false);
 
   // Mode & Modifier modal
   const [showModeModal, setShowModeModal] = useState(false);
@@ -581,7 +585,7 @@ export default function Home() {
       />
 
       {/* Header - Full width */}
-      <Header onAboutClick={() => setShowAbout(true)} provider={llmProvider} />
+      <Header onAboutClick={() => setShowAbout(true)} onShareClick={() => setShowQRCode(true)} provider={llmProvider} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
@@ -1134,6 +1138,12 @@ export default function Home() {
       <AboutModal
         isOpen={showAbout}
         onClose={() => setShowAbout(false)}
+      />
+
+      {/* QR Code / Share Modal */}
+      <QRCodeModal
+        isOpen={showQRCode}
+        onClose={() => setShowQRCode(false)}
       />
 
       {/* Mobile Target AI Bottom Sheet */}
